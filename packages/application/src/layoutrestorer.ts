@@ -21,11 +21,11 @@ import {
 
 import {
   InstanceTracker
-} from '@QuantLab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IStateDB
-} from '@QuantLab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ApplicationShell
