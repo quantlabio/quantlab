@@ -5,7 +5,7 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
-var services = require('@jupyterlab/services');
+var services = require('@quantlab/services');
 var ws = require('ws');
 var xhr = require('xmlhttprequest');
 
@@ -51,4 +51,3 @@ services.Session.startNew(options).then(function(s) {
   console.error(err);
   process.exit(1);
 })
-

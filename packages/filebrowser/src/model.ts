@@ -3,15 +3,15 @@
 
 import {
   IChangedArgs, IStateDB, PathExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IDocumentManager
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   Contents, Kernel, Session
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   ArrayIterator, each, IIterator, IterableOrArrayLike

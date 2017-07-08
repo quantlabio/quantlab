@@ -3,7 +3,7 @@
 
 import {
   TerminalSession
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   ElementExt

@@ -10,28 +10,28 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette, IMainMenu
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IEditorServices
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   editorServices, CodeMirrorEditor, Mode
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   ISettingRegistry, IStateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IEditorTracker
-} from '@jupyterlab/fileeditor';
+} from '@quantlab/fileeditor';
 
 
 /**
@@ -57,8 +57,8 @@ namespace CommandIDs {
  * This will eventually reside in its own settings file.
  */
 const schema = {
-  "jupyter.lab.setting-icon-class": "jp-TextEditorIcon",
-  "jupyter.lab.setting-icon-label": "CodeMirror",
+  "jupyter.quantlab.setting-icon-class": "jp-TextEditorIcon",
+  "jupyter.quantlab.setting-icon-label": "CodeMirror",
   "title": "CodeMirror",
   "description": "Text editor settings for all CodeMirror editors.",
   "properties": {
@@ -73,7 +73,7 @@ const schema = {
  * The editor services.
  */
 export
-const servicesPlugin: JupyterLabPlugin<IEditorServices> = {
+const servicesPlugin: QuantLabPlugin<IEditorServices> = {
   id: IEditorServices.name,
   provides: IEditorServices,
   activate: (): IEditorServices => editorServices
@@ -84,7 +84,7 @@ const servicesPlugin: JupyterLabPlugin<IEditorServices> = {
  * The editor commands.
  */
 export
-const commandsPlugin: JupyterLabPlugin<void> = {
+const commandsPlugin: QuantLabPlugin<void> = {
   id: 'jupyter.services.codemirror-commands',
   requires: [IEditorTracker, IMainMenu, ICommandPalette, IStateDB, ISettingRegistry],
   activate: activateEditorCommands,
@@ -95,14 +95,14 @@ const commandsPlugin: JupyterLabPlugin<void> = {
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [commandsPlugin, servicesPlugin];
+const plugins: QuantLabPlugin<any>[] = [commandsPlugin, servicesPlugin];
 export default plugins;
 
 
 /**
  * Set up the editor widget menu and commands.
  */
-function activateEditorCommands(app: JupyterLab, tracker: IEditorTracker, mainMenu: IMainMenu, palette: ICommandPalette, state: IStateDB, settingRegistry: ISettingRegistry): void {
+function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu: IMainMenu, palette: ICommandPalette, state: IStateDB, settingRegistry: ISettingRegistry): void {
   const { commands, restored } = app;
   const { id } = commandsPlugin;
   let { theme, keyMap } = CodeMirrorEditor.defaultConfig;

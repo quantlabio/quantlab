@@ -3,7 +3,7 @@
 
 import {
   KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IDisposable
@@ -15,15 +15,15 @@ import {
 
 import {
   Text
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   Completer
@@ -170,7 +170,7 @@ class CompletionHandler implements IDisposable {
     if (!editor) {
       return Promise.reject(new Error('No active editor'));
     }
-    
+
     const code = editor.model.value.text;
     const offset = Text.jsIndexToCharIndex(editor.getOffsetAt(position), code);
     let content: KernelMessage.ICompleteRequest = {

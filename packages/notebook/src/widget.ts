@@ -41,19 +41,19 @@ import {
   ICellModel, Cell, IMarkdownCellModel,
   CodeCell, MarkdownCell,
   ICodeCellModel, RawCell, IRawCellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   IEditorMimeTypeService, CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IChangedArgs, IObservableMap, IObservableList, nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   INotebookModel

@@ -22,11 +22,11 @@ import {
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IObservableMap, IObservableString, uuid, ICollaborator
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   Mode
@@ -1116,4 +1116,3 @@ namespace Private {
 CodeMirrorEditor.addCommand(
   'delSpaceToPrevTabStop', Private.delSpaceToPrevTabStop
 );
-

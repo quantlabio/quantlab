@@ -3,7 +3,7 @@
 
 import {
   Kernel, KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   JSONObject
@@ -15,27 +15,27 @@ import {
 
 import {
   Text
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
-  JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IConsoleTracker
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   INotebookTracker
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   ITooltipManager, Tooltip
-} from '@jupyterlab/tooltip';
+} from '@quantlab/tooltip';
 
 
 /**
@@ -54,11 +54,11 @@ namespace CommandIDs {
 /**
  * The main tooltip service.
  */
-const service: JupyterLabPlugin<ITooltipManager> = {
+const service: QuantLabPlugin<ITooltipManager> = {
   id: 'jupyter.services.tooltip',
   autoStart: true,
   provides: ITooltipManager,
-  activate: (app: JupyterLab): ITooltipManager => {
+  activate: (app: QuantLab): ITooltipManager => {
     let tooltip: Tooltip | null = null;
     return {
       invoke(options: ITooltipManager.IOptions): Promise<void> {
@@ -83,11 +83,11 @@ const service: JupyterLabPlugin<ITooltipManager> = {
 /**
  * The console tooltip plugin.
  */
-const consolePlugin: JupyterLabPlugin<void> = {
+const consolePlugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.tooltip-console',
   autoStart: true,
   requires: [ITooltipManager, IConsoleTracker],
-  activate: (app: JupyterLab, manager: ITooltipManager, consoles: IConsoleTracker): void => {
+  activate: (app: QuantLab, manager: ITooltipManager, consoles: IConsoleTracker): void => {
     // Add tooltip launch command.
     app.commands.addCommand(CommandIDs.launchConsole, {
       execute: () => {
@@ -116,11 +116,11 @@ const consolePlugin: JupyterLabPlugin<void> = {
 /**
  * The notebook tooltip plugin.
  */
-const notebookPlugin: JupyterLabPlugin<void> = {
+const notebookPlugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.tooltip-notebook',
   autoStart: true,
   requires: [ITooltipManager, INotebookTracker],
-  activate: (app: JupyterLab, manager: ITooltipManager, notebooks: INotebookTracker): void => {
+  activate: (app: QuantLab, manager: ITooltipManager, notebooks: INotebookTracker): void => {
     // Add tooltip launch command.
     app.commands.addCommand(CommandIDs.launchNotebook, {
       execute: () => {
@@ -149,7 +149,7 @@ const notebookPlugin: JupyterLabPlugin<void> = {
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [
+const plugins: QuantLabPlugin<any>[] = [
   service, consolePlugin, notebookPlugin
 ];
 export default plugins;

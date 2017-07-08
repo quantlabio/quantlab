@@ -2,16 +2,16 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette, InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   ImageViewer, ImageViewerFactory, IImageTracker
-} from '@jupyterlab/imageviewer';
+} from '@quantlab/imageviewer';
 
 import {
   CommandRegistry
@@ -47,7 +47,7 @@ const FACTORY = 'Image';
 /**
  * The image file handler extension.
  */
-const plugin: JupyterLabPlugin<IImageTracker> = {
+const plugin: QuantLabPlugin<IImageTracker> = {
   activate,
   id: 'jupyter.extensions.image-handler',
   provides: IImageTracker,
@@ -65,7 +65,7 @@ export default plugin;
 /**
  * Activate the image widget extension.
  */
-function activate(app: JupyterLab, palette: ICommandPalette, restorer: ILayoutRestorer): IImageTracker {
+function activate(app: QuantLab, palette: ICommandPalette, restorer: ILayoutRestorer): IImageTracker {
   const namespace = 'image-widget';
   const factory = new ImageViewerFactory({
     name: FACTORY,
@@ -171,4 +171,3 @@ function addCommands(tracker: IImageTracker, commands: CommandRegistry) {
     widget.scale = 1;
   }
 }
-

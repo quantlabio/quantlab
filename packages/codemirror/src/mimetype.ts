@@ -3,11 +3,11 @@
 
 import {
   IEditorMimeTypeService
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   nbformat, PathExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   Mode

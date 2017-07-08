@@ -3,14 +3,14 @@
 
 import {
   URLExt, PathExt, ModelDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   JSONExt, JSONObject
 } from '@phosphor/coreutils';
 
 import {
-  each 
+  each
 } from '@phosphor/algorithm';
 
 import {
@@ -585,7 +585,7 @@ class ContentsManager implements Contents.IManager {
           path: this._toGlobalPath(drive, localPath)
         } as Contents.IModel;
       }
-    }); 
+    });
   }
 
   /**

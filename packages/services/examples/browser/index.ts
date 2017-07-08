@@ -9,7 +9,7 @@ import 'es6-promise';
 
 import {
   Session
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 
 function log(text: string): void {

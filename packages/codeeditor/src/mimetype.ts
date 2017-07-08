@@ -3,7 +3,7 @@
 
 import {
   nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
 /**

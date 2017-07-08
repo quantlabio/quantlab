@@ -2,7 +2,7 @@ MANIFEST
 build
 dist
 lib
-jupyterlab/build
+quantlab/build
 
 node_modules
 .cache

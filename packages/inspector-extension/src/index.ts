@@ -2,24 +2,24 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette, InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IConsoleTracker
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   IInspector, InspectorPanel, InspectionHandler
-} from '@jupyterlab/inspector';
+} from '@quantlab/inspector';
 
 import {
   INotebookTracker
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   InspectorManager
@@ -38,12 +38,12 @@ namespace CommandIDs {
 /**
  * A service providing code introspection.
  */
-const service: JupyterLabPlugin<IInspector> = {
+const service: QuantLabPlugin<IInspector> = {
   id: 'jupyter.services.inspector',
   requires: [ICommandPalette, ILayoutRestorer],
   provides: IInspector,
   autoStart: true,
-  activate: (app: JupyterLab, palette: ICommandPalette, restorer: ILayoutRestorer): IInspector => {
+  activate: (app: QuantLab, palette: ICommandPalette, restorer: ILayoutRestorer): IInspector => {
     const { commands, shell } = app;
     const manager = new InspectorManager();
     const category = 'Inspector';
@@ -105,11 +105,11 @@ const service: JupyterLabPlugin<IInspector> = {
 /**
  * An extension that registers consoles for inspection.
  */
-const consolePlugin: JupyterLabPlugin<void> = {
+const consolePlugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.console-inspector',
   requires: [IInspector, IConsoleTracker],
   autoStart: true,
-  activate: (app: JupyterLab, manager: IInspector, consoles: IConsoleTracker): void => {
+  activate: (app: QuantLab, manager: IInspector, consoles: IConsoleTracker): void => {
     // Maintain association of new consoles with their respective handlers.
     const handlers: { [id: string]: InspectionHandler } = {};
 
@@ -155,11 +155,11 @@ const consolePlugin: JupyterLabPlugin<void> = {
 /**
  * An extension that registers notebooks for inspection.
  */
-const notebookPlugin: JupyterLabPlugin<void> = {
+const notebookPlugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.notebook-inspector',
   requires: [IInspector, INotebookTracker],
   autoStart: true,
-  activate: (app: JupyterLab, manager: IInspector, notebooks: INotebookTracker): void => {
+  activate: (app: QuantLab, manager: IInspector, notebooks: INotebookTracker): void => {
     // Maintain association of new notebooks with their respective handlers.
     const handlers: { [id: string]: InspectionHandler } = {};
 
@@ -205,7 +205,7 @@ const notebookPlugin: JupyterLabPlugin<void> = {
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [
+const plugins: QuantLabPlugin<any>[] = [
   service, consolePlugin, notebookPlugin
 ];
 export default plugins;

@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   PageConfig
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ServerConnection
@@ -16,7 +16,7 @@ import {
 } from './mockxhr';
 
 
-describe('@jupyterlab/services', () => {
+describe('@quantlab/services', () => {
 
   describe('ServerConnection', () => {
 

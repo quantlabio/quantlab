@@ -21,11 +21,11 @@ import {
 
 import {
   ActivityMonitor
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ABCWidgetFactory, DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   CSVToolbar

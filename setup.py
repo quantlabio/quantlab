@@ -54,8 +54,8 @@ if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 here = os.path.dirname(os.path.abspath(__file__))
 pjoin = os.path.join
 
-DESCRIPTION = 'An alpha preview of the JupyterLab notebook server extension.'
-LONG_DESCRIPTION = 'This is an alpha preview of JupyterLab. It is not ready for general usage yet. Development happens on https://github.com/jupyter/jupyterlab, with chat on https://gitter.im/jupyter/jupyterlab.'
+DESCRIPTION = 'An alpha preview of the QuantLab notebook server extension.'
+LONG_DESCRIPTION = 'This is an alpha preview of QuantLab. It is not ready for general usage yet. Development happens on https://github.com/quantlabio/quantlab.'
 
 
 setup_args = dict(
@@ -107,7 +107,7 @@ setup_args['cmdclass'] = cmdclass
 setuptools_args = {}
 install_requires = setuptools_args['install_requires'] = [
     'notebook>=4.3.1',
-    'jupyterlab_launcher>=0.2.8'
+    'quantlab_launcher>=0.2.8'
 ]
 
 extras_require = setuptools_args['extras_require'] = {
@@ -127,9 +127,9 @@ if 'setuptools' in sys.modules:
     # force entrypoints with setuptools (needed for Windows, unconditional because of wheels)
     setup_args['entry_points'] = {
         'console_scripts': [
-            'jupyter-lab = jupyterlab.labapp:main',
-            'jupyter-labextension = jupyterlab.labextensions:main',
-            'jupyter-labhub = jupyterlab.labhubapp:main'
+            'jupyter-quantlab = quantlab.labapp:main',
+            'jupyter-quantlabextension = quantlab.labextensions:main',
+            'jupyter-quantlabhub = quantlab.labhubapp:main'
         ]
     }
     setup_args.pop('scripts', None)

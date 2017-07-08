@@ -3,7 +3,7 @@
 
 import {
   Kernel
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Token
@@ -15,11 +15,11 @@ import  {
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import '../style/index.css';
 

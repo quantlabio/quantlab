@@ -4,7 +4,7 @@
 
 import {
   Kernel, KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   each
@@ -28,23 +28,23 @@ import {
 
 import {
   IClientSession, Toolbar
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IEditorMimeTypeService
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IChangedArgs
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   INotebookModel

@@ -1,11 +1,11 @@
 {
-  "name": "@jupyterlab/services",
-  "version": "0.47.0",
+  "name": "@quantlab/services",
+  "version": "0.1.0",
   "description": "Client APIs for the Jupyter services REST APIs",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "@jupyterlab/coreutils": "^0.8.0",
+    "@quantlab/coreutils": "^0.1.0",
     "@phosphor/algorithm": "^1.1.1",
     "@phosphor/coreutils": "^1.2.0",
     "@phosphor/disposable": "^1.1.1",
@@ -40,7 +40,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/jupyterlab"
+    "url": "https://github.com/quantlabio/quantlab"
   },
   "keywords": [
     "jupyter",
@@ -58,7 +58,7 @@
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/jupyterlab/jupyterlab/issues"
+    "url": "https://github.com/quantlabio/quantlab/issues"
   },
-  "homepage": "https://github.com/jupyterlab/jupyterlab"
+  "homepage": "https://github.com/quantlabio/quantlab"
 }

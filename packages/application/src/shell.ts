@@ -57,7 +57,7 @@ const ACTIVITY_CLASS = 'jp-Activity';
 
 
 /**
- * The application shell for JupyterLab.
+ * The application shell for QuantLab.
  */
 export
 class ApplicationShell extends Widget {
@@ -972,4 +972,3 @@ namespace Private {
   }
 
 }
-

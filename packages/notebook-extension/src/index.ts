@@ -2,33 +2,33 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   Dialog, ICommandPalette, IMainMenu, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IEditorServices
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IStateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ILauncher
-} from '@jupyterlab/launcher';
+} from '@quantlab/launcher';
 
 import {
   CellTools, ICellTools, INotebookTracker, NotebookActions,
   NotebookModelFactory,  NotebookPanel, NotebookTracker, NotebookWidgetFactory
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   IServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   ReadonlyJSONObject
@@ -44,7 +44,7 @@ import {
 
 import {
   URLExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
 
@@ -239,7 +239,7 @@ const EXPORT_TO_FORMATS = [
  * The notebook widget tracker provider.
  */
 export
-const trackerPlugin: JupyterLabPlugin<INotebookTracker> = {
+const trackerPlugin: QuantLabPlugin<INotebookTracker> = {
   id: 'jupyter.services.notebook-tracker',
   provides: INotebookTracker,
   requires: [
@@ -260,12 +260,12 @@ const trackerPlugin: JupyterLabPlugin<INotebookTracker> = {
  * The notebook cell factory provider.
  */
 export
-const contentFactoryPlugin: JupyterLabPlugin<NotebookPanel.IContentFactory> = {
+const contentFactoryPlugin: QuantLabPlugin<NotebookPanel.IContentFactory> = {
   id: 'jupyter.services.notebook-renderer',
   provides: NotebookPanel.IContentFactory,
   requires: [IEditorServices],
   autoStart: true,
-  activate: (app: JupyterLab, editorServices: IEditorServices) => {
+  activate: (app: QuantLab, editorServices: IEditorServices) => {
     let editorFactory = editorServices.factoryService.newInlineEditor.bind(
       editorServices.factoryService);
     return new NotebookPanel.ContentFactory({ editorFactory });
@@ -275,7 +275,7 @@ const contentFactoryPlugin: JupyterLabPlugin<NotebookPanel.IContentFactory> = {
 /**
  * The cell tools extension.
  */
-const cellToolsPlugin: JupyterLabPlugin<ICellTools> = {
+const cellToolsPlugin: QuantLabPlugin<ICellTools> = {
   activate: activateCellTools,
   provides: ICellTools,
   id: 'jupyter.extensions.cell-tools',
@@ -287,14 +287,14 @@ const cellToolsPlugin: JupyterLabPlugin<ICellTools> = {
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin, cellToolsPlugin];
+const plugins: QuantLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin, cellToolsPlugin];
 export default plugins;
 
 
 /**
  * Activate the cell tools extension.
  */
-function activateCellTools(app: JupyterLab, tracker: INotebookTracker, editorServices: IEditorServices, state: IStateDB): Promise<ICellTools> {
+function activateCellTools(app: QuantLab, tracker: INotebookTracker, editorServices: IEditorServices, state: IStateDB): Promise<ICellTools> {
   const id = 'cell-tools';
   const celltools = new CellTools({ tracker });
   const activeCellTool = new CellTools.ActiveCellTool();
@@ -362,7 +362,7 @@ function activateCellTools(app: JupyterLab, tracker: INotebookTracker, editorSer
 /**
  * Activate the notebook handler extension.
  */
-function activateNotebookHandler(app: JupyterLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: NotebookPanel.IContentFactory, editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): INotebookTracker {
+function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: NotebookPanel.IContentFactory, editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): INotebookTracker {
 
   const factory = new NotebookWidgetFactory({
     name: FACTORY,
@@ -474,7 +474,7 @@ function activateNotebookHandler(app: JupyterLab, services: IServiceManager, mai
 /**
  * Add the notebook commands to the application's command registry.
  */
-function addCommands(app: JupyterLab, services: IServiceManager, tracker: NotebookTracker): void {
+function addCommands(app: QuantLab, services: IServiceManager, tracker: NotebookTracker): void {
   const { commands, shell } = app;
 
   // Get the current widget and activate unless the args specify otherwise.
@@ -1197,7 +1197,7 @@ function populatePalette(palette: ICommandPalette): void {
 /**
  * Creates a menu for the notebook.
  */
-function createMenu(app: JupyterLab): Menu {
+function createMenu(app: QuantLab): Menu {
   let { commands } = app;
   let menu = new Menu({ commands });
   let settings = new Menu({ commands });

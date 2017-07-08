@@ -1,7 +1,7 @@
 {
-  "name": "@jupyterlab/fileeditor-extension",
-  "version": "0.8.1",
-  "description": "JupyterLab - Editor Widget Extension",
+  "name": "@quantlab/fileeditor-extension",
+  "version": "0.1.0",
+  "description": "QuantLab - Editor Widget Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -12,13 +12,13 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.8.1",
-    "@jupyterlab/apputils": "^0.8.1",
-    "@jupyterlab/codeeditor": "^0.8.0",
-    "@jupyterlab/coreutils": "^0.8.0",
-    "@jupyterlab/docregistry": "^0.8.1",
-    "@jupyterlab/fileeditor": "^0.8.1",
-    "@jupyterlab/launcher": "^0.8.1"
+    "@quantlab/application": "^0.1.0",
+    "@quantlab/apputils": "^0.1.0",
+    "@quantlab/codeeditor": "^0.1.0",
+    "@quantlab/coreutils": "^0.1.0",
+    "@quantlab/docregistry": "^0.1.0",
+    "@quantlab/fileeditor": "^0.1.0",
+    "@quantlab/launcher": "^0.1.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
@@ -29,17 +29,17 @@
     "clean": "rimraf lib",
     "watch": "tsc -w"
   },
-  "jupyterlab": {
+  "quantlab": {
     "extension": true
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/jupyterlab.git"
+    "url": "https://github.com/quantlabio/quantlab.git"
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/jupyterlab/jupyterlab/issues"
+    "url": "https://github.com/quantlabio/quantlab/issues"
   },
-  "homepage": "https://github.com/jupyterlab/jupyterlab"
+  "homepage": "https://github.com/quantlabio/quantlab"
 }

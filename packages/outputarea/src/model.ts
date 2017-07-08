@@ -16,11 +16,11 @@ import {
 import {
   IObservableList, ObservableList, nbformat,
   IObservableValue, ObservableValue, IModelDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IOutputModel, OutputModel
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 
 /**

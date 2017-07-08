@@ -3,18 +3,18 @@
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   MimeDocument, MimeDocumentFactory
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   IRenderMime
-} from '@jupyterlab/rendermime-interfaces';
+} from '@quantlab/rendermime-interfaces';
 
 import {
-  JupyterLab, JupyterLabPlugin
+  QuantLab, QuantLabPlugin
 } from '.';
 
 import {
@@ -26,8 +26,8 @@ import {
  * Create rendermime plugins for rendermime extension modules.
  */
 export
-function createRendermimePlugins(extensions: IRenderMime.IExtensionModule[]): JupyterLabPlugin<void>[] {
-  let plugins: JupyterLabPlugin<void>[] = [];
+function createRendermimePlugins(extensions: IRenderMime.IExtensionModule[]): QuantLabPlugin<void>[] {
+  let plugins: QuantLabPlugin<void>[] = [];
   extensions.forEach(mod => {
     let data = mod.default;
     // Handle commonjs exports.
@@ -50,12 +50,12 @@ function createRendermimePlugins(extensions: IRenderMime.IExtensionModule[]): Ju
  * Create rendermime plugins for rendermime extension modules.
  */
 export
-function createRendermimePlugin(item: IRenderMime.IExtension): JupyterLabPlugin<void> {
+function createRendermimePlugin(item: IRenderMime.IExtension): QuantLabPlugin<void> {
   return {
     id: `jupyter.services.mimerenderer-${item.mimeType}`,
     requires: [ILayoutRestorer],
     autoStart: true,
-    activate: (app: JupyterLab, restorer: ILayoutRestorer) => {
+    activate: (app: QuantLab, restorer: ILayoutRestorer) => {
       // Add the mime renderer.
       if (item.rank !== undefined) {
         app.rendermime.addFactory(

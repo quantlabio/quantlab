@@ -5,15 +5,15 @@
 
 import {
   Dialog, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   CodeEditor, JSONEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   ICON_CLASS_KEY, ICON_LABEL_KEY, ISettingRegistry, IStateDB, ObservableJSON
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   Message

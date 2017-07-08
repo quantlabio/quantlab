@@ -1,0 +1,64 @@
+@quantlab/application-top          v0.6.1  (private)
+@quantlab/example-app              v0.7.1  (private)
+@quantlab/example-console          v0.6.0  (private)
+@quantlab/example-filebrowser      v0.6.1  (private)
+@quantlab/example-notebook         v0.6.1  (private)
+quantlab-example-terminal          v0.6.0  (private)
+@quantlab/all-packages             v0.6.1  (private)
+@quantlab/application-extension    v0.6.0
+@quantlab/application              v0.6.0
+@quantlab/apputils-extension       v0.6.0
+@quantlab/apputils                 v0.6.0
+@quantlab/cells                    v0.6.0
+@quantlab/chatbox-extension        v0.1.2
+@quantlab/chatbox                  v0.1.1
+@quantlab/codeeditor               v0.6.0
+@quantlab/codemirror-extension     v0.6.0
+@quantlab/codemirror               v0.6.0
+@quantlab/completer-extension      v0.6.0
+@quantlab/completer                v0.6.0
+@quantlab/console-extension        v0.6.1
+@quantlab/console                  v0.6.0
+@quantlab/coreutils                v0.6.0
+@quantlab/csvviewer-extension      v0.6.0
+@quantlab/csvviewer                v0.6.0
+@quantlab/docmanager-extension     v0.6.1
+@quantlab/docmanager               v0.6.1
+@quantlab/docregistry-extension    v0.6.0
+@quantlab/docregistry              v0.6.0
+@quantlab/faq-extension            v0.6.0
+@quantlab/filebrowser-extension    v0.6.1
+@quantlab/filebrowser              v0.6.1
+@quantlab/fileeditor-extension     v0.6.0
+@quantlab/fileeditor               v0.6.0
+@quantlab/help-extension           v0.6.0
+@quantlab/imageviewer-extension    v0.6.0
+@quantlab/imageviewer              v0.6.0
+@quantlab/inspector-extension      v0.6.0
+@quantlab/inspector                v0.6.0
+@quantlab/landing-extension        v0.7.1
+@quantlab/launcher-extension       v0.6.1
+@quantlab/launcher                 v0.6.0
+@quantlab/markdownviewer-extension v0.6.0
+@quantlab/markdownviewer           v0.6.0
+@quantlab/notebook-extension       v0.6.0
+@quantlab/notebook                 v0.6.0
+@quantlab/outputarea               v0.6.0
+@quantlab/rendermime-extension     v0.6.0
+@quantlab/rendermime               v0.6.0
+@quantlab/running-extension        v0.6.0
+@quantlab/running                  v0.6.0
+@quantlab/services-extension       v0.6.0
+@quantlab/services                 v0.45.0
+@quantlab/shortcuts-extension      v0.6.0
+@quantlab/tabmanager-extension     v0.6.0
+@quantlab/terminal-extension       v0.6.0
+@quantlab/terminal                 v0.6.0
+@quantlab/theme-dark-extension     v0.6.0
+@quantlab/theme-light-extension    v0.6.0
+@quantlab/theming                  v0.6.0
+@quantlab/tooltip-extension        v0.6.0
+@quantlab/tooltip                  v0.6.0
+node-example                         v0.2.0  (private)
+browser-example                      v0.2.0  (private)
+@quantlab/test-all                 v0.6.1  (private)

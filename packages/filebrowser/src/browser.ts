@@ -3,15 +3,15 @@
 
 import {
   Toolbar, ToolbarButton
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   DocumentManager
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   Contents
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IIterator

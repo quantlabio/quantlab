@@ -12,12 +12,12 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  ILayoutRestorer, JupyterLab
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab
+} from '@quantlab/application';
 
 import {
   ICommandPalette, IPaletteItem
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 
 
@@ -38,7 +38,7 @@ namespace CommandIDs {
 
 /**
  * A thin wrapper around the `CommandPalette` class to conform with the
- * JupyterLab interface for the application-wide command palette.
+ * QuantLab interface for the application-wide command palette.
  */
 class Palette implements ICommandPalette {
   /**
@@ -85,7 +85,7 @@ class Palette implements ICommandPalette {
  * Activate the command palette.
  */
 export
-function activatePalette(app: JupyterLab, restorer: ILayoutRestorer): ICommandPalette {
+function activatePalette(app: QuantLab, restorer: ILayoutRestorer): ICommandPalette {
   const { commands, shell } = app;
   const palette = new CommandPalette({ commands });
 

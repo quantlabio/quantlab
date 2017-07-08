@@ -13,11 +13,11 @@ import {
 
 import {
   CodeEditor, CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   CodeMirrorEditorFactory
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   ICellModel

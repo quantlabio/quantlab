@@ -19,7 +19,7 @@ import {
 
 import {
   Styling
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 
 /**

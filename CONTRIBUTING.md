@@ -7,7 +7,7 @@ Please take a look at the Contributor documentation, familiarize yourself with
 using the Jupyter Notebook, and introduce yourself on the mailing list and share
 what area of the project you are interested in working on.
 
-We have labeled some issues as [sprint friendly](https://github.com/jupyterlab/jupyterlab/issues?q=is%3Aopen+is%3Aissue+label%3Asprint-friendly)
+We have labeled some issues as [sprint friendly](https://github.com/quantlabio/quantlab/issues?q=is%3Aopen+is%3Aissue+label%3Asprint-friendly)
 that we believe are good examples of small, self contained changes.
 We encourage those that are new to the code base to implement and/or ask
 questions about these issues.
@@ -25,7 +25,7 @@ All source code is written in [TypeScript](http://www.typescriptlang.org/Handboo
 
 ### Installing Node.js and npm
 
-Building the JupyterLab from its GitHub source code requires Node.js version 
+Building the QuantLab from its GitHub source code requires Node.js version
 6+ and Node's package manager, ``npm``.
 
 If you use ``conda``, you can get them with:
@@ -43,9 +43,9 @@ brew install node
 You can also use the installer from the [Node.js](https://nodejs.org) website.
 
 
-## Installing JupyterLab
+## Installing QuantLab
 
-JupyterLab requires Jupyter Notebook version 4.2 or later.
+QuantLab requires Jupyter Notebook version 4.2 or later.
 
 If you use ``conda``, you can install it as:
 
@@ -65,17 +65,17 @@ If you use `pip` you can install it as:
 pip install notebook
 ```
 
-Fork the JupyterLab [repository](https://github.com/jupyterlab/jupyterlab).
+Fork the QuantLab [repository](https://github.com/quantlabio/quantlab).
 
 Once you have installed the dependencies mentioned above, use the following
 steps::
 
-    git clone https://github.com/<your-github-username>/jupyterlab.git
-    cd jupyterlab
+    git clone https://github.com/<your-github-username>/quantlab.git
+    cd quantlab
     pip install -e . # will take a long time to build everything
     npm install
     npm run build:main
-    jupyter serverextension enable --py jupyterlab
+    jupyter serverextension enable --py quantlab
 
 Notes:
 
@@ -83,24 +83,24 @@ Notes:
 clean -fdx``.
 
 * If `pip` gives a `VersionConflict` error, it usually means that the installed
-version of `jupyterlab_launcher` is out of date. Run `pip install --upgrade
-jupyterlab_launcher` to get the latest version.
+version of `quantlab_launcher` is out of date. Run `pip install --upgrade
+quantlab_launcher` to get the latest version.
 
-* To install JupyterLab in isolation for a single conda/virtual environment, you can add the `--sys-prefix` flag to the extension activation above; this will tie the installation to the `sys.prefix` location of your environment, without writing anything in your user-wide settings area (which are visible to all your envs):
+* To install QuantLab in isolation for a single conda/virtual environment, you can add the `--sys-prefix` flag to the extension activation above; this will tie the installation to the `sys.prefix` location of your environment, without writing anything in your user-wide settings area (which are visible to all your envs):
 
 ```
-jupyter serverextension enable --py --sys-prefix jupyterlab
+jupyter serverextension enable --py --sys-prefix quantlab
 ```
 
-### Run JupyterLab
+### Run QuantLab
 
-Start JupyterLab in development mode:
+Start QuantLab in development mode:
 
 ```bash
-jupyter lab --dev-mode
+jupyter quantlab --dev-mode
 ```
 
-Development mode ensures that you are running the JavaScript assets that are 
+Development mode ensures that you are running the JavaScript assets that are
 built in the dev-installed Python package.  When running from source in development
 mode, the page will have a red stripe at the top to indicate it is an unreleased version.
 
@@ -130,12 +130,12 @@ python main.py
 
 ## High level Architecture
 
-The JupyterLab application is made up of two major parts:
+The QuantLab application is made up of two major parts:
 
 - an npm package
 - a Jupyter server extension (Python package)
 
-Each part is named `jupyterlab`. The [developer tutorial documentation](https://jupyterlab-tutorial.readthedocs.io/en/latest/index.html)
+Each part is named `quantlab`. The [developer tutorial documentation](https://quantlab-tutorial.readthedocs.io/en/latest/index.html)
 provides additional architecture information.
 
 ## The NPM Packages
@@ -149,14 +149,14 @@ build tool.  The npm package source files are in the `packages/` subdirectory.
 - Jupyter notebook server version 4.2 or later (to run examples)
 
 ```bash
-npm install --save jupyterlab
+npm install --save quantlab
 ```
 
 ### Build the NPM Packages from Source
 
 ```bash
-git clone https://github.com/jupyterlab/jupyterlab.git
-cd jupyterlab
+git clone https://github.com/quantlabio/quantlab.git
+cd quantlab
 npm install
 npm run build:packages
 ```
@@ -170,13 +170,13 @@ npm run build:packages
 
 ## The Jupyter Server Extension
 
-The Jupyter server extension source files are in the `jupyterlab/`
+The Jupyter server extension source files are in the `quantlab/`
 subdirectory. To use this extension, make sure the Jupyter notebook server
 version 4.2 or later is installed.
 
-### Build the JupyterLab server extension
+### Build the QuantLab server extension
 
-When you make a change to JupyterLab npm package source files, run:
+When you make a change to QuantLab npm package source files, run:
 
 ```bash
 npm run build
@@ -194,14 +194,13 @@ and refresh the browser.
 
 ## Notes
 
-- By default, the application will load from the JupyterLab staging directory (default is `<sys-prefix>/share/jupyter/lab/build`.  If you wish to run
-the core application in `<git root>/jupyterlab/build`,
-run `jupyter lab --core-mode`.  This is the core application that will
+- By default, the application will load from the QuantLab staging directory (default is `<sys-prefix>/share/jupyter/quantlab/build`.  If you wish to run
+the core application in `<git root>/quantlab/build`,
+run `jupyter quantlab --core-mode`.  This is the core application that will
 be shipped.
 
 - If working with extensions, see the extension documentation on
-https://jupyterlab-tutorial.readthedocs.io/en/latest/index.html.
+https://quantlab-tutorial.readthedocs.io/en/latest/index.html.
 
 - The npm modules are fully compatible with Node/Babel/ES6/ES5. Simply
 omit the type declarations when using a language other than TypeScript.
-

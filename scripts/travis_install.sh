@@ -30,4 +30,4 @@ mkdir ~/.jupyter
 pip install -v -e ".[test]"
 npm install
 npm run build:main
-jupyter serverextension enable --py jupyterlab
+jupyter serverextension enable --py quantlab

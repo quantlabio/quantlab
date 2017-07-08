@@ -3,7 +3,7 @@
 
 import {
   Dialog, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 /**
  * An error message dialog to show in the filebrowser widget.

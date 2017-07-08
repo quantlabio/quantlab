@@ -3,7 +3,7 @@
 
 import {
  KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IDisposable
@@ -11,7 +11,7 @@ import {
 
 import {
   Text
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ISignal, Signal
@@ -19,15 +19,15 @@ import {
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   MimeModel, RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   IInspector

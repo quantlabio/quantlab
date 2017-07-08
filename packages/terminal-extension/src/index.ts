@@ -2,24 +2,24 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette, IMainMenu, InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   ILauncher
-} from '@jupyterlab/launcher';
+} from '@quantlab/launcher';
 
 import {
   IServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Terminal, ITerminalTracker
-} from '@jupyterlab/terminal';
+} from '@quantlab/terminal';
 
 import {
   Menu
@@ -60,7 +60,7 @@ const TERMINAL_ICON_CLASS = 'jp-TerminalIcon';
 /**
  * The default terminal extension.
  */
-const plugin: JupyterLabPlugin<ITerminalTracker> = {
+const plugin: QuantLabPlugin<ITerminalTracker> = {
   activate,
   id: 'jupyter.extensions.terminal',
   provides: ITerminalTracker,
@@ -81,7 +81,7 @@ export default plugin;
 /**
  * Activate the terminal plugin.
  */
-function activate(app: JupyterLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer, launcher: ILauncher | null): ITerminalTracker {
+function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer, launcher: ILauncher | null): ITerminalTracker {
   // Bail if there are no terminals available.
   if (!services.terminals.isAvailable()) {
     console.log('Disabling terminals plugin because they are not available on the server');
@@ -149,7 +149,7 @@ function activate(app: JupyterLab, services: IServiceManager, mainMenu: IMainMen
  * Add the commands for the terminal.
  */
 export
-function addCommands(app: JupyterLab, services: IServiceManager, tracker: InstanceTracker<Terminal>) {
+function addCommands(app: QuantLab, services: IServiceManager, tracker: InstanceTracker<Terminal>) {
   let { commands, shell } = app;
 
   /**
@@ -252,4 +252,3 @@ function addCommands(app: JupyterLab, services: IServiceManager, tracker: Instan
     isEnabled: hasWidget
   });
 }
-

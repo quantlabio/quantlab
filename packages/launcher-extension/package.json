@@ -1,7 +1,7 @@
 {
-  "name": "@jupyterlab/launcher-extension",
-  "version": "0.8.1",
-  "description": "JupyterLab - Launcher Page Extension",
+  "name": "@quantlab/launcher-extension",
+  "version": "0.1.0",
+  "description": "QuantLab - Launcher Page Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -13,11 +13,11 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.8.1",
-    "@jupyterlab/apputils": "^0.8.1",
-    "@jupyterlab/filebrowser": "^0.8.1",
-    "@jupyterlab/launcher": "^0.8.1",
-    "@jupyterlab/services": "^0.47.0",
+    "@quantlab/application": "^0.1.0",
+    "@quantlab/apputils": "^0.1.0",
+    "@quantlab/filebrowser": "^0.1.0",
+    "@quantlab/launcher": "^0.1.0",
+    "@quantlab/services": "^0.1.0",
     "@phosphor/coreutils": "^1.2.0",
     "@phosphor/widgets": "^1.3.0"
   },
@@ -30,17 +30,17 @@
     "clean": "rimraf lib",
     "watch": "tsc -w"
   },
-  "jupyterlab": {
+  "quantlab": {
     "extension": true
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/jupyterlab.git"
+    "url": "https://github.com/quantlabio/quantlab.git"
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/jupyterlab/jupyterlab/issues"
+    "url": "https://github.com/quantlabio/quantlab/issues"
   },
-  "homepage": "https://github.com/jupyterlab/jupyterlab"
+  "homepage": "https://github.com/quantlabio/quantlab"
 }

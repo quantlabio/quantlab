@@ -4,7 +4,7 @@
 |----------------------------------------------------------------------------*/
 import '../style/index.css';  // Why is this first?
 
-export * from '@jupyterlab/rendermime-interfaces';
+export * from '@quantlab/rendermime-interfaces';
 export * from './factories';
 export * from './latex';
 export * from './mimemodel';

@@ -3,7 +3,7 @@
 
 import {
   nbformat, uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   JSONObject, JSONValue

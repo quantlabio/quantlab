@@ -3,7 +3,7 @@
 
 import {
   PageConfig
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   JSONValue, PromiseDelegate

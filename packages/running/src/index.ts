@@ -3,7 +3,7 @@
 
 import {
   ServiceManager, Session, TerminalSession
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Message
@@ -23,7 +23,7 @@ import {
 
 import {
   DOMUtils
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import '../style/index.css';
 

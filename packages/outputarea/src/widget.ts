@@ -23,19 +23,19 @@ import {
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IOutputModel, RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   Kernel, KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IOutputAreaModel

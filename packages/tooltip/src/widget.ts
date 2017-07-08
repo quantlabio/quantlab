@@ -19,15 +19,15 @@ import {
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   HoverBox
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IRenderMime, RenderMime, MimeModel
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 
 /**

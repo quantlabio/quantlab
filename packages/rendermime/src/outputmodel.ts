@@ -12,11 +12,11 @@ import {
 
 import {
   IObservableJSON, ObservableJSON, nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IRenderMime
-} from '@jupyterlab/rendermime-interfaces';
+} from '@quantlab/rendermime-interfaces';
 
 import {
   MimeModel

@@ -19,7 +19,7 @@ module.exports = {
       {
         enforce: 'pre',
         test: /\.js$/,
-        include: path.resolve('node_modules/@jupyterlab'),
+        include: path.resolve('node_modules/@quantlab'),
         use: 'istanbul-instrumenter'
       }
     ],

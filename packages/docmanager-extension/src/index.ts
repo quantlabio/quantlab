@@ -2,20 +2,20 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette, IMainMenu
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   renameDialog, DocumentManager, IDocumentManager, showErrorMessage
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   Contents, Kernel, IServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 
 /**
@@ -57,11 +57,11 @@ namespace CommandIDs {
 /**
  * The default document manager provider.
  */
-const plugin: JupyterLabPlugin<IDocumentManager> = {
+const plugin: QuantLabPlugin<IDocumentManager> = {
   id: 'jupyter.services.document-manager',
   provides: IDocumentManager,
   requires: [IServiceManager, ICommandPalette, IMainMenu],
-  activate: (app: JupyterLab, manager: IServiceManager, palette: ICommandPalette, mainMenu: IMainMenu): IDocumentManager => {
+  activate: (app: QuantLab, manager: IServiceManager, palette: ICommandPalette, mainMenu: IMainMenu): IDocumentManager => {
     const opener: DocumentManager.IWidgetOpener = {
       open: widget => {
         if (!widget.id) {
@@ -97,7 +97,7 @@ export default plugin;
 /**
  * Add the file operations commands to the application's command registry.
  */
-function addCommands(app: JupyterLab, docManager: IDocumentManager, palette: ICommandPalette): void {
+function addCommands(app: QuantLab, docManager: IDocumentManager, palette: ICommandPalette): void {
   const { commands } = app;
   const category = 'File Operations';
   const isEnabled = () => {

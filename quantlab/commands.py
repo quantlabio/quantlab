@@ -38,10 +38,10 @@ logging.basicConfig(format='%(message)s', level=logging.INFO)
 
 
 def get_app_dir(app_dir=None):
-    """Get the configured JupyterLab app directory.
+    """Get the configured QuantLab app directory.
     """
-    app_dir = app_dir or os.environ.get('JUPYTERLAB_DIR')
-    app_dir = app_dir or pjoin(ENV_JUPYTER_PATH[0], 'lab')
+    app_dir = app_dir or os.environ.get('QUANTLAB_DIR')
+    app_dir = app_dir or pjoin(ENV_JUPYTER_PATH[0], 'quantlab')
     return os.path.realpath(app_dir)
 
 
@@ -62,7 +62,7 @@ def run(cmd, **kwargs):
 
 
 def install_extension(extension, app_dir=None, logger=None):
-    """Install an extension package into JupyterLab.
+    """Install an extension package into QuantLab.
 
     Follows the semantics of https://docs.npmjs.com/cli/install.
 
@@ -101,7 +101,7 @@ def install_extension(extension, app_dir=None, logger=None):
     # Remove the tarball if the package is not an extension.
     if not _is_extension(data):
         shutil.rmtree(target)
-        msg = '%s is not a valid JupyterLab extension' % extension
+        msg = '%s is not a valid QuantLab extension' % extension
         raise ValueError(msg)
 
     # Remove the tarball if the package is not compatible.
@@ -131,7 +131,7 @@ def install_extension(extension, app_dir=None, logger=None):
 
 
 def link_package(path, app_dir=None, logger=None):
-    """Link a package against the JupyterLab build.
+    """Link a package against the QuantLab build.
     """
     logger = logger or logging
     app_dir = get_app_dir(app_dir)
@@ -160,7 +160,7 @@ def link_package(path, app_dir=None, logger=None):
         install_extension(path, app_dir)
     else:
         msg = ('*** Note: Linking non-extension package "%s" (lacks ' +
-               '`jupyterlab.extension` metadata)')
+               '`quantlab.extension` metadata)')
         logger.info(msg % data['name'])
 
     core_data = _get_core_data()
@@ -178,7 +178,7 @@ def link_package(path, app_dir=None, logger=None):
 
 
 def unlink_package(package, app_dir=None, logger=None):
-    """Unlink a package from JupyterLab by path or name.
+    """Unlink a package from QuantLab by path or name.
     """
     logger = logger or logging
     package = _normalize_path(package)
@@ -210,13 +210,13 @@ def unlink_package(package, app_dir=None, logger=None):
 
 
 def enable_extension(extension, app_dir=None, logger=None):
-    """Enable a JupyterLab extension.
+    """Enable a QuantLab extension.
     """
     _toggle_extension(extension, False, app_dir, logger)
 
 
 def disable_extension(extension, app_dir=None, logger=None):
-    """Disable a JupyterLab package.
+    """Disable a QuantLab package.
     """
     _toggle_extension(extension, True, app_dir, logger)
 
@@ -231,7 +231,7 @@ def check_node():
 
 
 def should_build(app_dir=None, logger=None):
-    """Determine whether JupyterLab should be built.
+    """Determine whether QuantLab should be built.
 
     Note: Linked packages should be updated by manually building.
 
@@ -254,7 +254,7 @@ def should_build(app_dir=None, logger=None):
         data = json.load(fid)
 
     # Look for mismatched version.
-    version = data['jupyterlab'].get('version', '')
+    version = data['quantlab'].get('version', '')
     if LooseVersion(version) != LooseVersion(__version__):
         msg = 'Version mismatch: %s (built), %s (current)'
         return True, msg % (version, __version__)
@@ -266,14 +266,14 @@ def should_build(app_dir=None, logger=None):
     with open(staging_path) as fid:
         staging_data = json.load(fid)
 
-    staging_exts = staging_data['jupyterlab']['extensions']
+    staging_exts = staging_data['quantlab']['extensions']
 
-    if set(staging_exts) != set(data['jupyterlab']['extensions']):
+    if set(staging_exts) != set(data['quantlab']['extensions']):
         return True, 'Installed extensions changed'
 
-    staging_mime_exts = staging_data['jupyterlab']['mimeExtensions']
+    staging_mime_exts = staging_data['quantlab']['mimeExtensions']
 
-    if set(staging_mime_exts) != set(data['jupyterlab']['mimeExtensions']):
+    if set(staging_mime_exts) != set(data['quantlab']['mimeExtensions']):
         return True, 'Installed extensions changed'
 
     deps = data.get('dependencies', dict())
@@ -372,7 +372,7 @@ def list_extensions(app_dir=None, logger=None):
             continue
         app.append(key)
 
-    logger.info('JupyterLab v%s' % __version__)
+    logger.info('QuantLab v%s' % __version__)
     logger.info('Known labextensions:')
     if app:
         logger.info('   app dir: %s' % app_dir)
@@ -437,7 +437,7 @@ def list_extensions(app_dir=None, logger=None):
 
 
 def clean(app_dir=None):
-    """Clean the JupyterLab application directory."""
+    """Clean the QuantLab application directory."""
     app_dir = get_app_dir(app_dir)
     if app_dir == here:
         raise ValueError('Cannot clean the core app')
@@ -448,7 +448,7 @@ def clean(app_dir=None):
 
 
 def build(app_dir=None, name=None, version=None, logger=None):
-    """Build the JupyterLab application."""
+    """Build the QuantLab application."""
     # Set up the build directory.
     check_node()
     logger = logger or logging
@@ -513,7 +513,7 @@ def _validate_compatibility(extension, deps, core_data):
     """Validate the compatibility of an extension.
     """
     core_deps = core_data['dependencies']
-    singletons = core_data['jupyterlab']['singletonPackages']
+    singletons = core_data['quantlab']['singletonPackages']
 
     errors = []
 
@@ -586,7 +586,7 @@ def _test_overlap(spec1, spec2):
 def _format_compatibility_errors(name, version, errors):
     """Format a message for compatibility errors.
     """
-    msg = '\n"%s@%s" is not compatible with the current JupyterLab'
+    msg = '\n"%s@%s" is not compatible with the current QuantLab'
     msg = msg % (name, version)
     msg += '\nConflicting Dependencies:'
     msg += '\nRequired\tActual\tPackage'
@@ -662,7 +662,7 @@ def _ensure_package(app_dir, name=None, version=None, logger=None):
     if os.path.exists(pkg_path):
         with open(pkg_path) as fid:
             data = json.load(fid)
-        if data['jupyterlab'].get('version', '') != __version__:
+        if data['quantlab'].get('version', '') != __version__:
             shutil.rmtree(staging)
 
     if not os.path.exists(staging):
@@ -685,11 +685,11 @@ def _ensure_package(app_dir, name=None, version=None, logger=None):
             logger.warn(msg + '\n')
             continue
         data['dependencies'][key] = value['path']
-        jlab_data = value['jupyterlab']
+        jlab_data = value['quantlab']
         if jlab_data.get('extension', False):
-            data['jupyterlab']['extensions'].append(key)
+            data['quantlab']['extensions'].append(key)
         else:
-            data['jupyterlab']['mimeExtensions'].append(key)
+            data['quantlab']['mimeExtensions'].append(key)
 
     # Handle linked packages that are not extensions.
     for (key, path) in _get_linked_packages(app_dir).items():
@@ -698,14 +698,14 @@ def _ensure_package(app_dir, name=None, version=None, logger=None):
         data['dependencies'][key] = path
 
     for item in _get_uinstalled_core_extensions(app_dir):
-        if item in data['jupyterlab']['extensions']:
-            data['jupyterlab']['extensions'].remove(item)
+        if item in data['quantlab']['extensions']:
+            data['quantlab']['extensions'].remove(item)
         else:
-            data['jupyterlab']['mimeExtensions'].remove(item)
+            data['quantlab']['mimeExtensions'].remove(item)
 
-    data['jupyterlab']['name'] = name or 'JupyterLab'
+    data['quantlab']['name'] = name or 'QuantLab'
     if version:
-        data['jupyterlab']['version'] = version
+        data['quantlab']['version'] = version
 
     data['scripts']['build'] = 'webpack'
 
@@ -717,12 +717,12 @@ def _ensure_package(app_dir, name=None, version=None, logger=None):
 def _is_extension(data):
     """Detect if a package is an extension using its metadata.
     """
-    if 'jupyterlab' not in data:
+    if 'quantlab' not in data:
         return False
-    if not isinstance(data['jupyterlab'], dict):
+    if not isinstance(data['quantlab'], dict):
         return False
-    is_extension = data['jupyterlab'].get('extension', False)
-    is_mime_extension = data['jupyterlab'].get('mimeExtension', False)
+    is_extension = data['quantlab'].get('extension', False)
+    is_mime_extension = data['quantlab'].get('mimeExtension', False)
     return is_extension or is_mime_extension
 
 
@@ -736,7 +736,7 @@ def _get_uinstalled_core_extensions(app_dir):
 def _validate_package(data, extension):
     """Validate package.json data.
     """
-    msg = '%s is not a valid JupyterLab extension' % extension
+    msg = '%s is not a valid QuantLab extension' % extension
     if not _is_extension(data):
         raise ValueError(msg)
 
@@ -751,7 +751,7 @@ def _get_disabled(app_dir):
 def _get_core_extensions():
     """Get the core extensions.
     """
-    data = _get_core_data()['jupyterlab']
+    data = _get_core_data()['quantlab']
     return data['extensions'] + data['mimeExtensions']
 
 
@@ -767,7 +767,7 @@ def _get_extensions(app_dir):
         deps = data.get('dependencies', dict())
         extensions[data['name']] = dict(path=os.path.realpath(target),
                                         version=data['version'],
-                                        jupyterlab=data['jupyterlab'],
+                                        quantlab=data['quantlab'],
                                         dependencies=deps)
 
     # Look in app_dir if different
@@ -780,7 +780,7 @@ def _get_extensions(app_dir):
         deps = data.get('dependencies', dict())
         extensions[data['name']] = dict(path=os.path.realpath(target),
                                         version=data['version'],
-                                        jupyterlab=data['jupyterlab'],
+                                        quantlab=data['quantlab'],
                                         dependencies=deps)
 
     return extensions

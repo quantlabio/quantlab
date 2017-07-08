@@ -2,24 +2,24 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IDocumentManager
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   IEditorServices
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   ChatboxPanel
-} from '@jupyterlab/chatbox';
+} from '@quantlab/chatbox';
 
 
 /**
@@ -41,7 +41,7 @@ namespace CommandIDs {
  * The chatbox widget content factory.
  */
 export
-const chatboxPlugin: JupyterLabPlugin<void> = {
+const chatboxPlugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.chatbox',
   requires: [ICommandPalette, IEditorServices, IDocumentManager, ILayoutRestorer],
   autoStart: true,
@@ -58,7 +58,7 @@ export default chatboxPlugin;
 /**
  * Activate the chatbox extension.
  */
-function activateChatbox(app: JupyterLab, palette: ICommandPalette, editorServices: IEditorServices, docManager: IDocumentManager, restorer: ILayoutRestorer): void {
+function activateChatbox(app: QuantLab, palette: ICommandPalette, editorServices: IEditorServices, docManager: IDocumentManager, restorer: ILayoutRestorer): void {
   const id = 'chatbox';
   let { commands, shell } = app;
   let category = 'Chatbox';

@@ -1,11 +1,11 @@
 # coding: utf-8
-"""A tornado based Jupyter lab server."""
+"""A tornado based Quant lab server."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 import os
 
-from jupyterlab_launcher import add_handlers, LabConfig
+from quantlab_launcher import add_handlers, LabConfig
 
 from .commands import get_app_dir, list_extensions, should_build
 from ._version import __version__
@@ -14,13 +14,13 @@ from ._version import __version__
 # Module globals
 #-----------------------------------------------------------------------------
 
-DEV_NOTE_NPM = """You're running JupyterLab from source.
-If you're working on the TypeScript sources of JupyterLab, try running
+DEV_NOTE_NPM = """You're running QuantLab from source.
+If you're working on the TypeScript sources of QuantLab, try running
 
     npm run watch
 
-from the JupyterLab repo directory in another terminal window to have the
-system incrementally watch and build JupyterLab's TypeScript for you, as you
+from the QuantLab repo directory in another terminal window to have the
+system incrementally watch and build QuantLab's TypeScript for you, as you
 make changes.
 """
 
@@ -31,11 +31,11 @@ Running the core application with no additional extensions or settings
 
 
 def load_jupyter_server_extension(nbapp):
-    """Load the JupyterLab server extension.
+    """Load the QuantLab server extension.
     """
     # Print messages.
     here = os.path.dirname(__file__)
-    nbapp.log.info('JupyterLab alpha preview extension loaded from %s' % here)
+    nbapp.log.info('QuantLab alpha preview extension loaded from %s' % here)
 
     app_dir = get_app_dir()
     if hasattr(nbapp, 'app_dir'):
@@ -46,7 +46,7 @@ def load_jupyter_server_extension(nbapp):
 
     config.assets_dir = os.path.join(app_dir, 'static')
     config.settings_dir = os.path.join(app_dir, 'settings')
-    config.page_title = 'JupyterLab Alpha Preview'
+    config.page_title = 'QuantLab Alpha Preview'
     config.page_url = '/lab'
     config.dev_mode = False
 

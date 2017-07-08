@@ -2,28 +2,28 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette, IMainMenu, InstanceTracker, ToolbarButton
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IStateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IDocumentManager
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   FileBrowserModel, FileBrowser, IFileBrowserFactory
-} from '@jupyterlab/filebrowser';
+} from '@quantlab/filebrowser';
 
 import {
   each
@@ -86,7 +86,7 @@ namespace CommandIDs {
 /**
  * The default file browser extension.
  */
-const fileBrowserPlugin: JupyterLabPlugin<void> = {
+const fileBrowserPlugin: QuantLabPlugin<void> = {
   activate: activateFileBrowser,
   id: 'jupyter.extensions.filebrowser',
   requires: [
@@ -102,7 +102,7 @@ const fileBrowserPlugin: JupyterLabPlugin<void> = {
 /**
  * The default file browser factory provider.
  */
-const factoryPlugin: JupyterLabPlugin<IFileBrowserFactory> = {
+const factoryPlugin: QuantLabPlugin<IFileBrowserFactory> = {
   activate: activateFactory,
   id: 'jupyter.services.filebrowser',
   provides: IFileBrowserFactory,
@@ -119,14 +119,14 @@ const namespace = 'filebrowser';
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [factoryPlugin, fileBrowserPlugin];
+const plugins: QuantLabPlugin<any>[] = [factoryPlugin, fileBrowserPlugin];
 export default plugins;
 
 
 /**
  * Activate the file browser factory provider.
  */
-function activateFactory(app: JupyterLab, docManager: IDocumentManager, state: IStateDB): IFileBrowserFactory {
+function activateFactory(app: QuantLab, docManager: IDocumentManager, state: IStateDB): IFileBrowserFactory {
   const { commands } = app;
   const tracker = new InstanceTracker<FileBrowser>({ namespace });
 
@@ -175,7 +175,7 @@ function activateFactory(app: JupyterLab, docManager: IDocumentManager, state: I
 /**
  * Activate the file browser in the sidebar.
  */
-function activateFileBrowser(app: JupyterLab, factory: IFileBrowserFactory, docManager: IDocumentManager, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer): void {
+function activateFileBrowser(app: QuantLab, factory: IFileBrowserFactory, docManager: IDocumentManager, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer): void {
   const { commands } = app;
   const fbWidget = factory.createFileBrowser('filebrowser', {
     commands
@@ -210,7 +210,7 @@ function activateFileBrowser(app: JupyterLab, factory: IFileBrowserFactory, docM
 /**
  * Add the main file browser commands to the application's command registry.
  */
-function addCommands(app: JupyterLab, tracker: InstanceTracker<FileBrowser>, mainBrowser: FileBrowser): void {
+function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, mainBrowser: FileBrowser): void {
   const { commands } = app;
 
   commands.addCommand(CommandIDs.del, {
@@ -382,7 +382,7 @@ function addCommands(app: JupyterLab, tracker: InstanceTracker<FileBrowser>, mai
 /**
  * Create a top level menu for the file browser.
  */
-function createMenu(app: JupyterLab): Menu {
+function createMenu(app: QuantLab): Menu {
   const { commands } = app;
   const menu = new Menu({ commands });
 

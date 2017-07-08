@@ -1,5 +1,5 @@
 
-require(['jquery', '@jupyterlab/services'], function ($, services) {
+require(['jquery', '@quantlab/services'], function ($, services) {
   'use strict';
   var startNewKernel = services.Kernel.startNew;
 

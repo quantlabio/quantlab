@@ -3,19 +3,19 @@
 
 import {
   Dialog, DOMUtils, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   PathExt, Time
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IDocumentManager, renameFile
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   Contents
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   ArrayExt, ArrayIterator, IIterator, each, filter, find, map, toArray
@@ -149,7 +149,7 @@ const MATERIAL_ICON_CLASS = 'jp-MaterialIcon';
 const FOLDER_MATERIAL_ICON_CLASS = 'jp-OpenFolderIcon';
 
 /**
- * The class name added to a notebook file browser item. 
+ * The class name added to a notebook file browser item.
  */
 const NOTEBOOK_MATERIAL_ICON_CLASS = 'jp-NotebookIcon';
 

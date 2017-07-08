@@ -3,7 +3,7 @@
 
 import {
   IInspector, InspectorPanel
-} from '@jupyterlab/inspector';
+} from '@quantlab/inspector';
 
 import {
   IDisposable

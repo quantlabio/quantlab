@@ -3,11 +3,11 @@
 
 import {
   IInstanceTracker, InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   Cell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   Token

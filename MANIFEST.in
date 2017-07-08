@@ -1,4 +1,4 @@
-recursive-include jupyterlab/build *
+recursive-include quantlab/build *
 
 include package.json
 include LICENSE
@@ -7,10 +7,10 @@ include README.md
 include package.json
 include setupbase.py
 
-include jupyterlab/package.app.json
-include jupyterlab/webpack.config.js
-include jupyterlab/index.app.js
-include jupyterlab/node-version-check.js
-include jupyterlab/released_packages.txt
+include quantlab/package.app.json
+include quantlab/webpack.config.js
+include quantlab/index.app.js
+include quantlab/node-version-check.js
+include quantlab/released_packages.txt
 
-prune jupyterlab/tests
+prune quantlab/tests

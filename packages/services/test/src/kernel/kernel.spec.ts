@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   PageConfig, uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   toArray

@@ -3,17 +3,17 @@
 
 import {
   IServiceManager, ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
-  JupyterLabPlugin
-} from '@jupyterlab/application';
+  QuantLabPlugin
+} from '@quantlab/application';
 
 
 /**
  * The default services provider.
  */
-const plugin: JupyterLabPlugin<IServiceManager> = {
+const plugin: QuantLabPlugin<IServiceManager> = {
   id: 'jupyter.services.services',
   provides: IServiceManager,
   activate: (): IServiceManager => new ServiceManager()

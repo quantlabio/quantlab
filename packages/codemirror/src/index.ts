@@ -3,7 +3,7 @@
 
 import {
   IEditorServices
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   CodeMirrorEditorFactory

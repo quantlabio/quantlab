@@ -3,23 +3,23 @@
 
 import {
   ClientSession, IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IEditorMimeTypeService
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   PathExt, Time, uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Token

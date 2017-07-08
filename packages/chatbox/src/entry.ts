@@ -11,11 +11,11 @@ import {
 
 import {
   ICollaborator
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   MarkdownCell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 /**
  * The class name added to the chatbox entries.

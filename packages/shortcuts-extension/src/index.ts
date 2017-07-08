@@ -2,8 +2,8 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 
 /**
@@ -356,9 +356,9 @@ const SHORTCUTS = [
 /**
  * The default shortcuts extension.
  */
-const plugin: JupyterLabPlugin<void> = {
+const plugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.shortcuts',
-  activate: (app: JupyterLab): void => {
+  activate: (app: QuantLab): void => {
     SHORTCUTS.forEach(shortcut => { app.commands.addKeyBinding(shortcut); });
   },
   autoStart: true

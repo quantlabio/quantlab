@@ -4,7 +4,7 @@ var path = require('path');
 var childProcess = require('child_process');
 
 /**
- * Add an extension to the source tree of JupyterLab.
+ * Add an extension to the source tree of QuantLab.
  * It takes as an argument either a path to a directory
  * on the local filesystem or a URL to a git repository.
  * In the former case, it copies the directory into the
@@ -37,7 +37,7 @@ if (target[0] === '.' || target[0] === '/') {
   // Copy the package directory contents to the sibling package.
   var newPackagePath = path.join(basePath, 'packages', packageDirName);
   fs.copySync(packagePath, newPackagePath);
-} else { 
+} else {
   // Otherwise treat it as a git reposotory and try to add it.
   var packageDirName = target.split('/').pop().split('.')[0];
   var packagePath = path.join(basePath, 'packages', packageDirName);
@@ -60,9 +60,9 @@ var index = fs.readFileSync(indexPath, 'utf8');
 index = index + 'import "' + package.name + '";\n';
 fs.writeFileSync(indexPath, index);
 
-// Add the extension to jupyterlab/package.json
-var jupyterlabPackagePath = path.join(basePath, 'jupyterlab', 'package.json');
-var jupyterlabPackage = require(jupyterlabPackagePath);
-jupyterlabPackage.dependencies[package.name] = '~'+String(package.version);
-jupyterlabPackage.jupyterlab.extensions.push(package.name);
-fs.writeFileSync(jupyterlabPackagePath, JSON.stringify(jupyterlabPackage, null, 2) + '\n');
+// Add the extension to quantlab/package.json
+var quantlabPackagePath = path.join(basePath, 'quantlab', 'package.json');
+var quantlabPackage = require(quantlabPackagePath);
+quantlabPackage.dependencies[package.name] = '~'+String(package.version);
+quantlabPackage.quantlab.extensions.push(package.name);
+fs.writeFileSync(quantlabPackagePath, JSON.stringify(quantlabPackage, null, 2) + '\n');

@@ -31,11 +31,11 @@ import {
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   HoverBox
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 
 /**

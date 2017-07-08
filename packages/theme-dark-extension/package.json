@@ -1,7 +1,7 @@
 {
-  "name": "@jupyterlab/theme-dark-extension",
-  "version": "0.8.1",
-  "description": "JupyterLab - Default Dark Theme",
+  "name": "@quantlab/theme-dark-extension",
+  "version": "0.1.0",
+  "description": "QuantLab - Default Dark Theme",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -13,8 +13,8 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.8.1",
-    "@jupyterlab/theming": "^0.8.0"
+    "@quantlab/application": "^0.1.0",
+    "@quantlab/theming": "^0.1.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
@@ -22,15 +22,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/jupyterlab.git"
+    "url": "https://github.com/quantlabio/quantlab.git"
   },
-  "jupyterlab": {
+  "quantlab": {
     "extension": true
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/jupyterlab/jupyterlab/issues"
+    "url": "https://github.com/quantlabio/quantlab/issues"
   },
-  "homepage": "https://github.com/jupyterlab/jupyterlab"
+  "homepage": "https://github.com/quantlabio/quantlab"
 }

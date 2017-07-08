@@ -1,7 +1,7 @@
 {
-  "name": "@jupyterlab/codemirror",
-  "version": "0.8.0",
-  "description": "JupyterLab - CodeMirror Editor Provider",
+  "name": "@quantlab/codemirror",
+  "version": "0.1.0",
+  "description": "QuantLab - CodeMirror Editor Provider",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -13,8 +13,8 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@jupyterlab/codeeditor": "^0.8.0",
-    "@jupyterlab/coreutils": "^0.8.0",
+    "@quantlab/codeeditor": "^0.1.0",
+    "@quantlab/coreutils": "^0.1.0",
     "@phosphor/algorithm": "^1.1.1",
     "@phosphor/disposable": "^1.1.1",
     "@phosphor/signaling": "^1.2.1",
@@ -32,12 +32,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/jupyterlab.git"
+    "url": "https://github.com/quantlabio/quantlab.git"
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/jupyterlab/jupyterlab/issues"
+    "url": "https://github.com/quantlabio/quantlab/issues"
   },
-  "homepage": "https://github.com/jupyterlab/jupyterlab"
+  "homepage": "https://github.com/quantlabio/quantlab"
 }

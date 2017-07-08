@@ -3,7 +3,7 @@
 
 import {
   IStateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ArrayExt, each, find
@@ -109,7 +109,7 @@ interface IInstanceTracker<T extends Widget> extends IDisposable {
  * #### Notes
  * The API surface area of this concrete implementation is substantially larger
  * than the instance tracker interface it implements. The interface is intended
- * for export by JupyterLab plugins that create widgets and have clients who may
+ * for export by QuantLab plugins that create widgets and have clients who may
  * wish to keep track of newly created widgets. This class, however, can be used
  * internally by plugins to restore state as well.
  */

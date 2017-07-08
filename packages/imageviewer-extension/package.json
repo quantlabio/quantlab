@@ -1,7 +1,7 @@
 {
-  "name": "@jupyterlab/imageviewer-extension",
-  "version": "0.8.1",
-  "description": "JupyterLab - Image Widget Extension",
+  "name": "@quantlab/imageviewer-extension",
+  "version": "0.1.0",
+  "description": "QuantLab - Image Widget Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -12,10 +12,10 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.8.1",
-    "@jupyterlab/apputils": "^0.8.1",
-    "@jupyterlab/docregistry": "^0.8.1",
-    "@jupyterlab/imageviewer": "^0.8.1"
+    "@quantlab/application": "^0.1.0",
+    "@quantlab/apputils": "^0.1.0",
+    "@quantlab/docregistry": "^0.1.0",
+    "@quantlab/imageviewer": "^0.1.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
@@ -26,17 +26,17 @@
     "clean": "rimraf lib",
     "watch": "tsc -w"
   },
-  "jupyterlab": {
+  "quantlab": {
     "extension": true
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/jupyterlab.git"
+    "url": "https://github.com/quantlabio/quantlab.git"
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/jupyterlab/jupyterlab/issues"
+    "url": "https://github.com/quantlabio/quantlab/issues"
   },
-  "homepage": "https://github.com/jupyterlab/jupyterlab"
+  "homepage": "https://github.com/quantlabio/quantlab"
 }

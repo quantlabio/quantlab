@@ -3,7 +3,7 @@
 
 import {
   Contents, ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   JSONValue, PromiseDelegate
@@ -23,11 +23,11 @@ import {
 
 import {
   showDialog, ClientSession, Dialog, IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   PathExt, URLExt, IModelDB, ModelDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   DocumentRegistry

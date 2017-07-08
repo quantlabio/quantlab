@@ -65,7 +65,7 @@ interface IStateDB extends IDataConnector<JSONObject, JSONObject> {
    * #### Notes
    * The `id` values of stored items in the state database are formatted:
    * `'namespace:identifier'`, which is the same convention that command
-   * identifiers in JupyterLab use as well. While this is not a technical
+   * identifiers in QuantLab use as well. While this is not a technical
    * requirement for `fetch()`, `remove()`, and `save()`, it *is* necessary for
    * using the `fetchNamespace()` method.
    *
@@ -84,7 +84,7 @@ interface IStateDB extends IDataConnector<JSONObject, JSONObject> {
    * #### Notes
    * Namespaces are entirely conventional entities. The `id` values of stored
    * items in the state database are formatted: `'namespace:identifier'`, which
-   * is the same convention that command identifiers in JupyterLab use as well.
+   * is the same convention that command identifiers in QuantLab use as well.
    *
    * If there are any errors in retrieving the data, they will be logged to the
    * console in order to optimistically return any extant data without failing.
@@ -113,7 +113,7 @@ interface IStateDB extends IDataConnector<JSONObject, JSONObject> {
    * #### Notes
    * The `id` values of stored items in the state database are formatted:
    * `'namespace:identifier'`, which is the same convention that command
-   * identifiers in JupyterLab use as well. While this is not a technical
+   * identifiers in QuantLab use as well. While this is not a technical
    * requirement for `fetch()`, `remove()`, and `save()`, it *is* necessary for
    * using the `fetchNamespace()` method.
    */
@@ -176,7 +176,7 @@ class StateDB implements IStateDB {
    * #### Notes
    * The `id` values of stored items in the state database are formatted:
    * `'namespace:identifier'`, which is the same convention that command
-   * identifiers in JupyterLab use as well. While this is not a technical
+   * identifiers in QuantLab use as well. While this is not a technical
    * requirement for `fetch()`, `remove()`, and `save()`, it *is* necessary for
    * using the `fetchNamespace()` method.
    *
@@ -202,7 +202,7 @@ class StateDB implements IStateDB {
    * #### Notes
    * Namespaces are entirely conventional entities. The `id` values of stored
    * items in the state database are formatted: `'namespace:identifier'`, which
-   * is the same convention that command identifiers in JupyterLab use as well.
+   * is the same convention that command identifiers in QuantLab use as well.
    *
    * If there are any errors in retrieving the data, they will be logged to the
    * console in order to optimistically return any extant data without failing.
@@ -254,7 +254,7 @@ class StateDB implements IStateDB {
    * #### Notes
    * The `id` values of stored items in the state database are formatted:
    * `'namespace:identifier'`, which is the same convention that command
-   * identifiers in JupyterLab use as well. While this is not a technical
+   * identifiers in QuantLab use as well. While this is not a technical
    * requirement for `fetch()`, `remove()`, and `save()`, it *is* necessary for
    * using the `fetchNamespace()` method.
    */

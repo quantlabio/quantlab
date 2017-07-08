@@ -1,14 +1,14 @@
 import {
-  JupyterLabPlugin
-} from '@jupyterlab/application';
+  QuantLabPlugin
+} from '@quantlab/application';
 
-import '@jupyterlab/theming/style/variables-light.css';
+import '@quantlab/theming/style/variables-light.css';
 
 
 /**
  * Initialization data for the light theme extension.
  */
-const extension: JupyterLabPlugin<void> = {
+const extension: QuantLabPlugin<void> = {
   id: 'jupyter.themes.light',
   autoStart: true,
   activate: (app) => {

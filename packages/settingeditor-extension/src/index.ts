@@ -6,20 +6,20 @@
 import '../style/settingeditor.css';
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IEditorServices
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   ISettingRegistry, IStateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   SettingEditor
@@ -38,8 +38,8 @@ namespace CommandIDs {
 /**
  * The default setting editor extension.
  */
-const plugin: JupyterLabPlugin<void> = {
-  activate: (app: JupyterLab, restorer: ILayoutRestorer, registry: ISettingRegistry, editorServices: IEditorServices, state: IStateDB) => {
+const plugin: QuantLabPlugin<void> = {
+  activate: (app: QuantLab, restorer: ILayoutRestorer, registry: ISettingRegistry, editorServices: IEditorServices, state: IStateDB) => {
     const { commands, shell } = app;
     const namespace = 'setting-editor';
     const factoryService = editorServices.factoryService;

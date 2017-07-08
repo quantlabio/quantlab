@@ -2,14 +2,14 @@
   "private": true,
   "name": "node-example",
   "dependencies": {
-    "@jupyterlab/services": "^0.47.0",
+    "@quantlab/services": "^0.47.0",
     "requirejs": "^2.2.0",
     "ws": "^1.1.1",
     "xmlhttprequest": "^1.8.0"
   },
   "scripts": {
     "clean": "rimraf node_modules",
-    "update": "rimraf node_modules/@jupyterlab/services && npm install"
+    "update": "rimraf node_modules/@quantlab/services && npm install"
   },
   "devDependencies": {
     "rimraf": "^2.5.2"

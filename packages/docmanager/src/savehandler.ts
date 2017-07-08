@@ -3,7 +3,7 @@
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IDisposable
@@ -15,11 +15,11 @@ import {
 
 import {
 Dialog, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 
 /**

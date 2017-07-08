@@ -13,7 +13,7 @@ import {
 
 import {
   IRenderMime
-} from '@jupyterlab/rendermime-interfaces';
+} from '@quantlab/rendermime-interfaces';
 
 /**
  * Import vega-embed in this manner due to how it is exported.
@@ -102,7 +102,7 @@ class RenderedVega extends Widget implements IRenderMime.IRenderer {
     return new Promise<void>((resolve, reject) => {
       embed(this.node, embedSpec, (error: any, result: any): any => {
         resolve(undefined);
-        // This is copied out for now as there is a bug in JupyterLab
+        // This is copied out for now as there is a bug in QuantLab
         // that triggers and infinite rendering loop when this is done.
         // let imageData = result.view.toImageURL();
         // imageData = imageData.split(',')[1];
@@ -173,7 +173,7 @@ namespace Private {
 
   /**
    * Apply the default cell config to the spec in place.
-   * 
+   *
    * #### Notes
    * This carefully does a shallow copy to avoid copying the potentially
    * large data.

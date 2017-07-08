@@ -3,11 +3,11 @@
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   Kernel, KernelMessage, ServerConnection, Session
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IterableOrArrayLike, each, find

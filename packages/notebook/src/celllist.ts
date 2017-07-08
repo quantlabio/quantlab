@@ -12,11 +12,11 @@ import {
 import {
   IObservableMap, ObservableMap, IObservableList,
   IObservableUndoableList, IModelDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ICellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   NotebookModel

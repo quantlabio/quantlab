@@ -27,7 +27,7 @@ import {
 
 import {
   Toolbar, ToolbarButton
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 
 /**

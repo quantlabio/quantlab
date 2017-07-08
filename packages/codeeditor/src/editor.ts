@@ -16,7 +16,7 @@ import {
 import {
   IModelDB, ModelDB, IObservableValue, ObservableValue,
   IObservableMap, IObservableString, IChangedArgs
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
 /**

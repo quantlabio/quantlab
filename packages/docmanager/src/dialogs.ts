@@ -3,15 +3,15 @@
 
 import {
   ClientSession, Dialog, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   PathExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   Contents, Kernel
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   JSONObject

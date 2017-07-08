@@ -3,15 +3,15 @@
 
 import {
   IChangedArgs
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ABCWidgetFactory, DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   CodeEditor, IEditorServices, IEditorMimeTypeService, CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   PromiseDelegate

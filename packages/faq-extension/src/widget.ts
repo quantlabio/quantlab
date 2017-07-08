@@ -3,7 +3,7 @@
 
 import {
   CommandLinker, VDomModel, VDomRenderer
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   Message
@@ -93,17 +93,17 @@ const SUBHEADINGS = ['THE BASICS', 'FEATURES', 'DEVELOPER'];
  * Contain questions for `the basics` section.
  */
 const BASIC_QUESTIONS = [
-  'What is JupyterLab?',
+  'What is QuantLab?',
   'What is a Jupyter Notebook?',
-  'How stable is JupyterLab?',
-  `I'm confused with the interface. How do I navigate around JupyterLab?`
+  'How stable is QuantLab?',
+  `I'm confused with the interface. How do I navigate around QuantLab?`
 ];
 
 /**
  * Contain questions for the `features` section.
  */
 const FEATURES_QUESTIONS = [
-  'How do I add more kernels/languages to JupyterLab?',
+  'How do I add more kernels/languages to QuantLab?',
   'How can I share my notebooks?'
 ];
 
@@ -112,7 +112,7 @@ const FEATURES_QUESTIONS = [
  */
 const DEVELOPER_QUESTIONS = [
   'How do I report a bug?',
-  'I have security concerns about JupyterLab.',
+  'I have security concerns about QuantLab.',
   'How can I contribute?'
 ];
 
@@ -232,10 +232,10 @@ class FaqWidget extends VDomRenderer<FaqModel> {
       h.ul({ className: FAQ_LIST_CLASS },
         h.li({ className: QUESTION_CLASS, id: 'basicsQ1' }, basicsQuestions[0]),
         h.li({ className: ANSWER_CLASS },
-          `JupyterLab allows users to arrange multiple Jupyter notebooks,
+          `QuantLab allows users to arrange multiple Jupyter notebooks,
           text editors, terminals, output areas, etc. on a single page with
           multiple panels and tabs into one application. The codebase and UI of
-          JupyterLab is based on a flexible plugin system that makes it easy to
+          QuantLab is based on a flexible plugin system that makes it easy to
           extend with new components.`
         ),
         h.li({ className: QUESTION_CLASS, id: 'basicsQ2' }, basicsQuestions[1]),
@@ -249,18 +249,18 @@ class FaqWidget extends VDomRenderer<FaqModel> {
         ),
         h.li({ className: QUESTION_CLASS, id: 'basicsQ3' }, basicsQuestions[2]),
         h.li({ className: ANSWER_CLASS },
-          `JupyterLab is currently in an alpha release and not ready for public
+          `QuantLab is currently in an alpha release and not ready for public
           use as new features and bug fixes are being added very frequently. We
-          strongly recommend to back up your work before using JupyterLab.
+          strongly recommend to back up your work before using QuantLab.
           However, testing, development, and user feedback are greatly
           appreciated.`
         ),
         h.li({ className: QUESTION_CLASS, id: 'basicsQ4' }, basicsQuestions[3]),
         h.li({ className: ANSWER_CLASS },
-          'Check out the JupyterLab tour ',
+          'Check out the QuantLab tour ',
           h.a({
             className: ANCHOR_CLASS,
-            dataset: linker.populateVNodeDataset('about-jupyterlab:open', null)
+            dataset: linker.populateVNodeDataset('about-quantlab:open', null)
           }, 'here')
         )
       ),
@@ -272,7 +272,7 @@ class FaqWidget extends VDomRenderer<FaqModel> {
           id: 'featuresQ1'
         }, featuresQuestions[0]),
         h.li({ className: ANSWER_CLASS },
-          `To add more languages to the JupyterLab you must install a new
+          `To add more languages to the QuantLab you must install a new
           kernel. Installing a kernel is usually fairly simple and can be done
           with a couple terminal commands. However the instructions for
           installing kernels is different for each language. For further
@@ -310,7 +310,7 @@ class FaqWidget extends VDomRenderer<FaqModel> {
           'You can open an issue on our ',
           h.a({
             className: ANCHOR_CLASS,
-            href: 'https://github.com/jupyterlab/jupyterlab/issues',
+            href: 'https://github.com/quantlabio/quantlab/issues',
             target: '_blank'
           }, 'GitHub repository'),
           '. Please check already opened issues before posting.'
@@ -333,25 +333,25 @@ class FaqWidget extends VDomRenderer<FaqModel> {
           id: 'developerQ3'
         }, developerQuestions[2]),
         h.li({ className: ANSWER_CLASS },
-          `There are many ways to contribute to JupyterLab. Whether you are an
+          `There are many ways to contribute to QuantLab. Whether you are an
           experienced Python programmer or a newcomer, any interested developers
-          are welcome. You can learn about the JupyterLab codebase by going
+          are welcome. You can learn about the QuantLab codebase by going
           through our`,
           h.a({
             className: ANCHOR_CLASS,
-            href: 'https://jupyterlab-tutorial.readthedocs.io/en/latest/index.html',
+            href: 'https://quantlab-tutorial.readthedocs.io/en/latest/index.html',
             target: '_blank'
           }, 'tutorial walkthrough' ),
           ' and ',
           h.a({
             className: ANCHOR_CLASS,
-            href: 'https://jupyterlab.github.io/jupyterlab/',
+            href: 'https://quantlabio.github.io/quantlab/',
             target: '_blank'
           }, 'documentation'),
           '. Also, feel free to ask questions on our ',
           h.a({
             className: ANCHOR_CLASS,
-            href: 'https://github.com/jupyterlab/jupyterlab',
+            href: 'https://github.com/quantlabio/quantlab',
             target: '_blank'
           }, 'github'),
           ' or through any of our ',

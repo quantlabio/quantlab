@@ -3,11 +3,11 @@
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IStateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   CommandRegistry
@@ -72,7 +72,7 @@ namespace IFileBrowserFactory {
    * The options for creating a file browser using a file browser factory.
    *
    * #### Notes
-   * In future versions of JupyterLab, some of these options may disappear,
+   * In future versions of QuantLab, some of these options may disappear,
    * which is a backward-incompatible API change and will necessitate a new
    * version release. This is because in future versions, there will likely be
    * an application-wide notion of a singleton command registry and a singleton

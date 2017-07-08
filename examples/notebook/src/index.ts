@@ -13,36 +13,36 @@ import {
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   NotebookPanel, NotebookWidgetFactory,
   NotebookModelFactory, NotebookActions
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   CompleterModel, Completer, CompletionHandler
-} from '@jupyterlab/completer';
+} from '@quantlab/completer';
 
 import {
   editorServices
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   DocumentManager
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   RenderMime, defaultRendererFactories
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 
-import '@jupyterlab/theming/style/index.css';
-import '@jupyterlab/theming/style/variables-light.css';
+import '@quantlab/theming/style/index.css';
+import '@quantlab/theming/style/variables-light.css';
 import '../index.css';
 
 

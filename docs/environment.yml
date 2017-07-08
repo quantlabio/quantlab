@@ -1,4 +1,4 @@
-name: lab_tutorial
+name: quantlab_tutorial
 channels:
   - conda-forge
 dependencies:

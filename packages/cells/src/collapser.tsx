@@ -5,7 +5,7 @@
 
 import {
   VDomRenderer
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   h, VirtualNode
@@ -59,7 +59,7 @@ const MOD_COLLAPSED_CLASS = 'jp-mod-collapsed';
 
 /**
  * Abstract collapser base class.
- * 
+ *
  * ### Notes
  * A collapser is a visible div to the left of a cell's
  * input/output that a user can click on to collapse the

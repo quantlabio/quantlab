@@ -2,16 +2,16 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   MimeDocumentFactory, MimeDocument
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 
 import '../style/index.css';
@@ -39,7 +39,7 @@ namespace CommandIDs {
 /**
  * The markdown handler extension.
  */
-const plugin: JupyterLabPlugin<void> = {
+const plugin: QuantLabPlugin<void> = {
   activate,
   id: 'jupyter.extensions.rendered-markdown',
   requires: [ILayoutRestorer],
@@ -50,7 +50,7 @@ const plugin: JupyterLabPlugin<void> = {
 /**
  * Activate the markdown plugin.
  */
-function activate(app: JupyterLab, restorer: ILayoutRestorer) {
+function activate(app: QuantLab, restorer: ILayoutRestorer) {
     const factory = new MimeDocumentFactory({
       name: FACTORY,
       fileExtensions: ['.md'],

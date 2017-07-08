@@ -4,19 +4,19 @@
 |----------------------------------------------------------------------------*/
 import {
   Contents, Session
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IRenderMime
-} from '@jupyterlab/rendermime-interfaces';
+} from '@quantlab/rendermime-interfaces';
 
 import {
   PathExt, URLExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IClientSession, ISanitizer, defaultSanitizer
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   ReadonlyJSONObject

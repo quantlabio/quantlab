@@ -2,12 +2,12 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette, InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   FaqModel, FaqWidget
@@ -20,14 +20,14 @@ import '../style/index.css';
  */
 namespace CommandIDs {
   export
-  const open: string = 'faq-jupyterlab:open';
+  const open: string = 'faq-quantlab:open';
 };
 
 
 /**
  * The FAQ page extension.
  */
-const plugin: JupyterLabPlugin<void> = {
+const plugin: QuantLabPlugin<void> = {
   activate,
   id: 'jupyter.extensions.faq',
   requires: [ICommandPalette, ILayoutRestorer],
@@ -44,7 +44,7 @@ export default plugin;
 /**
  * Activate the FAQ plugin.
  */
-function activate(app: JupyterLab, palette: ICommandPalette, restorer: ILayoutRestorer): void {
+function activate(app: QuantLab, palette: ICommandPalette, restorer: ILayoutRestorer): void {
   const category = 'Help';
   const command = CommandIDs.open;
   const model = new FaqModel();

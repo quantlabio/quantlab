@@ -1,7 +1,7 @@
 {
-  "name": "@jupyterlab/rendermime-interfaces",
-  "version": "0.2.0",
-  "description": "JupyterLab - Interfaces for Mime Renderers",
+  "name": "@quantlab/rendermime-interfaces",
+  "version": "0.1.0",
+  "description": "QuantLab - Interfaces for Mime Renderers",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -26,12 +26,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/jupyterlab.git"
+    "url": "https://github.com/quantlabio/quantlab.git"
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/jupyterlab/jupyterlab/issues"
+    "url": "https://github.com/quantlabio/quantlab/issues"
   },
-  "homepage": "https://github.com/jupyterlab/jupyterlab"
+  "homepage": "https://github.com/quantlabio/quantlab"
 }

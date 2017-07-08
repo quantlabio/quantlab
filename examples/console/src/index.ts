@@ -13,22 +13,22 @@ import {
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   editorServices
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   ConsolePanel
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   RenderMime, defaultRendererFactories
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
-import '@jupyterlab/theming/style/index.css';
-import '@jupyterlab/theming/style/variables-light.css';
+import '@quantlab/theming/style/index.css';
+import '@quantlab/theming/style/variables-light.css';
 import '../index.css';
 
 let TITLE = 'Console';

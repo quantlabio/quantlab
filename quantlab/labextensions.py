@@ -1,5 +1,5 @@
 # coding: utf-8
-"""Jupyter LabExtension Entry Points."""
+"""Jupyter QuantLabExtension Entry Points."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -63,10 +63,10 @@ class LinkLabExtensionApp(BaseExtensionApp):
     description = """
     Link labextension(s) or packages.
 
-    Links a package to the JupyterLab build process.  If the package is
+    Links a package to the QuantLab build process.  If the package is
     an extension, it will also be installed as an extension.  A linked
     package is manually re-installed from its source location when
-    `jupyter lab build` is run.
+    `jupyter quantlab build` is run.
     """
     should_build = Bool(True, config=True,
         help="Whether to build the app after the action")
@@ -138,28 +138,28 @@ class DisableLabExtensionsApp(BaseExtensionApp):
 
 
 _examples = """
-jupyter labextension list                        # list all configured labextensions
-jupyter labextension install <extension name>    # install a labextension
-jupyter labextension uninstall <extension name>  # uninstall a labextension
+jupyter quantlabextension list                        # list all configured labextensions
+jupyter quantlabextension install <extension name>    # install a labextension
+jupyter quantlabextension uninstall <extension name>  # uninstall a labextension
 """
 
 
 class LabExtensionApp(JupyterApp):
-    """Base jupyter labextension command entry point"""
-    name = "jupyter labextension"
+    """Base jupyter quantlabextension command entry point"""
+    name = "jupyter quantlabextension"
     version = __version__
-    description = "Work with JupyterLab extensions"
+    description = "Work with QuantLab extensions"
     examples = _examples
 
     subcommands = dict(
-        install=(InstallLabExtensionApp, "Install labextension(s)"),
-        uninstall=(UninstallLabExtensionApp, "Uninstall labextension(s)"),
-        list=(ListLabExtensionsApp, "List labextensions"),
-        link=(LinkLabExtensionApp, "Link labextension(s)"),
-        unlink=(UnlinkLabExtensionApp, "Unlink labextension(s)"),
+        install=(InstallLabExtensionApp, "Install quantlab extension(s)"),
+        uninstall=(UninstallLabExtensionApp, "Uninstall quantlab extension(s)"),
+        list=(ListLabExtensionsApp, "List quantlab extensions"),
+        link=(LinkLabExtensionApp, "Link quantlab extension(s)"),
+        unlink=(UnlinkLabExtensionApp, "Unlink quantlab extension(s)"),
         listlinked=(ListLinkedLabExtensionsApp, "List linked extensions"),
-        enable=(EnableLabExtensionsApp, "Enable labextension(s)"),
-        disable=(DisableLabExtensionsApp, "Disable labextensions(s)")
+        enable=(EnableLabExtensionsApp, "Enable quantlab extension(s)"),
+        disable=(DisableLabExtensionsApp, "Disable quantlab extensions(s)")
     )
 
     def start(self):

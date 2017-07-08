@@ -31,24 +31,24 @@ import {
 
 import {
   DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   Cell,
   MarkdownCellModel, MarkdownCell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   IObservableList, ActivityMonitor
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   ChatEntry, CHAT_ENTRY_CLASS

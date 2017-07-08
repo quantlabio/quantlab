@@ -3,7 +3,7 @@
 
  import {
   URLExt, uuid
- } from '@jupyterlab/coreutils';
+ } from '@quantlab/coreutils';
 
 import {
   ArrayExt, each, find
@@ -774,4 +774,3 @@ namespace Private {
     return Promise.all(promises).then(() => { return sessions; });
   }
 }
-

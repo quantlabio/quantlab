@@ -5,7 +5,7 @@
 
 import {
   IDataConnector, ISettingRegistry, StateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   JSONObject

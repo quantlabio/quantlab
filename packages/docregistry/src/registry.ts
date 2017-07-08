@@ -3,7 +3,7 @@
 
 import {
   Contents, Kernel
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   ArrayExt, ArrayIterator, IIterator, each, empty, find, map
@@ -27,19 +27,19 @@ import {
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IChangedArgs as IChangedArgsGeneric, PathExt, IModelDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IRenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 
 /**

@@ -1,0 +1,10 @@
+{
+  "name": "@quantlab/python-tests",
+  "version": "0.1.0",
+  "private": true,
+  "quantlab": { "extension": true },
+  "dependencies": {
+    "@quantlab/application": "^0.5.0"
+  },
+  "devDependencies": {}
+}

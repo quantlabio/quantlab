@@ -1,5 +1,5 @@
 # coding: utf-8
-"""A tornado based Jupyter lab server."""
+"""A tornado based Quant lab server."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -23,10 +23,10 @@ build_aliases['version'] = 'LabBuildApp.version'
 class LabBuildApp(JupyterApp):
     version = __version__
     description = """
-    Build the JupyterLab application
+    Build the QuantLab application
 
-    The application is built in the JupyterLab app directory in `/staging`.
-    When the build is complete it is put in the JupyterLab app `/static`
+    The application is built in the QuantLab app directory in `/staging`.
+    When the build is complete it is put in the QuantLab app `/static`
     directory, where it is used to serve the application.
     """
     aliases = build_aliases
@@ -34,7 +34,7 @@ class LabBuildApp(JupyterApp):
     app_dir = Unicode('', config=True,
         help="The app directory to build in")
 
-    name = Unicode('JupyterLab', config=True,
+    name = Unicode('QuantLab', config=True,
         help="The name of the built application")
 
     version = Unicode('', config=True,
@@ -51,7 +51,7 @@ clean_aliases['app-dir'] = 'LabCleanApp.app_dir'
 class LabCleanApp(JupyterApp):
     version = __version__
     description = """
-    Clean the JupyterLab application
+    Clean the QuantLab application
 
     This will clean the app directory by removing the `staging` and `static`
     directories.
@@ -68,9 +68,9 @@ class LabCleanApp(JupyterApp):
 class LabPathApp(JupyterApp):
     version = __version__
     description = """
-    Print the configured path to the JupyterLab application
+    Print the configured path to the QuantLab application
 
-    The path can be configured using the JUPYTERLAB_DIR environment variable.
+    The path can be configured using the QUANTLAB_DIR environment variable.
     """
 
     def start(self):
@@ -95,32 +95,32 @@ class LabApp(NotebookApp):
     version = __version__
 
     description = """
-    JupyterLab - An extensible computational environment for Jupyter.
+    QuantLab - An extensible computational environment for Jupyter.
 
     This launches a Tornado based HTML Server that serves up an
-    HTML5/Javascript JupyterLab client.
+    HTML5/Javascript QuantLab client.
 
-    JupyterLab has three different modes of running:
+    QuantLab has three different modes of running:
 
-    * Core mode (`--core-mode`): in this mode JupyterLab will run using the JavaScript
-      assets contained in the installed `jupyterlab` Python package. In core mode, no 
-      extensions are enabled. This is the default in a stable JupyterLab release if you
+    * Core mode (`--core-mode`): in this mode QuantLab will run using the JavaScript
+      assets contained in the installed `quantlab` Python package. In core mode, no
+      extensions are enabled. This is the default in a stable QuantLab release if you
       have no extensions installed.
-    * Dev mode (`--dev-mode`): like core mode, but when the `jupyterlab` Python package
+    * Dev mode (`--dev-mode`): like core mode, but when the `quantlab` Python package
       is installed from source and installed using `pip install -e .`. In this case
-      JupyterLab will show a red stripe at the top of the page.
-    * App mode: JupyterLab allows multiple JupyterLab "applications" to be
+      QuantLab will show a red stripe at the top of the page.
+    * App mode: QuantLab allows multiple QuantLab "applications" to be
       created by the user with different combinations of extensions. The `--app-dir` can
       be used to set a directory for different applications. The default application
-      path can be found using `jupyter lab path`.
+      path can be found using `jupyter quantlab path`.
     """
 
     examples = """
-        jupyter lab                       # start JupyterLab
-        jupyter lab --dev-mode            # start JupyterLab in development mode, with no extensions
-        jupyter lab --core-mode           # start JupyterLab in core mode, with no extensions
-        jupyter lab --app-dir=~/myjupyterlabapp # start JupyterLab with a particular set of extensions
-        jupyter lab --certfile=mycert.pem # use SSL/TLS certificate
+        jupyter quantlab                       # start QuantLab
+        jupyter quantlab --dev-mode            # start QuantLab in development mode, with no extensions
+        jupyter quantlab --core-mode           # start QuantLab in core mode, with no extensions
+        jupyter quantlab --app-dir=~/myquantlabapp # start QuantLab with a particular set of extensions
+        jupyter quantlab --certfile=mycert.pem # use SSL/TLS certificate
     """
 
     aliases = lab_aliases
@@ -132,16 +132,16 @@ class LabApp(NotebookApp):
         path=(LabPathApp, LabPathApp.description.splitlines()[0])
     )
 
-    default_url = Unicode('/lab', config=True,
+    default_url = Unicode('/quantlab', config=True,
         help="The default URL to redirect to from `/`")
 
     app_dir = Unicode('', config=True,
-        help="The app directory to launch JupyterLab from.")
+        help="The app directory to launch QuantLab from.")
 
     core_mode = Bool(False, config=True,
-        help="""Whether to start the app in core mode. In this mode, JupyterLab
+        help="""Whether to start the app in core mode. In this mode, QuantLab
         will run using the JavaScript assets that are within the installed
-        JupyterLab Python package. In core mode, third party extensions are disabled.
+        QuantLab Python package. In core mode, third party extensions are disabled.
         The `--dev-mode` flag is an alias to this to be used when the Python package
         itself is installed in development mode (`pip install -e .`).
         """)
@@ -152,14 +152,14 @@ class LabApp(NotebookApp):
         Import the module, then call the load_jupyter_server_extension function,
         if one exists.
 
-        If the JupyterLab server extension is not enabled, it will
+        If the QuantLab server extension is not enabled, it will
         be manually loaded with a warning.
 
         The extension API is experimental, and may change in future releases.
         """
         super(LabApp, self).init_server_extensions()
-        msg = 'JupyterLab server extension not enabled, manually loading...'
-        if not self.nbserver_extensions.get('jupyterlab', False):
+        msg = 'QuantLab server extension not enabled, manually loading...'
+        if not self.nbserver_extensions.get('quantlab', False):
             self.log.warn(msg)
             load_jupyter_server_extension(self)
 

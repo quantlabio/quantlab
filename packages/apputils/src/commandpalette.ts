@@ -33,7 +33,7 @@ interface IPaletteItem extends CommandPalette.IItemOptions {}
 
 
 /**
- * The interface for a Jupyter Lab command palette.
+ * The interface for a Quant Lab command palette.
  */
 export
 interface ICommandPalette {

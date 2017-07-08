@@ -38,14 +38,14 @@ function handlePackage(packagePath, data) {
 }
 
 
-// Get the current version of JupyterLab
+// Get the current version of QuantLab
 var cwd = path.resolve('..');
 var version = childProcess.execSync('python setup.py --version', { cwd: cwd });
 version = version.toString().trim();
 
 // Update our package.json files.
 var data = require('./package.json');
-data['jupyterlab']['version'] = version;
+data['quantlab']['version'] = version;
 
 // Update our package.json files.
 updateDependencies(data);

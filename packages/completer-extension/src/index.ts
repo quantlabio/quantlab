@@ -6,20 +6,20 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   CompleterModel, Completer, CompletionHandler, ICompletionManager
-} from '@jupyterlab/completer';
+} from '@quantlab/completer';
 
 import {
   IConsoleTracker
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   INotebookTracker
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 
 
@@ -50,11 +50,11 @@ namespace CommandIDs {
 /**
  * A service providing code completion for editors.
  */
-const service: JupyterLabPlugin<ICompletionManager> = {
+const service: QuantLabPlugin<ICompletionManager> = {
   id: 'jupyter.services.completer',
   autoStart: true,
   provides: ICompletionManager,
-  activate: (app: JupyterLab): ICompletionManager => {
+  activate: (app: QuantLab): ICompletionManager => {
     const handlers: { [id: string]: CompletionHandler } = {};
 
     app.commands.addCommand(CommandIDs.invoke, {
@@ -123,11 +123,11 @@ const service: JupyterLabPlugin<ICompletionManager> = {
 /**
  * An extension that registers consoles for code completion.
  */
-const consolePlugin: JupyterLabPlugin<void> = {
+const consolePlugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.console-completer',
   requires: [ICompletionManager, IConsoleTracker],
   autoStart: true,
-  activate: (app: JupyterLab, manager: ICompletionManager, consoles: IConsoleTracker): void => {
+  activate: (app: QuantLab, manager: ICompletionManager, consoles: IConsoleTracker): void => {
     // Create a handler for each console that is created.
     consoles.widgetAdded.connect((sender, panel) => {
       const anchor = panel.console;
@@ -177,11 +177,11 @@ const consolePlugin: JupyterLabPlugin<void> = {
 /**
  * An extension that registers notebooks for code completion.
  */
-const notebookPlugin: JupyterLabPlugin<void> = {
+const notebookPlugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.notebook-completer',
   requires: [ICompletionManager, INotebookTracker],
   autoStart: true,
-  activate: (app: JupyterLab, manager: ICompletionManager, notebooks: INotebookTracker): void => {
+  activate: (app: QuantLab, manager: ICompletionManager, notebooks: INotebookTracker): void => {
     // Create a handler for each notebook that is created.
     notebooks.widgetAdded.connect((sender, panel) => {
       const cell = panel.notebook.activeCell;
@@ -229,7 +229,7 @@ const notebookPlugin: JupyterLabPlugin<void> = {
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [
+const plugins: QuantLabPlugin<any>[] = [
   service, consolePlugin, notebookPlugin
 ];
 export default plugins;

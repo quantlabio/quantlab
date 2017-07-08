@@ -7,17 +7,17 @@ import {
 
 import {
   DocumentModel, DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   ICellModel, ICodeCellModel, IRawCellModel, IMarkdownCellModel,
   CodeCellModel, RawCellModel, MarkdownCellModel, CellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   IObservableJSON, IObservableUndoableList, uuid,
   IObservableList, nbformat, IModelDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   CellList

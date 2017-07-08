@@ -4,16 +4,16 @@
 |----------------------------------------------------------------------------*/
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   ICommandPalette, IMainMenu, MainMenu
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   ISettingRegistry, IStateDB, SettingRegistry, StateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   JSONObject
@@ -44,10 +44,10 @@ namespace CommandIDs {
 /**
  * A service providing an interface to the main menu.
  */
-const mainMenuPlugin: JupyterLabPlugin<IMainMenu> = {
+const mainMenuPlugin: QuantLabPlugin<IMainMenu> = {
   id: 'jupyter.services.main-menu',
   provides: IMainMenu,
-  activate: (app: JupyterLab): IMainMenu => {
+  activate: (app: QuantLab): IMainMenu => {
     let menu = new MainMenu();
     menu.id = 'jp-MainMenu';
 
@@ -66,7 +66,7 @@ const mainMenuPlugin: JupyterLabPlugin<IMainMenu> = {
 /**
  * The default commmand palette extension.
  */
-const palettePlugin: JupyterLabPlugin<ICommandPalette> = {
+const palettePlugin: QuantLabPlugin<ICommandPalette> = {
   activate: activatePalette,
   id: 'jupyter.services.commandpalette',
   provides: ICommandPalette,
@@ -78,7 +78,7 @@ const palettePlugin: JupyterLabPlugin<ICommandPalette> = {
 /**
  * The default setting registry provider.
  */
-const settingPlugin: JupyterLabPlugin<ISettingRegistry> = {
+const settingPlugin: QuantLabPlugin<ISettingRegistry> = {
   id: 'jupyter.services.setting-registry',
   activate: () => new SettingRegistry({
     connector: new SettingClientDataConnector(),
@@ -92,11 +92,11 @@ const settingPlugin: JupyterLabPlugin<ISettingRegistry> = {
 /**
  * The default state database for storing application state.
  */
-const stateDBPlugin: JupyterLabPlugin<IStateDB> = {
+const stateDBPlugin: QuantLabPlugin<IStateDB> = {
   id: 'jupyter.services.statedb',
   autoStart: true,
   provides: IStateDB,
-  activate: (app: JupyterLab) => {
+  activate: (app: QuantLab) => {
     const state = new StateDB({ namespace: app.info.namespace });
     const version = app.info.version;
     const key = 'statedb:version';
@@ -125,11 +125,10 @@ const stateDBPlugin: JupyterLabPlugin<IStateDB> = {
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [
+const plugins: QuantLabPlugin<any>[] = [
   mainMenuPlugin,
   palettePlugin,
   settingPlugin,
   stateDBPlugin
 ];
 export default plugins;
-

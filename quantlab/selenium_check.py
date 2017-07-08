@@ -10,7 +10,7 @@ import threading
 from tornado import ioloop
 from notebook.notebookapp import NotebookApp, flags, aliases
 from traitlets import Bool, Unicode
-from jupyterlab_launcher import LabConfig, add_handlers
+from quantlab_launcher import LabConfig, add_handlers
 
 from selenium import webdriver
 
@@ -33,7 +33,7 @@ test_aliases['app-dir'] = 'TestApp.app_dir'
 
 class TestApp(NotebookApp):
 
-    default_url = Unicode('/lab')
+    default_url = Unicode('/quantlab')
     open_browser = Bool(False)
     base_url = '/foo'
     flags = test_flags

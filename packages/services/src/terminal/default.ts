@@ -3,7 +3,7 @@
 
 import {
   PageConfig, URLExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ArrayExt, each, map, toArray

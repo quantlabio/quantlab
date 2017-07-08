@@ -5,7 +5,7 @@ import encoding = require('text-encoding');
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   JSONObject, JSONPrimitive, PromiseDelegate

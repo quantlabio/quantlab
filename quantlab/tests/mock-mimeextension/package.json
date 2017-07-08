@@ -1,8 +1,8 @@
 {
-  "name": "@jupyterlab/mime-extension-test",
+  "name": "@quantlab/mime-extension-test",
   "version": "0.1.0",
   "private": true,
-  "jupyterlab": { "mimeExtension": true },
+  "quantlab": { "mimeExtension": true },
   "dependencies": {
     "@phosphor/widgets": "^1.3.0"
   },

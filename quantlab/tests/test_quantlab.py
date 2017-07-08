@@ -1,5 +1,5 @@
 # coding: utf-8
-"""Test installation of JupyterLab extensions"""
+"""Test installation of QuantLab extensions"""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -21,11 +21,11 @@ from ipython_genutils.tempdir import TemporaryDirectory
 from notebook.notebookapp import NotebookApp
 from jupyter_core import paths
 
-from jupyterlab import commands
-from jupyterlab.extension import (
+from quantlab import commands
+from quantlab.extension import (
     load_jupyter_server_extension
 )
-from jupyterlab.commands import (
+from quantlab.commands import (
     install_extension, uninstall_extension, list_extensions,
     build, link_package, unlink_package, should_build,
     disable_extension, enable_extension, _get_extensions,
@@ -106,7 +106,7 @@ class TestExtension(TestCase):
         self.assertEqual(paths.ENV_CONFIG_PATH, [self.config_dir])
         self.assertEqual(paths.ENV_JUPYTER_PATH, [self.data_dir])
         self.assertEqual(commands.ENV_JUPYTER_PATH, [self.data_dir])
-        self.assertEqual(commands.get_app_dir(), os.path.realpath(pjoin(self.data_dir, 'lab')))
+        self.assertEqual(commands.get_app_dir(), os.path.realpath(pjoin(self.data_dir, 'quantlab')))
 
         self.app_dir = commands.get_app_dir()
 
@@ -118,21 +118,21 @@ class TestExtension(TestCase):
         install_extension(self.source_dir)
         path = pjoin(self.app_dir, 'extensions', '*python-tests*.tgz')
         assert glob.glob(path)
-        assert '@jupyterlab/python-tests' in _get_extensions(self.app_dir)
+        assert '@quantlab/python-tests' in _get_extensions(self.app_dir)
 
     def test_install_twice(self):
         install_extension(self.source_dir)
         path = pjoin(commands.get_app_dir(), 'extensions', '*python-tests*.tgz')
         install_extension(self.source_dir)
         assert glob.glob(path)
-        assert '@jupyterlab/python-tests' in _get_extensions(self.app_dir)
+        assert '@quantlab/python-tests' in _get_extensions(self.app_dir)
 
     def test_install_mime_renderer(self):
         install_extension(self.mime_renderer_dir)
-        assert '@jupyterlab/mime-extension-test' in _get_extensions(self.app_dir)
+        assert '@quantlab/mime-extension-test' in _get_extensions(self.app_dir)
 
-        uninstall_extension('@jupyterlab/mime-extension-test')
-        assert '@jupyterlab/mime-extension-test' not in _get_extensions(self.app_dir)
+        uninstall_extension('@quantlab/mime-extension-test')
+        assert '@quantlab/mime-extension-test' not in _get_extensions(self.app_dir)
 
     def test_install_incompatible(self):
         with pytest.raises(ValueError) as excinfo:
@@ -149,43 +149,43 @@ class TestExtension(TestCase):
 
     def test_uninstall_extension(self):
         install_extension(self.source_dir)
-        uninstall_extension('@jupyterlab/python-tests')
+        uninstall_extension('@quantlab/python-tests')
         path = pjoin(self.app_dir, 'extensions', '*python_tests*.tgz')
         assert not glob.glob(path)
-        assert '@jupyterlab/python-tests' not in _get_extensions(self.app_dir)
+        assert '@quantlab/python-tests' not in _get_extensions(self.app_dir)
 
     def test_uninstall_core_extension(self):
-        uninstall_extension('@jupyterlab/console-extension')
+        uninstall_extension('@quantlab/console-extension')
         app_dir = self.app_dir
         _ensure_package(app_dir)
         with open(pjoin(app_dir, 'staging', 'package.json')) as fid:
             data = json.load(fid)
-        extensions = data['jupyterlab']['extensions']
-        assert '@jupyterlab/console-extension' not in extensions
+        extensions = data['quantlab']['extensions']
+        assert '@quantlab/console-extension' not in extensions
 
-        install_extension('@jupyterlab/console-extension')
+        install_extension('@quantlab/console-extension')
         _ensure_package(app_dir)
         with open(pjoin(app_dir, 'staging', 'package.json')) as fid:
             data = json.load(fid)
-        extensions = data['jupyterlab']['extensions']
-        assert '@jupyterlab/console-extension' in extensions
+        extensions = data['quantlab']['extensions']
+        assert '@quantlab/console-extension' in extensions
 
     def test_link_extension(self):
         link_package(self.source_dir)
         linked = _get_linked_packages().keys()
-        assert '@jupyterlab/python-tests' in linked
-        assert '@jupyterlab/python-tests' in _get_extensions(self.app_dir)
+        assert '@quantlab/python-tests' in linked
+        assert '@quantlab/python-tests' in _get_extensions(self.app_dir)
 
     def test_link_mime_renderer(self):
         link_package(self.mime_renderer_dir)
         linked = _get_linked_packages().keys()
-        assert '@jupyterlab/mime-extension-test' in linked
-        assert '@jupyterlab/mime-extension-test' in _get_extensions(self.app_dir)
+        assert '@quantlab/mime-extension-test' in linked
+        assert '@quantlab/mime-extension-test' in _get_extensions(self.app_dir)
 
-        unlink_package('@jupyterlab/mime-extension-test')
+        unlink_package('@quantlab/mime-extension-test')
         linked = _get_linked_packages().keys()
-        assert '@jupyterlab/mime-extension-test' not in linked
-        assert '@jupyterlab/mime-extension-test' not in _get_extensions(self.app_dir)
+        assert '@quantlab/mime-extension-test' not in linked
+        assert '@quantlab/mime-extension-test' not in _get_extensions(self.app_dir)
 
     def test_link_package(self):
         path = self.mock_package
@@ -209,8 +209,8 @@ class TestExtension(TestCase):
         link_package(target)
         unlink_package(target)
         linked = _get_linked_packages().keys()
-        assert '@jupyterlab/python-tests' not in linked
-        assert '@jupyterlab/python-tests' not in _get_extensions(self.app_dir)
+        assert '@quantlab/python-tests' not in linked
+        assert '@quantlab/python-tests' not in _get_extensions(self.app_dir)
 
     def test_list_extensions(self):
         install_extension(self.source_dir)
@@ -222,20 +222,20 @@ class TestExtension(TestCase):
         install_extension(self.source_dir, app_dir)
         path = pjoin(app_dir, 'extensions', '*python-tests*.tgz')
         assert glob.glob(path)
-        assert '@jupyterlab/python-tests' in _get_extensions(app_dir)
+        assert '@quantlab/python-tests' in _get_extensions(app_dir)
 
-        uninstall_extension('@jupyterlab/python-tests', app_dir)
+        uninstall_extension('@quantlab/python-tests', app_dir)
         path = pjoin(app_dir, 'extensions', '*python-tests*.tgz')
         assert not glob.glob(path)
-        assert '@jupyterlab/python-tests' not in _get_extensions(app_dir)
+        assert '@quantlab/python-tests' not in _get_extensions(app_dir)
 
         link_package(self.source_dir, app_dir)
         linked = _get_linked_packages(app_dir).keys()
-        assert '@jupyterlab/python-tests' in linked
+        assert '@quantlab/python-tests' in linked
 
         unlink_package(self.source_dir, app_dir)
         linked = _get_linked_packages(app_dir).keys()
-        assert '@jupyterlab/python-tests' not in linked
+        assert '@quantlab/python-tests' not in linked
 
     def test_app_dir_use_sys_prefix(self):
         app_dir = self.tempdir()
@@ -245,7 +245,7 @@ class TestExtension(TestCase):
         install_extension(self.source_dir)
         path = pjoin(app_dir, 'extensions', '*python-tests*.tgz')
         assert not glob.glob(path)
-        assert '@jupyterlab/python-tests' in _get_extensions(app_dir)
+        assert '@quantlab/python-tests' in _get_extensions(app_dir)
 
     def test_app_dir_shadowing(self):
         app_dir = self.tempdir()
@@ -258,21 +258,21 @@ class TestExtension(TestCase):
         assert glob.glob(sys_path)
         app_path = pjoin(app_dir, 'extensions', '*python-tests*.tgz')
         assert not glob.glob(app_path)
-        assert '@jupyterlab/python-tests' in _get_extensions(app_dir)
+        assert '@quantlab/python-tests' in _get_extensions(app_dir)
 
         install_extension(self.source_dir, app_dir)
         assert glob.glob(app_path)
-        assert '@jupyterlab/python-tests' in _get_extensions(app_dir)
+        assert '@quantlab/python-tests' in _get_extensions(app_dir)
 
-        uninstall_extension('@jupyterlab/python-tests', app_dir)
+        uninstall_extension('@quantlab/python-tests', app_dir)
         assert not glob.glob(app_path)
         assert glob.glob(sys_path)
-        assert '@jupyterlab/python-tests' in _get_extensions(app_dir)
+        assert '@quantlab/python-tests' in _get_extensions(app_dir)
 
-        uninstall_extension('@jupyterlab/python-tests', app_dir)
+        uninstall_extension('@quantlab/python-tests', app_dir)
         assert not glob.glob(app_path)
         assert not glob.glob(sys_path)
-        assert '@jupyterlab/python-tests' not in _get_extensions(app_dir)
+        assert '@quantlab/python-tests' not in _get_extensions(app_dir)
 
     def test_build(self):
         install_extension(self.source_dir)
@@ -281,13 +281,13 @@ class TestExtension(TestCase):
         entry = pjoin(self.app_dir, 'staging', 'build', 'index.out.js')
         with open(entry) as fid:
             data = fid.read()
-        assert '@jupyterlab/python-tests' in data
+        assert '@quantlab/python-tests' in data
 
         # check static directory.
         entry = pjoin(self.app_dir, 'static', 'index.out.js')
         with open(entry) as fid:
             data = fid.read()
-        assert '@jupyterlab/python-tests' in data
+        assert '@quantlab/python-tests' in data
 
     def test_build_custom(self):
         install_extension(self.source_dir)
@@ -297,13 +297,13 @@ class TestExtension(TestCase):
         entry = pjoin(self.app_dir, 'static', 'index.out.js')
         with open(entry) as fid:
             data = fid.read()
-        assert '@jupyterlab/python-tests' in data
+        assert '@quantlab/python-tests' in data
 
         pkg = pjoin(self.app_dir, 'static', 'package.json')
         with open(pkg) as fid:
             data = json.load(fid)
-        assert data['jupyterlab']['name'] == 'foo'
-        assert data['jupyterlab']['version'] == '1.0'
+        assert data['quantlab']['name'] == 'foo'
+        assert data['quantlab']['version'] == '1.0'
 
     def test_load_extension(self):
         app = NotebookApp()
@@ -316,20 +316,20 @@ class TestExtension(TestCase):
     def test_disable_extension(self):
         app_dir = self.tempdir()
         install_extension(self.source_dir, app_dir)
-        disable_extension('@jupyterlab/python-tests', app_dir)
+        disable_extension('@quantlab/python-tests', app_dir)
         disabled = _get_disabled(app_dir)
-        assert '@jupyterlab/python-tests' in disabled
-        disable_extension('@jupyterlab/notebook-extension', app_dir)
+        assert '@quantlab/python-tests' in disabled
+        disable_extension('@quantlab/notebook-extension', app_dir)
         disabled = _get_disabled(app_dir)
-        assert '@jupyterlab/notebook-extension' in disabled
+        assert '@quantlab/notebook-extension' in disabled
 
     def test_enable_extension(self):
         app_dir = self.tempdir()
         install_extension(self.source_dir, app_dir)
-        disable_extension('@jupyterlab/python-tests', app_dir)
-        enable_extension('@jupyterlab/python-tests', app_dir)
+        disable_extension('@quantlab/python-tests', app_dir)
+        enable_extension('@quantlab/python-tests', app_dir)
         disabled = _get_disabled(app_dir)
-        assert '@jupyterlab/python-tests' not in disabled
+        assert '@quantlab/python-tests' not in disabled
 
     def test_should_build(self):
         assert not should_build()[0]
@@ -337,7 +337,7 @@ class TestExtension(TestCase):
         assert should_build()[0]
         build()
         assert not should_build()[0]
-        uninstall_extension('@jupyterlab/python-tests')
+        uninstall_extension('@quantlab/python-tests')
         assert should_build()[0]
 
     def test_compatibility(self):

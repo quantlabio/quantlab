@@ -5,7 +5,7 @@
 
 import {
   KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   JSONValue, PromiseDelegate
@@ -21,27 +21,27 @@ import {
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IChangedArgs, ActivityMonitor
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   CodeEditor, CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IRenderMime, MimeModel, RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   IObservableMap
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   OutputArea, IOutputPrompt, OutputPrompt, IStdin, Stdin
-} from '@jupyterlab/outputarea';
+} from '@quantlab/outputarea';
 
 import {
   ICellModel, ICodeCellModel,

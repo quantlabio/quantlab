@@ -1,7 +1,7 @@
 {
-  "name": "@jupyterlab/rendermime",
-  "version": "0.8.1",
-  "description": "JupyterLab - RenderMime",
+  "name": "@quantlab/rendermime",
+  "version": "0.1.0",
+  "description": "QuantLab - RenderMime",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -13,11 +13,11 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@jupyterlab/apputils": "^0.8.1",
-    "@jupyterlab/codemirror": "^0.8.0",
-    "@jupyterlab/coreutils": "^0.8.0",
-    "@jupyterlab/rendermime-interfaces": "^0.2.0",
-    "@jupyterlab/services": "^0.47.0",
+    "@quantlab/apputils": "^0.1.0",
+    "@quantlab/codemirror": "^0.1.0",
+    "@quantlab/coreutils": "^0.1.0",
+    "@quantlab/rendermime-interfaces": "^0.1.0",
+    "@quantlab/services": "^0.1.0",
     "@phosphor/algorithm": "^1.1.1",
     "@phosphor/coreutils": "^1.2.0",
     "@phosphor/disposable": "^1.1.1",
@@ -38,12 +38,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/jupyterlab.git"
+    "url": "https://github.com/quantlabio/quantlab.git"
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/jupyterlab/jupyterlab/issues"
+    "url": "https://github.com/quantlabio/quantlab/issues"
   },
-  "homepage": "https://github.com/jupyterlab/jupyterlab"
+  "homepage": "https://github.com/quantlabio/quantlab"
 }

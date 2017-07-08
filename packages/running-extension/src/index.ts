@@ -2,22 +2,22 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   IServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   RunningSessions
-} from '@jupyterlab/running';
+} from '@quantlab/running';
 
 
 /**
  * The default running sessions extension.
  */
-const plugin: JupyterLabPlugin<void> = {
+const plugin: QuantLabPlugin<void> = {
   activate,
   id: 'jupyter.extensions.running-sessions',
   requires: [IServiceManager, ILayoutRestorer],
@@ -34,7 +34,7 @@ export default plugin;
 /**
  * Activate the running plugin.
  */
-function activate(app: JupyterLab, services: IServiceManager, restorer: ILayoutRestorer): void {
+function activate(app: QuantLab, services: IServiceManager, restorer: ILayoutRestorer): void {
   let running = new RunningSessions({ manager: services });
   running.id = 'jp-running-sessions';
   running.title.label = 'Running';

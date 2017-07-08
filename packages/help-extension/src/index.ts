@@ -2,16 +2,16 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   Dialog, ICommandPalette, IFrame, IMainMenu, InstanceTracker, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   PageConfig, URLExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   Message
@@ -119,7 +119,7 @@ RESOURCES.sort((a: any, b: any) => {
 /**
  * The help handler extension.
  */
-const plugin: JupyterLabPlugin<void> = {
+const plugin: QuantLabPlugin<void> = {
   activate,
   id: 'jupyter.extensions.help-handler',
   requires: [IMainMenu, ICommandPalette, ILayoutRestorer],
@@ -165,7 +165,7 @@ class HelpWidget extends Widget {
  *
  * returns A promise that resolves when the extension is activated.
  */
-function activate(app: JupyterLab, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer): void {
+function activate(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer): void {
   let counter = 0;
   const category = 'Help';
   const namespace = 'help-doc';
@@ -202,7 +202,7 @@ function activate(app: JupyterLab, mainMenu: IMainMenu, palette: ICommandPalette
     menu.title.label = category;
 
     menu.addItem({ command: CommandIDs.about });
-    menu.addItem({ command: 'faq-jupyterlab:open' });
+    menu.addItem({ command: 'faq-quantlab:open' });
     menu.addItem({ command: CommandIDs.launchClassic });
     menu.addItem({ type: 'separator' });
     RESOURCES.forEach(args => {
@@ -237,7 +237,7 @@ function activate(app: JupyterLab, mainMenu: IMainMenu, palette: ICommandPalette
 
       //Create the body of the about dialog
       let jupyterURL = 'https://jupyter.org/about.html';
-      let contributorsURL = 'https://github.com/jupyterlab/jupyterlab/graphs/contributors';
+      let contributorsURL = 'https://github.com/quantlabio/quantlab/graphs/contributors';
       let externalLinks = h.span({className: 'jp-About-externalLinks'},
         h.a({href: contributorsURL, target: '_blank', className: 'jp-Button-flat'}, "CONTRIBUTOR LIST"),
         h.a({href: jupyterURL, target: '_blank', className: 'jp-Button-flat'}, "ABOUT PROJECT JUPYTER")

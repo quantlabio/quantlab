@@ -27,15 +27,15 @@ import {
 
 import {
   Time
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   showDialog, Dialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 
 /**

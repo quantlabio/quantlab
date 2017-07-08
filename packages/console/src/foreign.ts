@@ -3,19 +3,19 @@
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   Cell, CodeCell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IDisposable

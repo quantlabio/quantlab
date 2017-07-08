@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   toArray
@@ -262,4 +262,3 @@ describe('kernel/manager', () => {
   });
 
 });
-

@@ -3,7 +3,7 @@
 
 import {
   ABCWidgetFactory, DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   PromiseDelegate

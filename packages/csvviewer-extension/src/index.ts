@@ -2,16 +2,16 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   CSVViewer, CSVViewerFactory
-} from '@jupyterlab/csvviewer';
+} from '@quantlab/csvviewer';
 
 
 /**
@@ -23,7 +23,7 @@ const FACTORY = 'Table';
 /**
  * The table file handler extension.
  */
-const plugin: JupyterLabPlugin<void> = {
+const plugin: QuantLabPlugin<void> = {
   activate,
   id: 'jupyter.extensions.csv-handler',
   requires: [ILayoutRestorer],
@@ -40,7 +40,7 @@ export default plugin;
 /**
  * Activate the table widget extension.
  */
-function activate(app: JupyterLab, restorer: ILayoutRestorer): void {
+function activate(app: QuantLab, restorer: ILayoutRestorer): void {
   const factory = new CSVViewerFactory({
     name: FACTORY,
     fileExtensions: ['.csv'],

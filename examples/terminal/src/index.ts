@@ -9,14 +9,14 @@ import {
 
 import {
   TerminalSession
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Terminal
-} from '@jupyterlab/terminal';
+} from '@quantlab/terminal';
 
-import '@jupyterlab/theming/style/index.css';
-import '@jupyterlab/theming/style/variables-light.css';
+import '@quantlab/theming/style/index.css';
+import '@quantlab/theming/style/variables-light.css';
 import '../index.css';
 
 

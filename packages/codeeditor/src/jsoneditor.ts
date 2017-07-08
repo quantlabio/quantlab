@@ -3,7 +3,7 @@
 
 import {
   IObservableJSON
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   JSONExt, JSONObject

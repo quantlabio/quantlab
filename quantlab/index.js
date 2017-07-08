@@ -1,19 +1,19 @@
 require('es6-promise/auto');  // polyfill Promise on IE
 
-var PageConfig = require('@jupyterlab/coreutils').PageConfig;
+var PageConfig = require('@quantlab/coreutils').PageConfig;
 __webpack_public_path__ = PageConfig.getOption('publicUrl');
 
 // This needs to come after __webpack_public_path__ is set.
 require('font-awesome/css/font-awesome.min.css');
 // Load the core theming before any other package.
-require('@jupyterlab/theming/style/index.css');
+require('@quantlab/theming/style/index.css');
 
-var app = require('@jupyterlab/application').JupyterLab;
+var app = require('@quantlab/application').QuantLab;
 
 function main() {
     var version = PageConfig.getOption('appVersion') || 'unknown';
-    var name = PageConfig.getOption('appName') || 'JupyterLab';
-    var namespace = PageConfig.getOption('appNamespace') || 'jupyterlab';
+    var name = PageConfig.getOption('appName') || 'QuantLab';
+    var namespace = PageConfig.getOption('appNamespace') || 'quantlab';
     var devMode = PageConfig.getOption('devMode') || 'false';
     var settingsDir = PageConfig.getOption('settingsDir') || '';
     var assetsDir = PageConfig.getOption('assetsDir') || '';
@@ -33,7 +33,7 @@ function main() {
 
     // Handle the registered mime extensions.
     var mimeExtensions = [];
-    {{#each jupyterlab_mime_extensions}}
+    {{#each quantlab_mime_extensions}}
     try {
         if (disabled.indexOf('{{this}}') === -1) {
             mimeExtensions.push(require('{{this}}'));
@@ -54,7 +54,7 @@ function main() {
     });
 
     // Handled the registered standard extensions.
-    {{#each jupyterlab_extensions}}
+    {{#each quantlab_extensions}}
     try {
         if (disabled.indexOf('{{this}}') === -1) {
             lab.registerPluginModule(require('{{this}}'));

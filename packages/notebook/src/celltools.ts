@@ -23,19 +23,19 @@ import {
 
 import {
   Styling
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   Cell, ICellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   CodeEditor, CodeEditorWrapper, JSONEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IObservableMap, nbformat, ObservableJSON
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   INotebookTracker

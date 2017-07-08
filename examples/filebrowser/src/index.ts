@@ -17,35 +17,35 @@ import {
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Dialog, ToolbarButton, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   FileBrowser, FileBrowserModel
-} from '@jupyterlab/filebrowser';
+} from '@quantlab/filebrowser';
 
 import {
   DocumentManager
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   DocumentRegistry, TextModelFactory
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   CodeMirrorEditorFactory, CodeMirrorMimeTypeService
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   FileEditorFactory
-} from '@jupyterlab/fileeditor';
+} from '@quantlab/fileeditor';
 
 import '../index.css';
-import '@jupyterlab/theming/style/index.css';
-import '@jupyterlab/theming/style/variables-light.css';
+import '@quantlab/theming/style/index.css';
+import '@quantlab/theming/style/variables-light.css';
 
 
 

@@ -2,32 +2,32 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   ISettingRegistry
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   CodeEditor, IEditorServices
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
    MarkdownCodeBlocks, PathExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   FileEditor, FileEditorFactory, IEditorTracker
-} from '@jupyterlab/fileeditor';
+} from '@quantlab/fileeditor';
 
 import {
   ILauncher
-} from '@jupyterlab/launcher';
+} from '@quantlab/launcher';
 
 
 /**
@@ -74,7 +74,7 @@ namespace CommandIDs {
 /**
  * The editor tracker extension.
  */
-const plugin: JupyterLabPlugin<IEditorTracker> = {
+const plugin: QuantLabPlugin<IEditorTracker> = {
   activate,
   id: 'jupyter.services.editor-tracker',
   requires: [
@@ -96,8 +96,8 @@ const plugin: JupyterLabPlugin<IEditorTracker> = {
  * This will eventually reside in its own settings file.
  */
 const schema = {
-  "jupyter.lab.setting-icon-class": "jp-TextEditorIcon",
-  "jupyter.lab.setting-icon-label": "Editor",
+  "jupyter.quantlab.setting-icon-class": "jp-TextEditorIcon",
+  "jupyter.quantlab.setting-icon-label": "Editor",
   "title": "Text Editor",
   "description": "Text editor settings for all editors.",
   "properties": {
@@ -128,7 +128,7 @@ export default plugin;
 /**
  * Activate the editor tracker plugin.
  */
-function activate(app: JupyterLab, restorer: ILayoutRestorer, editorServices: IEditorServices, settingRegistry: ISettingRegistry, launcher: ILauncher | null): IEditorTracker {
+function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEditorServices, settingRegistry: ISettingRegistry, launcher: ILauncher | null): IEditorTracker {
   const id = plugin.id;
   const namespace = 'editor';
   const factory = new FileEditorFactory({

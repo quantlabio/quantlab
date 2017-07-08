@@ -1,6 +1,6 @@
 # encoding: utf-8
 """
-This module defines the things that are used in setup.py for building JupyterLab
+This module defines the things that are used in setup.py for building QuantLab
 This includes:
     * Functions for finding things like packages, package data, etc.
     * A function for checking dependencies.
@@ -30,7 +30,7 @@ else:
         return ' '.join(map(pipes.quote, cmd_list))
 
 # the name of the project
-name = 'jupyterlab'
+name = 'quantlab'
 
 
 here = os.path.dirname(os.path.abspath(__file__))
@@ -57,7 +57,7 @@ def find_packages():
     Find all of the packages.
     """
     packages = []
-    for dir, subdirs, files in os.walk('jupyterlab'):
+    for dir, subdirs, files in os.walk('quantlab'):
         package = dir.replace(os.path.sep, '.')
         if '__init__.py' not in files:
             # not a package
@@ -75,7 +75,7 @@ def find_package_data():
     Find package_data.
     """
     return {
-        'jupyterlab': ['build/*', 'index.app.js', 'webpack.config.js',
+        'quantlab': ['build/*', 'index.app.js', 'webpack.config.js',
                        'package.app.json', 'released_packages.txt',
                        'node-version-check.js']
     }
@@ -121,8 +121,8 @@ class CheckAssets(Command):
 
     # Representative files that should exist after a successful build
     targets = [
-        pjoin(here, 'jupyterlab', 'build', 'release_data.json'),
-        pjoin(here, 'jupyterlab', 'build', 'main.bundle.js'),
+        pjoin(here, 'quantlab', 'build', 'release_data.json'),
+        pjoin(here, 'quantlab', 'build', 'main.bundle.js'),
     ]
 
     def initialize_options(self):
@@ -137,7 +137,7 @@ class CheckAssets(Command):
                 msg = 'Missing file: %s' % t
                 raise ValueError(msg)
 
-        target = pjoin(here, 'jupyterlab', 'build', 'release_data.json')
+        target = pjoin(here, 'quantlab', 'build', 'release_data.json')
         with open(target) as fid:
             data = json.load(fid)
 

@@ -2,10 +2,10 @@
 
 /**
  * Remove an extension from the relevant metadata
- * files of the JupyterLab source tree so that it
+ * files of the QuantLab source tree so that it
  * is not included in the build. Intended for testing
  * adding/removing extensions against development
- * branches of JupyterLab.
+ * branches of QuantLab.
  *
  * Note: this does not remove any files or submodules
  * that may have been copied by the add-sibling.js
@@ -47,12 +47,12 @@ var indexEntries = indexEntries.filter(function(e) {
 });
 fs.writeFileSync(indexPath, indexEntries.join('\n'));
 
-// Remove the extension from jupyterlab/package.json
-var jupyterlabPackagePath = path.join(basePath, 'jupyterlab', 'package.json');
-var jupyterlabPackage = require(jupyterlabPackagePath);
-jupyterlabPackage.dependencies[package.name] = undefined;
-let extensions = jupyterlabPackage.jupyterlab.extensions.filter(function(e) {
+// Remove the extension from quantlab/package.json
+var quantlabPackagePath = path.join(basePath, 'quantlab', 'package.json');
+var quantlabPackage = require(quantlabPackagePath);
+quantlabPackage.dependencies[package.name] = undefined;
+let extensions = quantlabPackage.quantlab.extensions.filter(function(e) {
   return e.indexOf(package.name) === -1;
 });
-jupyterlabPackage.jupyterlab.extensions = extensions;
-fs.writeFileSync(jupyterlabPackagePath, JSON.stringify(jupyterlabPackage, null, 2) + '\n');
+quantlabPackage.quantlab.extensions = extensions;
+fs.writeFileSync(quantlabPackagePath, JSON.stringify(quantlabPackage, null, 2) + '\n');

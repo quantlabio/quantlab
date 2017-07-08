@@ -1,8 +1,8 @@
-name: jupyterlab
+name: quantlab
 channels:
   - conda-forge
 dependencies:
-  - jupyterlab
+  - quantlab
   - ipywidgets
   - pandas
   - nodejs

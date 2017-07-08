@@ -21,11 +21,11 @@ import {
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@QuantLab/apputils';
 
 import {
   IStateDB
-} from '@jupyterlab/coreutils';
+} from '@QuantLab/coreutils';
 
 import {
   ApplicationShell
@@ -401,7 +401,7 @@ namespace LayoutRestorer {
      * The initial promise that has to be resolved before restoration.
      *
      * #### Notes
-     * This promise should equal the JupyterLab application `started` notifier.
+     * This promise should equal the QuantLab application `started` notifier.
      */
     first: Promise<any>;
 

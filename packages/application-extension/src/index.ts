@@ -2,16 +2,16 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  JupyterLab, JupyterLabPlugin, ILayoutRestorer, LayoutRestorer
-} from '@jupyterlab/application';
+  QuantLab, QuantLabPlugin, ILayoutRestorer, LayoutRestorer
+} from '@quantlab/application';
 
 import {
   Dialog, ICommandPalette, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IStateDB, PageConfig
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
 /**
@@ -38,10 +38,10 @@ namespace CommandIDs {
 /**
  * The main extension.
  */
-const mainPlugin: JupyterLabPlugin<void> = {
+const mainPlugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.main',
   requires: [ICommandPalette],
-  activate: (app: JupyterLab, palette: ICommandPalette) => {
+  activate: (app: QuantLab, palette: ICommandPalette) => {
     addCommands(app, palette);
 
     // Temporary build message for manual rebuild.
@@ -49,8 +49,8 @@ const mainPlugin: JupyterLabPlugin<void> = {
     if (buildMessage) {
       let body = document.createElement('div');
       body.innerHTML = (
-        '<p>JupyterLab build is out of date.<br>' +
-        'Please run <code>jupyter lab build</code> from<br>' +
+        '<p>QuantLab build is out of date.<br>' +
+        'Please run <code>jupyter quantlab build</code> from<br>' +
         'the command line and relaunch.</p>'
       );
       showDialog({
@@ -60,7 +60,7 @@ const mainPlugin: JupyterLabPlugin<void> = {
       });
     }
 
-    const message = 'Are you sure you want to exit JupyterLab?\n' +
+    const message = 'Are you sure you want to exit QuantLab?\n' +
                     'Any unsaved changes will be lost.';
 
     // The spec for the `beforeunload` event is implemented differently by
@@ -79,10 +79,10 @@ const mainPlugin: JupyterLabPlugin<void> = {
 /**
  * The default layout restorer provider.
  */
-const layoutPlugin: JupyterLabPlugin<ILayoutRestorer> = {
+const layoutPlugin: QuantLabPlugin<ILayoutRestorer> = {
   id: 'jupyter.services.layout-restorer',
   requires: [IStateDB],
-  activate: (app: JupyterLab, state: IStateDB) => {
+  activate: (app: QuantLab, state: IStateDB) => {
     const first = app.started;
     const registry = app.commands;
     let restorer = new LayoutRestorer({ first, registry, state });
@@ -102,7 +102,7 @@ const layoutPlugin: JupyterLabPlugin<ILayoutRestorer> = {
 /**
  * Add the main application commands.
  */
-function addCommands(app: JupyterLab, palette: ICommandPalette): void {
+function addCommands(app: QuantLab, palette: ICommandPalette): void {
   const category = 'Main Area';
   let command = CommandIDs.activateNextTab;
   app.commands.addCommand(command, {
@@ -157,7 +157,7 @@ function addCommands(app: JupyterLab, palette: ICommandPalette): void {
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [
+const plugins: QuantLabPlugin<any>[] = [
   mainPlugin,
   layoutPlugin
 ];

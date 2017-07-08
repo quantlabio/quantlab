@@ -3,15 +3,15 @@
 
 import {
   CommandLinker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   Base64ModelFactory, DocumentRegistry, TextModelFactory
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   IRenderMime, RenderMime, defaultRendererFactories
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   Application, IPlugin
@@ -31,25 +31,25 @@ export { ILayoutRestorer, LayoutRestorer } from './layoutrestorer';
 import '../style/index.css';
 
 /**
- * The type for all JupyterLab plugins.
+ * The type for all QuantLab plugins.
  */
 export
-type JupyterLabPlugin<T> = IPlugin<JupyterLab, T>;
+type QuantLabPlugin<T> = IPlugin<QuantLab, T>;
 
 
 /**
- * JupyterLab is the main application class. It is instantiated once and shared.
+ * QuantLab is the main application class. It is instantiated once and shared.
  */
 export
-class JupyterLab extends Application<ApplicationShell> {
+class QuantLab extends Application<ApplicationShell> {
   /**
-   * Construct a new JupyterLab object.
+   * Construct a new QuantLab object.
    */
-  constructor(options: JupyterLab.IOptions = {}) {
+  constructor(options: QuantLab.IOptions = {}) {
     super({ shell: new ApplicationShell() });
     this._info = {
-      name: options.name || 'JupyterLab',
-      namespace: options.namespace || 'jupyterlab',
+      name: options.name || 'QuantLab',
+      namespace: options.namespace || 'quantlab',
       version:  options.version || 'unknown',
       devMode: options.devMode || false,
       settingsDir: options.settingsDir || '',
@@ -104,7 +104,7 @@ class JupyterLab extends Application<ApplicationShell> {
   /**
    * The information about the application.
    */
-  get info(): JupyterLab.IInfo {
+  get info(): QuantLab.IInfo {
     return this._info;
   }
 
@@ -123,7 +123,7 @@ class JupyterLab extends Application<ApplicationShell> {
    *
    * @param mod - The plugin module to register.
    */
-  registerPluginModule(mod: JupyterLab.IPluginModule): void {
+  registerPluginModule(mod: QuantLab.IPluginModule): void {
     let data = mod.default;
     // Handle commonjs exports.
     if (!mod.hasOwnProperty('__esModule')) {
@@ -140,26 +140,26 @@ class JupyterLab extends Application<ApplicationShell> {
    *
    * @param mods - The plugin modules to register.
    */
-  registerPluginModules(mods: JupyterLab.IPluginModule[]): void {
+  registerPluginModules(mods: QuantLab.IPluginModule[]): void {
     mods.forEach(mod => { this.registerPluginModule(mod); });
   }
 
-  private _info: JupyterLab.IInfo;
+  private _info: QuantLab.IInfo;
 }
 
 
 /**
- * The namespace for `JupyterLab` class statics.
+ * The namespace for `QuantLab` class statics.
  */
 export
-namespace JupyterLab {
+namespace QuantLab {
   /**
-   * The options used to initialize a JupyterLab object.
+   * The options used to initialize a QuantLab object.
    */
   export
   interface IOptions {
     /**
-     * The name of the JupyterLab application.
+     * The name of the QuantLab application.
      */
     name?: string;
 
@@ -170,12 +170,12 @@ namespace JupyterLab {
      * This field may be used by persistent storage mechanisms such as state
      * databases, cookies, session storage, etc.
      *
-     * If unspecified, the default value is `'jupyterlab'`.
+     * If unspecified, the default value is `'quantlab'`.
      */
     namespace?: string;
 
     /**
-     * The version of the JupyterLab application.
+     * The version of the QuantLab application.
      */
     version?: string;
 
@@ -201,12 +201,12 @@ namespace JupyterLab {
   }
 
   /**
-   * The information about a JupyterLab application.
+   * The information about a QuantLab application.
    */
   export
   interface IInfo {
     /**
-     * The name of the JupyterLab application.
+     * The name of the QuantLab application.
      */
     readonly name: string;
 
@@ -216,7 +216,7 @@ namespace JupyterLab {
     readonly namespace: string;
 
     /**
-     * The version of the JupyterLab application.
+     * The version of the QuantLab application.
      */
     readonly version: string;
 
@@ -245,6 +245,6 @@ namespace JupyterLab {
     /**
      * The default export.
      */
-    default: JupyterLabPlugin<any> | JupyterLabPlugin<any>[];
+    default: QuantLabPlugin<any> | QuantLabPlugin<any>[];
   }
 }

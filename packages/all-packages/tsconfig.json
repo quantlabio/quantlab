@@ -12,7 +12,7 @@
     "types": ["node", "text-encoding"],
     "baseUrl": ".",
     "paths": {
-      "@jupyterlab/*": ["../*/src"]
+      "@quantlab/*": ["../*/src"]
     },
     "jsx": "react",
     "jsxFactory": "h"

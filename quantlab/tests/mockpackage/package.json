@@ -1,5 +1,5 @@
 {
-  "name": "@jupyterlab/mock-package",
+  "name": "@quantlab/mock-package",
   "version": "0.1.0",
   "private": true,
   "dependencies": {},

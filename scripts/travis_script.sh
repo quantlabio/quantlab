@@ -27,12 +27,12 @@ if [[ $GROUP == tests ]]; then
     npm install -g postcss-cli
     postcss packages/**/style/*.css --dir /tmp
 
-    # Run the publish script in jupyterlab
-    cd jupyterlab
+    # Run the publish script in quantlab
+    cd quantlab
     npm run publish
 
     if [ ! -f ./build/release_data.json ]; then
-        echo "npm publish in jupyterlab unsucessful!"
+        echo "npm publish in quantlab unsucessful!"
     fi
 fi
 
@@ -65,41 +65,41 @@ fi
 if [[ $GROUP == cli ]]; then
     # Make sure we can successfully load the core app.
     pip install selenium
-    python -m jupyterlab.selenium_check --core-mode
+    python -m quantlab.selenium_check --core-mode
 
     # Make sure we can build and run the app.
-    jupyter lab build
-    python -m jupyterlab.selenium_check 
+    jupyter quantlab build
+    python -m quantlab.selenium_check
     jupyter labextension list
 
     # Test the cli apps.
-    jupyter lab clean
-    jupyter lab build
-    jupyter lab path
-    jupyter labextension link jupyterlab/tests/mockextension --no-build
-    jupyter labextension unlink jupyterlab/tests/mockextension --no-build
-    jupyter labextension link jupyterlab/tests/mockextension --no-build
-    jupyter labextension listlinked
-    jupyter labextension unlink  @jupyterlab/python-tests --no-build
-    jupyter labextension install jupyterlab/tests/mockextension  --no-build
-    jupyter labextension list
-    jupyter labextension disable @jupyterlab/python-tests
-    jupyter labextension enable @jupyterlab/python-tests
-    jupyter labextension disable @jupyterlab/notebook-extension
-    jupyter labextension uninstall @jupyterlab/python-tests --no-build
-    jupyter labextension uninstall @jupyterlab/notebook-extension --no-build
+    jupyter quantlab clean
+    jupyter quantlab build
+    jupyter quantlab path
+    jupyter quantlabextension link quantlab/tests/mockextension --no-build
+    jupyter quantlabextension unlink quantlab/tests/mockextension --no-build
+    jupyter quantlabextension link quantlab/tests/mockextension --no-build
+    jupyter quantlabextension listlinked
+    jupyter quantlabextension unlink  @quantlab/python-tests --no-build
+    jupyter quantlabextension install quantlab/tests/mockextension  --no-build
+    jupyter quantlabextension list
+    jupyter quantlabextension disable @quantlab/python-tests
+    jupyter quantlabextension enable @quantlab/python-tests
+    jupyter quantlabextension disable @quantlab/notebook-extension
+    jupyter quantlabextension uninstall @quantlab/python-tests --no-build
+    jupyter quantlabextension uninstall @quantlab/notebook-extension --no-build
 
     # Make sure we can call help on all the cli apps.
-    jupyter lab -h 
-    jupyter lab build -h 
-    jupyter lab clean -h
-    jupyter lab path -h 
-    jupyter labextension link -h
-    jupyter labextension unlink -h
-    jupyter labextension install -h 
-    jupyter labextension uninstall -h 
-    jupyter labextension list -h
-    jupyter labextension listlinked -h
-    jupyter labextension enable -h
-    jupyter labextension disable -h
+    jupyter quantlab -h
+    jupyter quantlab build -h
+    jupyter quantlab clean -h
+    jupyter quantlab path -h
+    jupyter quantlabextension link -h
+    jupyter quantlabextension unlink -h
+    jupyter quantlabextension install -h
+    jupyter quantlabextension uninstall -h
+    jupyter quantlabextension list -h
+    jupyter quantlabextension listlinked -h
+    jupyter quantlabextension enable -h
+    jupyter quantlabextension disable -h
 fi

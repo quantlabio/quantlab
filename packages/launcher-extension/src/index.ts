@@ -3,20 +3,20 @@
 
 import {
   IServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
-  JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 
 import {
   ICommandPalette
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   ILauncher, LauncherModel, Launcher
-} from '@jupyterlab/launcher';
+} from '@quantlab/launcher';
 
 import {
   JSONObject
@@ -41,7 +41,7 @@ namespace CommandIDs {
 /**
  * A service providing an interface to the the launcher.
  */
-const plugin: JupyterLabPlugin<ILauncher> = {
+const plugin: QuantLabPlugin<ILauncher> = {
   activate,
   id: 'jupyter.services.launcher',
   requires: [
@@ -62,7 +62,7 @@ export default plugin;
 /**
  * Activate the launcher.
  */
-function activate(app: JupyterLab, services: IServiceManager, palette: ICommandPalette): ILauncher {
+function activate(app: QuantLab, services: IServiceManager, palette: ICommandPalette): ILauncher {
   const { commands, shell } = app;
 
   let model = new LauncherModel();

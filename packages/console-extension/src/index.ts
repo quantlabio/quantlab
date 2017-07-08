@@ -2,29 +2,29 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   Dialog, ICommandPalette, IMainMenu, InstanceTracker,
   showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IEditorServices
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IConsoleTracker, ConsolePanel
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   ILauncher
-} from '@jupyterlab/launcher';
+} from '@quantlab/launcher';
 
 import {
   IServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   find
@@ -82,7 +82,7 @@ namespace CommandIDs {
  * The console widget tracker provider.
  */
 export
-const trackerPlugin: JupyterLabPlugin<IConsoleTracker> = {
+const trackerPlugin: QuantLabPlugin<IConsoleTracker> = {
   id: 'jupyter.services.console-tracker',
   provides: IConsoleTracker,
   requires: [
@@ -103,12 +103,12 @@ const trackerPlugin: JupyterLabPlugin<IConsoleTracker> = {
  * The console widget content factory.
  */
 export
-const contentFactoryPlugin: JupyterLabPlugin<ConsolePanel.IContentFactory> = {
+const contentFactoryPlugin: QuantLabPlugin<ConsolePanel.IContentFactory> = {
   id: 'jupyter.services.console-renderer',
   provides: ConsolePanel.IContentFactory,
   requires: [IEditorServices],
   autoStart: true,
-  activate: (app: JupyterLab, editorServices: IEditorServices) => {
+  activate: (app: QuantLab, editorServices: IEditorServices) => {
     let editorFactory = editorServices.factoryService.newInlineEditor.bind(
       editorServices.factoryService);
     return new ConsolePanel.ContentFactory({ editorFactory });
@@ -119,14 +119,14 @@ const contentFactoryPlugin: JupyterLabPlugin<ConsolePanel.IContentFactory> = {
 /**
  * Export the plugins as the default.
  */
-const plugins: JupyterLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin];
+const plugins: QuantLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin];
 export default plugins;
 
 
 /**
  * Activate the console extension.
  */
-function activateConsole(app: JupyterLab, manager: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: ConsolePanel.IContentFactory,  editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): IConsoleTracker {
+function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: ConsolePanel.IContentFactory,  editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): IConsoleTracker {
   let { commands, shell } = app;
   let category = 'Console';
   let command: string;

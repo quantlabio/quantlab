@@ -13,19 +13,19 @@ import {
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   IChangedArgs, nbformat, uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IObservableJSON, IModelDB, IObservableValue, ObservableValue
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IOutputAreaModel, OutputAreaModel
-} from '@jupyterlab/outputarea';
+} from '@quantlab/outputarea';
 
 
 /**

@@ -2,7 +2,7 @@
   "private": true,
   "name": "browser-example",
   "dependencies": {
-    "@jupyterlab/services": "^0.47.0",
+    "@quantlab/services": "^0.47.0",
     "es6-promise": "^4.1.0"
   },
   "scripts": {

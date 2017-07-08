@@ -3,29 +3,29 @@
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   IEditorMimeTypeService, CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   Cell, CodeCell, RawCell,
   ICodeCellModel, IRawCellModel, CellModel,
   RawCellModel, CodeCellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   nbformat, IObservableList, ObservableList
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   map, toArray

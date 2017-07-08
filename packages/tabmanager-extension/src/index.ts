@@ -2,8 +2,8 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  ILayoutRestorer, JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
+  ILayoutRestorer, QuantLab, QuantLabPlugin
+} from '@quantlab/application';
 
 import {
   each
@@ -18,9 +18,9 @@ import '../style/index.css';
 /**
  * The default tab manager extension.
  */
-const plugin: JupyterLabPlugin<void> = {
+const plugin: QuantLabPlugin<void> = {
   id: 'jupyter.extensions.tab-manager',
-  activate: (app: JupyterLab, restorer: ILayoutRestorer): void => {
+  activate: (app: QuantLab, restorer: ILayoutRestorer): void => {
     const { shell } = app;
     const tabs = new TabBar<Widget>({ orientation: 'vertical' });
     const header = document.createElement('header');

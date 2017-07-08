@@ -3,7 +3,7 @@
 
 import {
   IInstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
  Token

@@ -3,7 +3,7 @@
 
 import {
   Dialog, ToolbarButton, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   FileBrowserModel

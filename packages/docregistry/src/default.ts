@@ -3,11 +3,11 @@
 
 import {
   Mode
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   Contents
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   JSONObject, JSONValue, PromiseDelegate
@@ -27,15 +27,15 @@ import {
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   ActivityMonitor, IChangedArgs, IModelDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IRenderMime, RenderMime, MimeModel
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   DocumentRegistry

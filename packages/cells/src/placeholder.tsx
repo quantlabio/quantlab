@@ -10,7 +10,7 @@ import {
 
 import {
   VDomRenderer
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 
 /**

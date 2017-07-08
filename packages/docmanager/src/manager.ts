@@ -4,19 +4,19 @@
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   ModelDB, uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   DocumentRegistry, Context
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   Contents, Kernel, ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   ArrayExt, each, find, map, toArray

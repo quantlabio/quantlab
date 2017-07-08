@@ -3,20 +3,20 @@
 
 import {
   KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IClientSession, Clipboard, Dialog, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ICellModel, ICodeCellModel,
   CodeCell, Cell, MarkdownCell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   ArrayExt, each, toArray

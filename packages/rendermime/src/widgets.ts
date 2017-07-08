@@ -4,7 +4,7 @@
 |----------------------------------------------------------------------------*/
 import {
   IRenderMime
-} from '@jupyterlab/rendermime-interfaces';
+} from '@quantlab/rendermime-interfaces';
 
 import {
   ReadonlyJSONObject

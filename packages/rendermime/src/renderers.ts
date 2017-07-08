@@ -11,19 +11,19 @@ import * as marked
 
 import {
   ISanitizer
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   Mode, CodeMirrorEditor
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   URLExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   IRenderMime
-} from '@jupyterlab/rendermime-interfaces';
+} from '@quantlab/rendermime-interfaces';
 
 import {
   typeset, removeMath, replaceMath

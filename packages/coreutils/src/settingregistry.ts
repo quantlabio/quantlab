@@ -28,13 +28,13 @@ import {
  * The key in the schema for setting editor icon class hints.
  */
 export
-const ICON_CLASS_KEY ='jupyter.lab.setting-icon-class';
+const ICON_CLASS_KEY ='jupyter.quantlab.setting-icon-class';
 
 /**
  * The key in the schema for setting editor icon label hints.
  */
 export
-const ICON_LABEL_KEY = 'jupyter.lab.setting-icon-label';
+const ICON_LABEL_KEY = 'jupyter.quantlab.setting-icon-label';
 
 /**
  * An alias for the JSON deep copy function.
@@ -140,21 +140,21 @@ namespace ISettingRegistry {
 
   /**
    * A schema type that is a minimal subset of the formal JSON Schema along with
-   * optional JupyterLab rendering hints.
+   * optional QuantLab rendering hints.
    */
   export
   interface ISchema extends JSONObject {
     /**
-     * The JupyterLab icon class hint for a plugin can be overridden by user
+     * The QuantLab icon class hint for a plugin can be overridden by user
      * settings. It can also be root level and therefore "private".
      */
-    'jupyter.lab.setting-icon-class'?: string;
+    'jupyter.quantlab.setting-icon-class'?: string;
 
     /**
-     * The JupyterLab icon label hint for a plugin can be overridden by user
+     * The QuantLab icon label hint for a plugin can be overridden by user
      * settings. It can also be root level and therefore "private".
      */
-    'jupyter.lab.setting-icon-label'?: string;
+    'jupyter.quantlab.setting-icon-label'?: string;
 
     /**
      * The default value, if any.
@@ -171,16 +171,16 @@ namespace ISettingRegistry {
      */
     properties?: {
       /**
-       * The JupyterLab icon class hint for a plugin can be overridden by user
+       * The QuantLab icon class hint for a plugin can be overridden by user
        * settings. It can also be root level and therefore "private".
        */
-      'jupyter.lab.setting-icon-class'?: ISchema;
+      'jupyter.quantlab.setting-icon-class'?: ISchema;
 
       /**
-       * The JupyterLab icon label hint for a plugin can be overridden by user
+       * The QuantLab icon label hint for a plugin can be overridden by user
        * settings. It can also be root level and therefore "private".
        */
-      'jupyter.lab.setting-icon-label'?: ISchema;
+      'jupyter.quantlab.setting-icon-label'?: ISchema;
 
       /**
        * Arbitrary setting keys can be added.

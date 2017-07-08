@@ -23,11 +23,11 @@ import {
 
 import {
   Dialog, DOMUtils, showDialog
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   PathExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   FileBrowserModel

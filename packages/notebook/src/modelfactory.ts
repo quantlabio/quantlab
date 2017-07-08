@@ -3,19 +3,19 @@
 
 import {
   Contents
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IModelDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   CodeCellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   INotebookModel, NotebookModel

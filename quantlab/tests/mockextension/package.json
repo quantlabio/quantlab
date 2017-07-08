@@ -1,8 +1,8 @@
 {
-  "name": "@jupyterlab/python-tests",
+  "name": "@quantlab/python-tests",
   "version": "0.1.0",
   "private": true,
-  "jupyterlab": { "extension": true },
+  "quantlab": { "extension": true },
   "dependencies": {},
   "devDependencies": {}
 }
