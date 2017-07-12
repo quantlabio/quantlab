@@ -47,7 +47,7 @@ def load_jupyter_server_extension(nbapp):
     config.assets_dir = os.path.join(app_dir, 'static')
     config.settings_dir = os.path.join(app_dir, 'settings')
     config.page_title = 'QuantLab Alpha Preview'
-    config.page_url = '/lab'
+    config.page_url = '/quant'
     config.dev_mode = False
 
     # Check for core mode.

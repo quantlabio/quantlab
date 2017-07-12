@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/application-top",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "scripts": {
     "build": "webpack",
     "publish": "node make-release.js"

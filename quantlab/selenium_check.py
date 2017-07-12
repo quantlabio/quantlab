@@ -33,7 +33,7 @@ test_aliases['app-dir'] = 'TestApp.app_dir'
 
 class TestApp(NotebookApp):
 
-    default_url = Unicode('/quantlab')
+    default_url = Unicode('/quant')
     open_browser = Bool(False)
     base_url = '/foo'
     flags = test_flags
