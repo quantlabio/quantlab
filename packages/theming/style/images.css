@@ -4,12 +4,12 @@
 |----------------------------------------------------------------------------*/
 
 
-.jp-ImageQuantLab {
+.jp-ImageJupyterLab {
   background-image: url(images/quantlab.svg);
 }
 
 
-.jp-ImageQuantLab-wordmark {
+.jp-ImageJupyterLab-wordmark {
   background-image: url(images/quantlab-wordmark.svg);
 }
 

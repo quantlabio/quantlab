@@ -15,6 +15,10 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
+  PageConfig, PathExt
+} from '@quantlab/coreutils';
+
+import {
   IConsoleTracker, ConsolePanel
 } from '@quantlab/console';
 
@@ -162,6 +166,7 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
   if (launcher) {
     manager.ready.then(() => {
       let specs = manager.specs;
+      let baseUrl = PageConfig.getBaseUrl();
       for (let name in specs.kernelspecs) {
         let displayName = specs.kernelspecs[name].display_name;
         let rank = name === specs.default ? 0 : Infinity;
@@ -172,7 +177,7 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
           iconClass: 'jp-CodeConsoleIcon',
           callback,
           rank,
-          kernelIconUrl: specs.kernelspecs[name].resources["logo-64x64"]
+          kernelIconUrl: baseUrl + PathExt.removeSlash(specs.kernelspecs[name].resources["logo-64x64"])
         });
       }
     });

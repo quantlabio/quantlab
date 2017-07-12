@@ -391,7 +391,7 @@ class DirListing extends Widget {
   paste(): Promise<void> {
     if (!this._clipboard.length) {
       this._isCut = false;
-      return;
+      return Promise.resolve(undefined);
     }
 
     const basePath = this._model.path;
@@ -416,7 +416,9 @@ class DirListing extends Widget {
     this._clipboard.length = 0;
     this._isCut = false;
     this.removeClass(CLIPBOARD_CLASS);
-    return Promise.all(promises).catch(error => {
+    return Promise.all(promises).then(() => {
+      return undefined;
+    }).catch(error => {
       utils.showErrorMessage('Paste Error', error);
     });
   }
@@ -466,7 +468,9 @@ class DirListing extends Widget {
         promises.push(this._model.manager.copy(oldPath, basePath));
       }
     });
-    return Promise.all(promises).catch(error => {
+    return Promise.all(promises).then(() => {
+      return undefined;
+    }).catch(error => {
       utils.showErrorMessage('Duplicate file', error);
     });
   }
@@ -498,7 +502,9 @@ class DirListing extends Widget {
         promises.push(model.manager.services.sessions.shutdown(session.id));
       }
     });
-    return Promise.all(promises).catch(error => {
+    return Promise.all(promises).then(() => {
+      return undefined;
+    }).catch(error => {
       utils.showErrorMessage('Shutdown kernel', error);
     });
   }
@@ -1284,8 +1290,7 @@ class DirListing extends Widget {
     this._clipboard.length = 0;
     each(this.selectedItems(), item => {
       if (item.type !== 'directory') {
-        // Store the absolute path of the item.
-        this._clipboard.push('/' + item.path);
+        this._clipboard.push(item.path);
       }
     });
     this.update();
@@ -1323,7 +1328,7 @@ class DirListing extends Widget {
     this._selectItem(index, false);
 
     return Private.doRename(nameNode, this._editNode).then(newName => {
-      if (newName === original) {
+      if (!newName || newName === original) {
         this._inRename = false;
         return original;
       }

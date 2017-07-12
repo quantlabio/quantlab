@@ -14,7 +14,7 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  IStateDB
+  IStateDB, PageConfig, PathExt
 } from '@quantlab/coreutils';
 
 import {
@@ -442,6 +442,7 @@ function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainM
   if (launcher) {
     services.ready.then(() => {
       let specs = services.specs;
+      let baseUrl = PageConfig.getBaseUrl();
       for (let name in specs.kernelspecs) {
         let displayName = specs.kernelspecs[name].display_name;
         let rank = name === specs.default ? 0 : Infinity;
@@ -452,7 +453,7 @@ function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainM
           iconClass: 'jp-NotebookRunningIcon',
           callback,
           rank,
-          kernelIconUrl: specs.kernelspecs[name].resources["logo-64x64"]
+          kernelIconUrl: baseUrl + PathExt.removeSlash(specs.kernelspecs[name].resources["logo-64x64"])
         });
       }
     });
