@@ -132,7 +132,7 @@ class LabApp(NotebookApp):
         path=(LabPathApp, LabPathApp.description.splitlines()[0])
     )
 
-    default_url = Unicode('/quant', config=True,
+    default_url = Unicode('/quantlab', config=True,
         help="The default URL to redirect to from `/`")
 
     app_dir = Unicode('', config=True,
