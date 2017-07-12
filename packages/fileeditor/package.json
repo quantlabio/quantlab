@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/fileeditor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "QuantLab - Editor Widget",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,12 +13,12 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/apputils": "^0.1.0",
-    "@quantlab/codeeditor": "^0.1.0",
-    "@quantlab/coreutils": "^0.1.0",
-    "@quantlab/docregistry": "^0.1.0",
     "@phosphor/commands": "^1.3.0",
-    "@phosphor/coreutils": "^1.2.0"
+    "@phosphor/coreutils": "^1.2.0",
+    "@quantlab/apputils": "^0.1.1",
+    "@quantlab/codeeditor": "^0.1.1",
+    "@quantlab/coreutils": "^0.1.1",
+    "@quantlab/docregistry": "^0.1.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

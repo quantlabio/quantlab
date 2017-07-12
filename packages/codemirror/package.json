@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/codemirror",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "QuantLab - CodeMirror Editor Provider",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,11 +13,11 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/codeeditor": "^0.1.0",
-    "@quantlab/coreutils": "^0.1.0",
     "@phosphor/algorithm": "^1.1.1",
     "@phosphor/disposable": "^1.1.1",
     "@phosphor/signaling": "^1.2.1",
+    "@quantlab/codeeditor": "^0.1.1",
+    "@quantlab/coreutils": "^0.1.1",
     "@types/codemirror": "0.0.38",
     "codemirror": "^5.24.2"
   },

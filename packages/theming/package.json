@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/theming",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "QuantLab - Theming",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -15,7 +15,6 @@
   "directories": {
     "lib": "lib/"
   },
-  "dependencies": {},
   "devDependencies": {
     "rimraf": "^2.5.2",
     "typescript": "~2.4.1"
