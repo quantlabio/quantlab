@@ -1,7 +1,7 @@
-# Contributing to JupyterLab
+# Contributing to QuantLab
 
 If you're reading this section, you're probably interested in contributing to
-JupyterLab.  Welcome and thanks for your interest in contributing!
+QuantLab.  Welcome and thanks for your interest in contributing!
 
 Please take a look at the Contributor documentation, familiarize yourself with
 using the Jupyter Notebook, and introduce yourself on the mailing list and share

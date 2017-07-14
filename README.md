@@ -5,15 +5,14 @@
 **[Getting help](#getting-help)**
 
 
-# [QuantLab](http://quantlabio.github.io/quantlab/)
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/quantlab/quantlab.svg)](https://greenkeeper.io/)
+# [QuantLab](https://doc.quantlab.io)
 
 [![Build Status](https://travis-ci.org/quantlabio/quantlab.svg?branch=master)](https://travis-ci.org/quantlabio/quantlab)
+[![Build status](https://ci.appveyor.com/api/projects/status/yx8r2721ep64pj0j?svg=true)](https://ci.appveyor.com/project/lab4quant/quantlab)
 [![Documentation Status](https://readthedocs.org/projects/quantlab-tutorial/badge/?version=latest)](https://quantlab-tutorial.readthedocs.io/en/latest/?badge=latest)
 [![Google Group](https://img.shields.io/badge/-Google%20Group-lightgrey.svg)](https://groups.google.com/forum/#!forum/jupyter)
 
-An extensible computational environment for Jupyter.
+forked from JupterLab, lab for quant
 
 **QuantLab is a very early developer preview, and is not suitable for
 general usage yet. Features and implementation are subject to change.**

@@ -1,8 +1,8 @@
 
-Making a JupyterLab release
+Making a QuantLab release
 ===========================
 
-This document guides a contributor through creating a release of JupyterLab.
+This document guides a contributor through creating a release of QuantLab.
 
 Check installed tools
 ---------------------
@@ -32,16 +32,16 @@ for twine setup instructions and for why twine is the recommended method.
 
 ```bash
 # this ensures the latest builds of everything,
-# then prompts you to select package versions.  When one package has an 
-# effective major release, the packages that depend on it should also get a 
-# major release, to prevent consumers that are using the `^` semver 
+# then prompts you to select package versions.  When one package has an
+# effective major release, the packages that depend on it should also get a
+# major release, to prevent consumers that are using the `^` semver
 # requirement from getting a conflict.
 #
 # Publish the npm packages:
 npm run publish  
-# Update jupyterlab/_version.py
+# Update quantlab/_version.py
 # Prep the static assets for release:
-cd jupyterlab && npm run publish && cd ..
+cd quantlab && npm run publish && cd ..
 # Commit and tag and push the tag
 rm -rf dist
 python setup.py sdist
@@ -52,6 +52,6 @@ shasum -a 256 dist/*.tar.gz  # get the sha256 hash for conda-forge install
 
 Publish on conda-forge
 
-- Fork https://github.com/conda-forge/jupyterlab-feedstock
+- Fork https://github.com/conda-forge/quantlab-feedstock
 - Create a PR with the version bump
 - Update `recipe/meta.yaml` with the new version and md5 and reset the build number to 0.

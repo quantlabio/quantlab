@@ -5,6 +5,8 @@ import "@quantlab/application";
 import "@quantlab/application-extension";
 import "@quantlab/apputils";
 import "@quantlab/apputils-extension";
+import "@quantlab/calendar";
+import "@quantlab/calendar-extension";
 import "@quantlab/cells";
 import "@quantlab/chatbox";
 import "@quantlab/chatbox-extension";

@@ -17,6 +17,8 @@
     "@quantlab/application-extension": "^0.1.1",
     "@quantlab/apputils": "^0.1.1",
     "@quantlab/apputils-extension": "^0.1.1",
+    "@quantlab/calendar": "^0.1.0",
+    "@quantlab/calendar-extension": "^0.1.0",    
     "@quantlab/cells": "^0.1.1",
     "@quantlab/chatbox": "^0.1.1",
     "@quantlab/chatbox-extension": "^0.1.1",
