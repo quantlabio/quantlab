@@ -4,10 +4,10 @@ module.exports = {
     entry: './lib',
     output: {
         filename: './dist/index.js',
-        library: '@jupyterlab/services',
+        library: '@quantlab/services',
         libraryTarget: 'umd',
         umdNamedDefine: true,
-        publicPath: 'https://unpkg.com/@jupyterlab/services@' + version + '/dist/'
+        publicPath: 'https://unpkg.com/@quantlab/services@' + version + '/dist/'
     },
     bail: true,
     devtool: 'source-map'

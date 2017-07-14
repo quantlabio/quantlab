@@ -1,5 +1,5 @@
 # coding: utf-8
-"""A tornado based Quant lab server."""
+"""A tornado based QuantLab server."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -86,7 +86,7 @@ quantlab_flags['core-mode'] = (
     "Start the app in core mode."
 )
 quantlab_flags['dev-mode'] = (
-    {'QuantLabApp': {'core_mode': True}},
+    {'QuantLabApp': {'dev_mode': True}},
     "Start the app in dev mode for running from source."
 )
 
