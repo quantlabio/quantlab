@@ -8,3 +8,5 @@
 /// <reference path="../../rendermime/typings/ansi_up/ansi_up.d.ts"/>
 /// <reference path="../../terminal/typings/xterm/xterm.d.ts"/>
 /// <reference path="../../vega2-extension/typings/vega-embed/vega-embed.d.ts"/>
+/// <reference path="../../jquery/typings/jquery/jquery.d.ts"/>
+/// <reference path="../../calendar/typings/fullcalendar/fullcalendar.d.ts"/>
