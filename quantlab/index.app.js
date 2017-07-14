@@ -43,7 +43,7 @@ function main() {
     }
     {{/each}}
 
-    lab = new app({
+    quantlab = new app({
         namespace: namespace,
         name: name,
         version: version,
@@ -57,7 +57,7 @@ function main() {
     {{#each quantlab_extensions}}
     try {
         if (disabled.indexOf('{{this}}') === -1) {
-            lab.registerPluginModule(require('{{this}}'));
+            quantlab.registerPluginModule(require('{{this}}'));
         }
     } catch (e) {
         console.error(e);
@@ -72,7 +72,7 @@ function main() {
     } catch (e) {
         // No-op
     }
-    lab.start({ "ignorePlugins": ignorePlugins });
+    quantlab.start({ "ignorePlugins": ignorePlugins });
 }
 
 window.onload = main;

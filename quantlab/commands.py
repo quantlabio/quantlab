@@ -1,5 +1,5 @@
 # coding: utf-8
-"""JupyterLab entry points"""
+"""QuantLab entry points"""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
@@ -341,7 +341,7 @@ def uninstall_extension(name, app_dir=None, logger=None):
             os.remove(path)
             return True
 
-    logger.warn('No labextension named "%s" installed' % name)
+    logger.warn('No quantlab extension named "%s" installed' % name)
     return False
 
 
@@ -373,7 +373,7 @@ def list_extensions(app_dir=None, logger=None):
         app.append(key)
 
     logger.info('QuantLab v%s' % __version__)
-    logger.info('Known labextensions:')
+    logger.info('Known quantlab extensions:')
     if app:
         logger.info('   app dir: %s' % app_dir)
         for item in sorted(app):
@@ -416,7 +416,7 @@ def list_extensions(app_dir=None, logger=None):
                 logger.warn(msg + '\n')
 
     if linked:
-        logger.info('* Denotes linked extensions. Use `jupyter labextension listlinked` to see details')
+        logger.info('* Denotes linked extensions. Use `jupyter quantlabextension listlinked` to see details')
 
     # Handle uninstalled and disabled core packages
     uninstalled_core = _get_uinstalled_core_extensions(app_dir)
@@ -596,7 +596,7 @@ def _format_compatibility_errors(name, version, errors):
 
 
 def _toggle_extension(extension, value, app_dir=None, logger=None):
-    """Enable or disable a lab extension.
+    """Enable or disable a quantlab extension.
     """
     app_dir = get_app_dir(app_dir)
     config = _get_page_config(app_dir)
@@ -685,8 +685,8 @@ def _ensure_package(app_dir, name=None, version=None, logger=None):
             logger.warn(msg + '\n')
             continue
         data['dependencies'][key] = value['path']
-        jlab_data = value['quantlab']
-        if jlab_data.get('extension', False):
+        jquantlab_data = value['quantlab']
+        if jquantlab_data.get('extension', False):
             data['quantlab']['extensions'].append(key)
         else:
             data['quantlab']['mimeExtensions'].append(key)

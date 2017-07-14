@@ -10,7 +10,7 @@ import threading
 from tornado import ioloop
 from notebook.notebookapp import NotebookApp, flags, aliases
 from traitlets import Bool, Unicode
-from quantlab_launcher import LabConfig, add_handlers
+from quantlab_launcher import QuantLabConfig, add_handlers
 
 from selenium import webdriver
 
@@ -47,7 +47,7 @@ class TestApp(NotebookApp):
 
     def start(self):
         self.io_loop = ioloop.IOLoop.current()
-        config = LabConfig()
+        config = QuantLabConfig()
         if self.core_mode:
             config.assets_dir = os.path.join(here, 'build')
         elif self.app_dir:

@@ -1,12 +1,12 @@
-from .labapp import LabApp
+from .quantlabapp import QuantLabApp
 
 try:
     from jupyterhub.singleuser import SingleUserNotebookApp
 except ImportError:
-    SingleUserLabApp = None
+    SingleUserQuantLabApp = None
     raise ImportError('You must have jupyterhub installed for this to work.')
 else:
-    class SingleUserLabApp(SingleUserNotebookApp, LabApp):
+    class SingleUserQuantLabApp(SingleUserNotebookApp, QuantLabApp):
         def init_webapp(self, *args, **kwargs):
             super().init_webapp(*args, **kwargs)
             settings = self.web_app.settings
@@ -18,7 +18,7 @@ else:
 
 
 def main(argv=None):
-    return SingleUserLabApp.launch_instance(argv)
+    return SingleUserQuantLabApp.launch_instance(argv)
 
 
 if __name__ == "__main__":

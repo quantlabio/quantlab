@@ -107,7 +107,7 @@ setup_args['cmdclass'] = cmdclass
 setuptools_args = {}
 install_requires = setuptools_args['install_requires'] = [
     'notebook>=4.3.1',
-    'quantlab_launcher>=0.1.0'
+    'quantlab_launcher>=0.1.1'
 ]
 
 extras_require = setuptools_args['extras_require'] = {
@@ -127,9 +127,9 @@ if 'setuptools' in sys.modules:
     # force entrypoints with setuptools (needed for Windows, unconditional because of wheels)
     setup_args['entry_points'] = {
         'console_scripts': [
-            'jupyter-quantlab = quantlab.labapp:main',
-            'jupyter-quantlabextension = quantlab.labextensions:main',
-            'jupyter-quantlabhub = quantlab.labhubapp:main'
+            'jupyter-quantlab = quantlab.quantlabapp:main',
+            'jupyter-quantlabextension = quantlab.quantlabextensions:main',
+            'jupyter-quantlabhub = quantlab.quantlabhubapp:main'
         ]
     }
     setup_args.pop('scripts', None)

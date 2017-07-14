@@ -15,12 +15,12 @@ from .commands import build, clean, get_app_dir
 
 
 build_aliases = dict(base_aliases)
-build_aliases['app-dir'] = 'LabBuildApp.app_dir'
-build_aliases['name'] = 'LabBuildApp.name'
-build_aliases['version'] = 'LabBuildApp.version'
+build_aliases['app-dir'] = 'QuantLabBuildApp.app_dir'
+build_aliases['name'] = 'QuantLabBuildApp.name'
+build_aliases['version'] = 'QuantLabBuildApp.version'
 
 
-class LabBuildApp(JupyterApp):
+class QuantLabBuildApp(JupyterApp):
     version = __version__
     description = """
     Build the QuantLab application
@@ -45,10 +45,10 @@ class LabBuildApp(JupyterApp):
 
 
 clean_aliases = dict(base_aliases)
-clean_aliases['app-dir'] = 'LabCleanApp.app_dir'
+clean_aliases['app-dir'] = 'QuantLabCleanApp.app_dir'
 
 
-class LabCleanApp(JupyterApp):
+class QuantLabCleanApp(JupyterApp):
     version = __version__
     description = """
     Clean the QuantLab application
@@ -65,7 +65,7 @@ class LabCleanApp(JupyterApp):
         clean(self.app_dir)
 
 
-class LabPathApp(JupyterApp):
+class QuantLabPathApp(JupyterApp):
     version = __version__
     description = """
     Print the configured path to the QuantLab application
@@ -77,21 +77,21 @@ class LabPathApp(JupyterApp):
         print(get_app_dir())
 
 
-lab_aliases = dict(aliases)
-lab_aliases['app-dir'] = 'LabApp.app_dir'
+quantlab_aliases = dict(aliases)
+quantlab_aliases['app-dir'] = 'QuantLabApp.app_dir'
 
-lab_flags = dict(flags)
-lab_flags['core-mode'] = (
-    {'LabApp': {'core_mode': True}},
+quantlab_flags = dict(flags)
+quantlab_flags['core-mode'] = (
+    {'QuantLabApp': {'core_mode': True}},
     "Start the app in core mode."
 )
-lab_flags['dev-mode'] = (
-    {'LabApp': {'core_mode': True}},
+quantlab_flags['dev-mode'] = (
+    {'QuantLabApp': {'core_mode': True}},
     "Start the app in dev mode for running from source."
 )
 
 
-class LabApp(NotebookApp):
+class QuantLabApp(NotebookApp):
     version = __version__
 
     description = """
@@ -123,13 +123,13 @@ class LabApp(NotebookApp):
         jupyter quantlab --certfile=mycert.pem # use SSL/TLS certificate
     """
 
-    aliases = lab_aliases
-    flags = lab_flags
+    aliases = quantlab_aliases
+    flags = quantlab_flags
 
     subcommands = dict(
-        build=(LabBuildApp, LabBuildApp.description.splitlines()[0]),
-        clean=(LabCleanApp, LabCleanApp.description.splitlines()[0]),
-        path=(LabPathApp, LabPathApp.description.splitlines()[0])
+        build=(QuantLabBuildApp, QuantLabBuildApp.description.splitlines()[0]),
+        clean=(QuantLabCleanApp, QuantLabCleanApp.description.splitlines()[0]),
+        path=(QuantLabPathApp, QuantLabPathApp.description.splitlines()[0])
     )
 
     default_url = Unicode('/quantlab', config=True,
@@ -157,7 +157,7 @@ class LabApp(NotebookApp):
 
         The extension API is experimental, and may change in future releases.
         """
-        super(LabApp, self).init_server_extensions()
+        super(QuantLabApp, self).init_server_extensions()
         msg = 'QuantLab server extension not enabled, manually loading...'
         if not self.nbserver_extensions.get('quantlab', False):
             self.log.warn(msg)
@@ -168,4 +168,4 @@ class LabApp(NotebookApp):
 # Main entry point
 #-----------------------------------------------------------------------------
 
-main = launch_new_instance = LabApp.launch_instance
+main = launch_new_instance = QuantLabApp.launch_instance

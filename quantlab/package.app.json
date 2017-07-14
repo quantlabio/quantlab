@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/application-top",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "build": "webpack",
     "publish": "node make-release.js"
@@ -11,7 +11,7 @@
     "@quantlab/apputils": "^0.1.0",
     "@quantlab/apputils-extension": "^0.1.0",
     "@quantlab/calendar": "^0.1.0",
-    "@quantlab/calendar-extension": "^0.1.0",        
+    "@quantlab/calendar-extension": "^0.1.0",
     "@quantlab/cells": "^0.1.0",
     "@quantlab/chatbox": "^0.1.0",
     "@quantlab/chatbox-extension": "^0.1.0",
@@ -117,6 +117,7 @@
     "extensions": [
       "@quantlab/application-extension",
       "@quantlab/apputils-extension",
+      "@quantlab/calendar-extension",
       "@quantlab/chatbox-extension",
       "@quantlab/codemirror-extension",
       "@quantlab/completer-extension",
@@ -162,6 +163,6 @@
       "@phosphor/widgets"
     ],
     "name": "QuantLab",
-    "version": "0.1.0"
+    "version": "0.1.1"
   }
 }

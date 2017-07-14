@@ -1,11 +1,11 @@
 # coding: utf-8
-"""A tornado based Quant lab server."""
+"""A tornado based Quant Lab server."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 import os
 
-from quantlab_launcher import add_handlers, LabConfig
+from quantlab_launcher import add_handlers, QuantLabConfig
 
 from .commands import get_app_dir, list_extensions, should_build
 from ._version import __version__
@@ -42,7 +42,7 @@ def load_jupyter_server_extension(nbapp):
         app_dir = get_app_dir(nbapp.app_dir)
 
     web_app = nbapp.web_app
-    config = LabConfig()
+    config = QuantLabConfig()
 
     config.assets_dir = os.path.join(app_dir, 'static')
     config.settings_dir = os.path.join(app_dir, 'settings')

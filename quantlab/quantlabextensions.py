@@ -46,8 +46,8 @@ class BaseExtensionApp(JupyterApp):
         return "%(message)s"
 
 
-class InstallLabExtensionApp(BaseExtensionApp):
-    description = "Install labextension(s)"
+class InstallQuantLabExtensionApp(BaseExtensionApp):
+    description = "Install quantlab extension(s)"
     should_build = Bool(True, config=True,
         help="Whether to build the app after the action")
 
@@ -59,9 +59,9 @@ class InstallLabExtensionApp(BaseExtensionApp):
             build(self.app_dir, logger=self.log)
 
 
-class LinkLabExtensionApp(BaseExtensionApp):
+class LinkQuantLabExtensionApp(BaseExtensionApp):
     description = """
-    Link labextension(s) or packages.
+    Link quantlab extension(s) or packages.
 
     Links a package to the QuantLab build process.  If the package is
     an extension, it will also be installed as an extension.  A linked
@@ -79,8 +79,8 @@ class LinkLabExtensionApp(BaseExtensionApp):
             build(self.app_dir, logger=self.log)
 
 
-class UnlinkLabExtensionApp(BaseExtensionApp):
-    description = "Unlink labextension(s) or packages by name or path"
+class UnlinkQuantLabExtensionApp(BaseExtensionApp):
+    description = "Unlink quantlab extension(s) or packages by name or path"
     should_build = Bool(True, config=True,
         help="Whether to build the app after the action")
 
@@ -92,8 +92,8 @@ class UnlinkLabExtensionApp(BaseExtensionApp):
             build(self.app_dir, logger=self.log)
 
 
-class UninstallLabExtensionApp(BaseExtensionApp):
-    description = "Uninstall labextension(s) by name"
+class UninstallQuantLabExtensionApp(BaseExtensionApp):
+    description = "Uninstall quantlab extension(s) by name"
     should_build = Bool(True, config=True,
         help="Whether to build the app after the action")
 
@@ -105,14 +105,14 @@ class UninstallLabExtensionApp(BaseExtensionApp):
             build(self.app_dir, logger=self.log)
 
 
-class ListLabExtensionsApp(BaseExtensionApp):
-    description = "List the installed labextensions"
+class ListQuantLabExtensionsApp(BaseExtensionApp):
+    description = "List the installed quantlab extensions"
 
     def start(self):
         list_extensions(self.app_dir, logger=self.log)
 
 
-class ListLinkedLabExtensionsApp(BaseExtensionApp):
+class ListLinkedQuantLabExtensionsApp(BaseExtensionApp):
     description = "List the linked packages"
 
     def start(self):
@@ -121,16 +121,16 @@ class ListLinkedLabExtensionsApp(BaseExtensionApp):
             print(path)
 
 
-class EnableLabExtensionsApp(BaseExtensionApp):
-    description = "Enable labextension(s) by name"
+class EnableQuantLabExtensionsApp(BaseExtensionApp):
+    description = "Enable quantlab extension(s) by name"
 
     def start(self):
         [enable_extension(arg, self.app_dir, logger=self.log)
          for arg in self.extra_args]
 
 
-class DisableLabExtensionsApp(BaseExtensionApp):
-    description = "Disable labextension(s) by name"
+class DisableQuantLabExtensionsApp(BaseExtensionApp):
+    description = "Disable quantlab extension(s) by name"
 
     def start(self):
         [disable_extension(arg, self.app_dir, logger=self.log)
@@ -144,7 +144,7 @@ jupyter quantlabextension uninstall <extension name>  # uninstall a labextension
 """
 
 
-class LabExtensionApp(JupyterApp):
+class QuantLabExtensionApp(JupyterApp):
     """Base jupyter quantlabextension command entry point"""
     name = "jupyter quantlabextension"
     version = __version__
@@ -152,19 +152,19 @@ class LabExtensionApp(JupyterApp):
     examples = _examples
 
     subcommands = dict(
-        install=(InstallLabExtensionApp, "Install quantlab extension(s)"),
-        uninstall=(UninstallLabExtensionApp, "Uninstall quantlab extension(s)"),
-        list=(ListLabExtensionsApp, "List quantlab extensions"),
-        link=(LinkLabExtensionApp, "Link quantlab extension(s)"),
-        unlink=(UnlinkLabExtensionApp, "Unlink quantlab extension(s)"),
-        listlinked=(ListLinkedLabExtensionsApp, "List linked extensions"),
-        enable=(EnableLabExtensionsApp, "Enable quantlab extension(s)"),
-        disable=(DisableLabExtensionsApp, "Disable quantlab extensions(s)")
+        install=(InstallQuantLabExtensionApp, "Install quantlab extension(s)"),
+        uninstall=(UninstallQuantLabExtensionApp, "Uninstall quantlab extension(s)"),
+        list=(ListQuantLabExtensionsApp, "List quantlab extensions"),
+        link=(LinkQuantLabExtensionApp, "Link quantlab extension(s)"),
+        unlink=(UnlinkQuantLabExtensionApp, "Unlink quantlab extension(s)"),
+        listlinked=(ListLinkedQuantLabExtensionsApp, "List linked quantlab extensions"),
+        enable=(EnableQuantLabExtensionsApp, "Enable quantlab extension(s)"),
+        disable=(DisableQuantLabExtensionsApp, "Disable quantlab extensions(s)")
     )
 
     def start(self):
         """Perform the App's functions as configured"""
-        super(LabExtensionApp, self).start()
+        super(QuantLabExtensionApp, self).start()
 
         # The above should have called a subcommand and raised NoStart; if we
         # get here, it didn't, so we should self.log.info a message.
@@ -172,4 +172,4 @@ class LabExtensionApp(JupyterApp):
         sys.exit("Please supply at least one subcommand: %s" % subcmds)
 
 
-main = LabExtensionApp.launch_instance
+main = QuantLabExtensionApp.launch_instance
