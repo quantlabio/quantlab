@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/completer-extension",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "QuantLab - Completer Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,10 +13,10 @@
   },
   "dependencies": {
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/application": "^0.1.1",
-    "@quantlab/completer": "^0.1.1",
-    "@quantlab/console": "^0.1.1",
-    "@quantlab/notebook": "^0.1.1"
+    "@quantlab/application": "^0.1.2",
+    "@quantlab/completer": "^0.1.2",
+    "@quantlab/console": "^0.1.2",
+    "@quantlab/notebook": "^0.1.2"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

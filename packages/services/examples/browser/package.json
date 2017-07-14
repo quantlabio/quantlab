@@ -2,7 +2,7 @@
   "private": true,
   "name": "browser-example",
   "dependencies": {
-    "@quantlab/services": "^0.1.1",
+    "@quantlab/services": "^0.1.2",
     "es6-promise": "^4.1.0"
   },
   "scripts": {
@@ -13,5 +13,5 @@
     "rimraf": "^2.5.2",
     "webpack": "^2.2.1"
   },
-  "version": "0.1.1"
+  "version": "0.1.2"
 }

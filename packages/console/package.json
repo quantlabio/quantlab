@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/console",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "QuantLab - Code Console",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -19,13 +19,13 @@
     "@phosphor/messaging": "^1.2.1",
     "@phosphor/signaling": "^1.2.1",
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/apputils": "^0.1.1",
-    "@quantlab/cells": "^0.1.1",
-    "@quantlab/codeeditor": "^0.1.1",
+    "@quantlab/apputils": "^0.1.2",
+    "@quantlab/cells": "^0.1.2",
+    "@quantlab/codeeditor": "^0.1.2",
     "@quantlab/coreutils": "^0.1.1",
-    "@quantlab/outputarea": "^0.1.1",
-    "@quantlab/rendermime": "^0.1.1",
-    "@quantlab/services": "^0.1.1"
+    "@quantlab/outputarea": "^0.1.2",
+    "@quantlab/rendermime": "^0.1.2",
+    "@quantlab/services": "^0.1.2"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

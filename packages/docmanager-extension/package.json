@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/docmanager-extension",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "QuantLab - Document Manager Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,11 +12,11 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.1.1",
-    "@quantlab/apputils": "^0.1.1",
-    "@quantlab/docmanager": "^0.1.1",
-    "@quantlab/docregistry": "^0.1.1",
-    "@quantlab/services": "^0.1.1"
+    "@quantlab/application": "^0.1.2",
+    "@quantlab/apputils": "^0.1.2",
+    "@quantlab/docmanager": "^0.1.2",
+    "@quantlab/docregistry": "^0.1.2",
+    "@quantlab/services": "^0.1.2"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

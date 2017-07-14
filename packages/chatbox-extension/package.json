@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/chatbox-extension",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "QuantLab - Chatbox Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,12 +12,12 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.1.1",
-    "@quantlab/apputils": "^0.1.1",
-    "@quantlab/chatbox": "^0.1.1",
-    "@quantlab/codeeditor": "^0.1.1",
-    "@quantlab/docmanager": "^0.1.1",
-    "@quantlab/rendermime": "^0.1.1"
+    "@quantlab/application": "^0.1.2",
+    "@quantlab/apputils": "^0.1.2",
+    "@quantlab/chatbox": "^0.1.2",
+    "@quantlab/codeeditor": "^0.1.2",
+    "@quantlab/docmanager": "^0.1.2",
+    "@quantlab/rendermime": "^0.1.2"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
