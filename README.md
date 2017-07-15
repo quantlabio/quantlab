@@ -49,6 +49,8 @@ A tool like [postcss](http://postcss.org/) can be used to convert the CSS files 
 
 If you use ``conda``, you can install as:
 
+> conda install is not ready yet, please use pip install for now
+
 ```bash
 conda install -c conda-forge quantlab
 ```
