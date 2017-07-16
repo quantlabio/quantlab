@@ -19,7 +19,7 @@ import {
 } from 'ws';
 
 import {
-  Contents, TerminalSession, Session, ServerConnection
+  Contents, TerminalSession, Session, ServerConnection, CalendarSession
 } from '../../lib';
 
 import {
@@ -164,6 +164,7 @@ class RequestHandler {
   runningKernels: Kernel.IModel[] = [];
   runningSessions: Session.IModel[] = [];
   runningTerminals: TerminalSession.IModel[] = [];
+  runningCalendars: CalendarSession.IModel[] = [];
 
   /**
    * Create a new RequestHandler.
@@ -223,6 +224,8 @@ class RequestHandler {
       this._handleKernelRequest(request);
     } else if (url.indexOf('api/terminals') !== -1) {
       this._handleTerminalRequst(request);
+    } else if (url.indexOf('api/calendars') !== -1) {
+      this._handleCalendarRequst(request);
     }
   }
 
@@ -315,6 +318,25 @@ class RequestHandler {
       break;
     case 'GET':
       request.respond(200, this.runningTerminals);
+      break;
+    case 'DELETE':
+      request.respond(204, {});
+      break;
+    default:
+      break;
+    }
+  };
+
+  /**
+   * Handle calendar requests.
+   */
+  private _handleCalendarRequst(request: MockXMLHttpRequest): void {
+    switch (request.method) {
+    case 'POST':
+      request.respond(200, { name: uuid() });
+      break;
+    case 'GET':
+      request.respond(200, this.runningCalendars);
       break;
     case 'DELETE':
       request.respond(204, {});
@@ -491,6 +513,36 @@ class TerminalTester extends RequestSocketTester {
   private _onMessage: (msg: TerminalSession.IMessage) => void = null;
 }
 
+/**
+ * Calendar session test rig.
+ */
+export
+class CalendarTester extends RequestSocketTester {
+
+  /**
+   * Register the message callback with the websocket server.
+   */
+  onMessage(cb: (msg: CalendarSession.IMessage) => void) {
+    this._onMessage = cb;
+  }
+
+  protected onSocket(sock: WebSocket): void {
+    super.onSocket(sock);
+    sock.on('message', (msg: any) => {
+      let onMessage = this._onMessage;
+      if (onMessage) {
+        let data = JSON.parse(msg) as JSONPrimitive[];
+        let termMsg: CalendarSession.IMessage = {
+          type: data[0] as CalendarSession.MessageType,
+          content: data.slice(1)
+        };
+        onMessage(termMsg);
+      }
+    });
+  }
+
+  private _onMessage: (msg: CalendarSession.IMessage) => void = null;
+}
 
 /**
  * Expect a failure on a promise with the given message, then call `done`.

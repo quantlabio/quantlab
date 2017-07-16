@@ -45,7 +45,6 @@
     "@quantlab/imageviewer-extension": "^0.1.2",
     "@quantlab/inspector": "^0.1.2",
     "@quantlab/inspector-extension": "^0.1.2",
-    "@quantlab/jquery": "^0.1.0",
     "@quantlab/launcher": "^0.1.2",
     "@quantlab/launcher-extension": "^0.1.2",
     "@quantlab/markdownviewer-extension": "^0.1.2",

@@ -26,6 +26,10 @@ import {
 } from './terminal';
 
 import {
+  CalendarSession, CalendarManager
+} from './calendar';
+
+import {
   ServerConnection
 } from './serverconnection';
 
@@ -45,6 +49,7 @@ class ServiceManager implements ServiceManager.IManager {
     this._sessionManager = new SessionManager(options);
     this._contentsManager = new ContentsManager(options);
     this._terminalManager = new TerminalManager(options);
+    this._calendarManager = new CalendarManager(options);
     this._sessionManager.specsChanged.connect((sender, specs) => {
       this._specsChanged.emit(specs);
     });
@@ -81,6 +86,7 @@ class ServiceManager implements ServiceManager.IManager {
     this._sessionManager.dispose();
     this._contentsManager.dispose();
     this._sessionManager.dispose();
+    this._calendarManager.dispose();
   }
 
   /**
@@ -117,6 +123,13 @@ class ServiceManager implements ServiceManager.IManager {
   }
 
   /**
+   * Get the calendar manager instance.
+   */
+  get calendars(): CalendarManager {
+    return this._calendarManager;
+  }
+
+  /**
    * Test whether the manager is ready.
    */
   get isReady(): boolean {
@@ -133,6 +146,7 @@ class ServiceManager implements ServiceManager.IManager {
   private _sessionManager: SessionManager = null;
   private _contentsManager: ContentsManager = null;
   private _terminalManager: TerminalManager = null;
+  private _calendarManager: CalendarManager = null;
   private _isDisposed = false;
   private _readyPromise: Promise<void>;
   private _specsChanged = new Signal<this, Kernel.ISpecModels>(this);
@@ -178,6 +192,11 @@ namespace ServiceManager {
      * The terminals manager for the manager.
      */
     readonly terminals: TerminalSession.IManager;
+
+    /**
+     * The calendars manager for the manager.
+     */
+    readonly calendars: CalendarSession.IManager;
 
     /**
      * Test whether the manager is ready.

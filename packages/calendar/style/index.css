@@ -2,3 +2,99 @@
 | Copyright (c) QuantLab Development Team.
 | Distributed under the terms of the Modified BSD License.
 |----------------------------------------------------------------------------*/
+
+@import url('~fullcalendar/dist/fullcalendar.css');
+
+
+:root {
+  --jp-private-calendar-lightCursor-color: var(--md-grey-700);
+}
+
+
+.jp-Calendar {
+  min-width: 200px;
+  min-height: 200px;
+  padding: 8px;
+  margin: 0;
+}
+
+
+.jp-Calendar-body {
+  font-family: var(--jp-code-font-family);
+  outline: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+
+.calendar {
+  font-family: var(--jp-code-font-family);
+}
+
+
+.calendar .xterm-viewport {
+  overflow-y: auto;
+}
+
+
+.jp-Calendar-dark {
+  background: black;
+  color: white;
+}
+
+
+/**
+ * xterm.js ships with the dark theme. Here we add the somewhat subtle styles to get a light theme.
+ * This approach is taken directly from the xterm.js css and modified for our light theme.
+ */
+
+.jp-Calendar-light {
+  background: white;
+  color: black;
+}
+
+
+.jp-Calendar-light .calendar {
+  background: white;
+  color: black;
+}
+
+
+.jp-Calendar-light .calendar.focus:not(.xterm-cursor-style-underline):not(.xterm-cursor-style-bar) .calendar-cursor {
+    background-color: var(--jp-private-calendar-lightCursor-color);
+    color: white;
+}
+
+
+.jp-Calendar-light .calendar:not(.focus) .calendar-cursor {
+    outline: 1px solid var(--jp-private-calendar-lightCursor-color);
+}
+
+
+.jp-Calendar-light .calendar:not(.xterm-cursor-style-underline):not(.xterm-cursor-style-bar).focus.xterm-cursor-blink-on .calendar-cursor {
+    background-color: transparent;
+    color: inherit;
+}
+
+
+.jp-Calendar-light .calendar.xterm-cursor-style-bar .calendar-cursor::before,
+.jp-Calendar-light .calendar.xterm-cursor-style-underline .calendar-cursor::before {
+    background-color: var(--jp-private-calendar-lightCursor-color);
+}
+
+
+.jp-Calendar-light .calendar.xterm-cursor-style-bar.focus.xterm-cursor-blink .calendar-cursor::before,
+.jp-Calendar-light .calendar.xterm-cursor-style-underline.focus.xterm-cursor-blink .calendar-cursor::before {
+    background-color: var(--jp-private-calendar-lightCursor-color);
+}
+
+
+.jp-Calendar-light .calendar .composition-view {
+    background: white;
+    color: black;
+}
+
+
+.jp-Calendar-light .calendar .xterm-viewport {
+    background-color: white;
+}
