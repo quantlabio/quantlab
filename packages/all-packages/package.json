@@ -57,6 +57,8 @@
     "@quantlab/services": "^0.1.2",
     "@quantlab/services-extension": "^0.1.2",
     "@quantlab/settingeditor-extension": "^0.1.2",
+    "@quantlab/sheet": "^0.1.0",
+    "@quantlab/sheet-extension": "^0.1.0",
     "@quantlab/shortcuts-extension": "^0.1.2",
     "@quantlab/tabmanager-extension": "^0.1.2",
     "@quantlab/terminal": "^0.1.2",

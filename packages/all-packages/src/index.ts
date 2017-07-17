@@ -45,6 +45,8 @@ import "@quantlab/running-extension";
 import "@quantlab/services";
 import "@quantlab/services-extension";
 import "@quantlab/settingeditor-extension";
+import "@quantlab/sheet";
+import "@quantlab/sheet-extension";
 import "@quantlab/shortcuts-extension";
 import "@quantlab/tabmanager-extension";
 import "@quantlab/terminal";

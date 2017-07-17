@@ -1,6 +1,4 @@
 // Copyright (c) QuantLab Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import '../style/index.css';
-
-export * from './widget';
+/// <reference path="../typings/handsontable/handsontable.d.ts"/>

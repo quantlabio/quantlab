@@ -16,8 +16,6 @@ export * from './manager';
 export * from './serverconnection';
 export * from './session';
 export * from './terminal';
-export * from './calendar';
-
 
 /* tslint:disable */
 /**
