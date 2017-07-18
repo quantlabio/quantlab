@@ -85,7 +85,7 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
 
       shell.addToMainArea(widget);
       shell.activateById(widget.id);
-      
+
       let calendar:JQuery = $('#' + id);
       calendar.fullCalendar({
         eventLimit: true,
@@ -101,6 +101,8 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
         },
         defaultView: 'agendaWeek'
       });
+
+      return widget;
 
     }
   });

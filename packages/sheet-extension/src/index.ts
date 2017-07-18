@@ -111,6 +111,8 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
 
       hot.render();
 
+      return widget;
+
     }
   });
 
