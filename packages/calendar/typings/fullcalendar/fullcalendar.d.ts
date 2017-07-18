@@ -34,7 +34,7 @@ export interface Header {
     right: string;
 }
 
-export interface Options extends AgendaOptions, EventDraggingResizingOptions, DroppingExternalElementsOptions, SelectionOptions {
+export interface Options extends AgendaOptions, EventDraggingResizingOptions, DroppingExternalElementsOptions, SelectionOptions, EventOptions {
     // General display - http://fullcalendar.io/docs/display/
 
     header?: boolean | Header;
@@ -143,6 +143,17 @@ export interface Options extends AgendaOptions, EventDraggingResizingOptions, Dr
     resourceLabelText?: any;
     resourceColumns?: any;
     displayEventTime?: any;
+
+    // misc options
+    googleCalendarApiKey?: string;
+}
+
+/**
+ * Event Options - http://fullcalendar.io/docs/event/
+ */
+export interface EventOptions {
+    googleCalendarId?: string;
+    className?: string;
 }
 
 /**

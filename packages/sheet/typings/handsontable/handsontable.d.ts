@@ -298,6 +298,9 @@ declare namespace Handsontable {
         persistentStateReset?(key: string): void;
         persistentStateSave?(key: string, value: any): void;
         unmodifyCol?(col: number): void;
+
+        // misc
+        formulas?: boolean;
     }
 
     class Core extends __Handsontable.Core {

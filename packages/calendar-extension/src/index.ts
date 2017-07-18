@@ -30,6 +30,8 @@ import * as $
 
 import 'fullcalendar';
 
+import 'fullcalendar/dist/gcal.js';
+
 /**
  * The command IDs used by the calendar plugin.
  */
@@ -80,12 +82,18 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
       widget.title.label = 'Calendar';
       widget.title.icon = 'CALENDAR_ICON_CLASS';
       widget.title.closable = true;
+
       shell.addToMainArea(widget);
-
-
       shell.activateById(widget.id);
+      
       let calendar:JQuery = $('#' + id);
       calendar.fullCalendar({
+        eventLimit: true,
+        googleCalendarApiKey: 'AIzaSyDjh1p472rNVktbzltiO6NM7DRRNccx-t4',
+        events: {
+          googleCalendarId: '41g8dii7l1mk3fqsr74ifl8o8s@group.calendar.google.com',
+          className: 'gcal-event'
+        },
         header:{
               left: 'today prev,next',
               center: 'title',
@@ -93,8 +101,6 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
         },
         defaultView: 'agendaWeek'
       });
-      return widget;
-
 
     }
   });

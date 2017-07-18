@@ -6,6 +6,11 @@ import {
 } from '@phosphor/widgets';
 
 /**
+ * The class name added to a sheet widget.
+ */
+const SHEET_CLASS = 'jp-Sheet';
+
+/**
  * A widget which manages a sheet session.
  */
 export
@@ -17,6 +22,8 @@ class Sheet extends Widget {
    */
   constructor(options: Sheet.IOptions = {}) {
     super();
+    this.addClass(SHEET_CLASS);
+
   }
 
   /**
@@ -25,6 +32,7 @@ class Sheet extends Widget {
   dispose(): void {
     super.dispose();
   }
+
 }
 
 /**

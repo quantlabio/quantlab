@@ -25,7 +25,11 @@ import {
   Sheet
 } from '@quantlab/sheet';
 
-import * as Handsontable from 'handsontable';
+import * as Handsontable
+  from 'handsontable';
+
+//import 'hot-formula-parser/dist/formula-parser.js';
+//import 'hot-formula-parser/dist/formula.js';
 
 /**
  * The command IDs used by the sheet plugin.
@@ -60,19 +64,15 @@ const plugin: QuantLabPlugin<void> = {
  */
 export default plugin;
 
-/**
- * get data for sheet opton.data.
- */
-function getData(): any[] {
-  return [
-    ['','Kia','Nissan','Toyota','Honda','Mazda','Ford'],
-    [2012,10,11,12,13,15,16],
-    [2013,10,11,12,13,15,16],
-    [2014,10,11,12,13,15,16],
-    [2015,10,11,12,13,15,16],
-    [2016,10,11,12,13,15,16]
-  ];
-}
+export
+let sheetData = [
+  ['=$B$2', "Maserati", "Mazda", "Mercedes", "Mini", "=A$1"],
+  [2009, 0, 2941, 4303, 354, 5814],
+  [2010, 5, 2905, 2867, '=SUM(A4,2,3)', '=$B1'],
+  [2011, 4, 2517, 4822, 552, 6127],
+  [2012, '=SUM(A2:A5)', '=SUM(B5,E3)', '=A2/B2', 12, 4151],
+];
+
 /**
  * Activate the sheet plugin.
  */
@@ -96,7 +96,7 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
       let container = document.getElementById(id);
 
       let hot = new Handsontable(container, {
-        data: getData(),
+        data: sheetData,
         rowHeaders: true,
         colHeaders: true,
         manualColumnResize: true,
@@ -104,13 +104,12 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
         minRows: 128,
         minCols: 32,
         colWidths: 100,
-        contextMenu: false,
+        contextMenu: true,
+        formulas: true,
         outsideClickDeselects: false
       });
 
       hot.render();
-
-      return widget;
 
     }
   });

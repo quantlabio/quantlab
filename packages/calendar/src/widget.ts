@@ -6,6 +6,11 @@ import {
 } from '@phosphor/widgets';
 
 /**
+ * The class name added to a calendar widget.
+ */
+const CALENDAR_CLASS = 'jp-Calendar';
+
+/**
  * A widget which manages a calendar session.
  */
 export
@@ -17,6 +22,8 @@ class Calendar extends Widget {
    */
   constructor(options: Calendar.IOptions = {}) {
     super();
+    this.addClass(CALENDAR_CLASS);
+
   }
 
   /**
@@ -25,6 +32,7 @@ class Calendar extends Widget {
   dispose(): void {
     super.dispose();
   }
+
 }
 
 /**

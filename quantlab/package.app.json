@@ -94,6 +94,7 @@
     "es6-promise": "^4.1.0",
     "font-awesome": "^4.6.3",
     "fullcalendar": "^2.7.3",
+    "hot-formula-parser": "^2.1.0",
     "handsontable": "^0.31.2",
     "marked": "^0.3.6",
     "minimist": "^1.2.0",
