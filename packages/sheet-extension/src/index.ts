@@ -25,10 +25,11 @@ import {
   Sheet
 } from '@quantlab/sheet';
 
+//import 'hot-formula-parser/dist/formula-parser.js';
+
 import * as Handsontable
   from 'handsontable';
 
-//import 'hot-formula-parser/dist/formula-parser.js';
 //import 'hot-formula-parser/dist/formula.js';
 
 /**
@@ -131,8 +132,8 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
   if (launcher) {
     launcher.add({
       displayName: 'Sheet',
-      category: 'Other',
-      rank: 1,
+      category: 'Quantitative Finance',
+      rank: 2,
       iconClass: SHEET_ICON_CLASS,
       callback: () => {
         return commands.execute(CommandIDs.create);

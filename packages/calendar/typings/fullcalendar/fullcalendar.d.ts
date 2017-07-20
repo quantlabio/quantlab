@@ -34,7 +34,7 @@ export interface Header {
     right: string;
 }
 
-export interface Options extends AgendaOptions, EventDraggingResizingOptions, DroppingExternalElementsOptions, SelectionOptions, EventOptions {
+export interface Options extends AgendaOptions, EventDraggingResizingOptions, DroppingExternalElementsOptions, SelectionOptions {
     // General display - http://fullcalendar.io/docs/display/
 
     header?: boolean | Header;
@@ -137,7 +137,7 @@ export interface Options extends AgendaOptions, EventDraggingResizingOptions, Dr
     eventDestroy?(event: EventObject, element: JQuery, view: ViewObject): void;
 
     // scheduler options
-    resourceAreaWidth?: number;
+    resourceAreaWidth?: string;
     schedulerLicenseKey?: string;
     customButtons?: any;
     resourceLabelText?: any;
@@ -146,14 +146,8 @@ export interface Options extends AgendaOptions, EventDraggingResizingOptions, Dr
 
     // misc options
     googleCalendarApiKey?: string;
-}
-
-/**
- * Event Options - http://fullcalendar.io/docs/event/
- */
-export interface EventOptions {
-    googleCalendarId?: string;
-    className?: string;
+    resources?: any[];
+    scrollTime?: moment.Duration;
 }
 
 /**
@@ -288,6 +282,7 @@ export interface ViewSpecificOptions {
     basicDay?: Options;
     agendaWeek?: Options;
     agendaDay?: Options;
+    timelineDay?: Options;
 }
 declare global {
     interface JQuery {
@@ -445,6 +440,7 @@ declare global {
          * Generic method function
          */
         fullCalendar(method: string, arg1: any, arg2: any, arg3: any): void;
+        fullCalendar(method: string, arg1: any, arg2: any): void;
     }
 
     interface JQueryStatic {
