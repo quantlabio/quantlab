@@ -38,6 +38,9 @@ import 'fullcalendar/dist/gcal.js';
 namespace CommandIDs {
   export
   const open = 'calendar:open';
+
+  export
+  const save = 'calendar:save';
 };
 
 /**
@@ -100,8 +103,16 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   const { commands, shell } = app;
   const category = 'Calendar';
 
+  commands.addCommand(CommandIDs.save, {
+    label: 'Save',
+    execute: () => {
+      //let context = docManager.contextForWidget(app.shell.currentWidget);
+      //return context.save();
+    }
+  });
+
   commands.addCommand(CommandIDs.open, {
-    label: 'Open Calendar',
+    label: 'Open',
     execute: args => {
       let id = `jp-Calendar-${Private.id++}`;
 
@@ -140,7 +151,8 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   let menu = new Menu({ commands });
   menu.title.label = category;
   [
-    CommandIDs.open
+    CommandIDs.open,
+    CommandIDs.save
   ].forEach(command => {
     palette.addItem({ command, category });
     menu.addItem({ command });

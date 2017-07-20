@@ -123,7 +123,6 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
    */
   private _updateCalendar(): void {
     let content = this._context.model.toString();
-    console.log(content);
     this._calendar = $('#' + this.id);
     this._calendar.fullCalendar({
       schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',

@@ -6,11 +6,11 @@ import {
 } from '@quantlab/services';
 
 import {
-  QuantLab, QuantLabPlugin
+  ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
 import {
-  ICommandPalette, IMainMenu
+  InstanceTracker, ICommandPalette, IMainMenu
 } from '@quantlab/apputils';
 
 import {
@@ -22,7 +22,7 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  Sheet
+  Sheet, SheetFactory
 } from '@quantlab/sheet';
 
 //import 'hot-formula-parser/dist/formula-parser.js';
@@ -37,8 +37,16 @@ import * as Handsontable
  */
 namespace CommandIDs {
   export
-  const create = 'sheet:create';
+  const open = 'sheet:open';
+
+  export
+  const save = 'sheet:save';
 };
+
+/**
+ * The name of the factory that creates Sheet widgets.
+ */
+const FACTORY = 'Sheet';
 
 /**
  * The class name for the sheet icon in the default theme.
@@ -53,7 +61,7 @@ const plugin: QuantLabPlugin<void> = {
   activate,
   id: 'jupyter.extensions.sheet',
   requires: [
-    IServiceManager, IMainMenu, ICommandPalette
+    ILayoutRestorer, IServiceManager, IMainMenu, ICommandPalette
   ],
   optional: [ILauncher],
   autoStart: true
@@ -65,27 +73,50 @@ const plugin: QuantLabPlugin<void> = {
  */
 export default plugin;
 
-export
-let sheetData = [
-  ['=$B$2', "Maserati", "Mazda", "Mercedes", "Mini", "=A$1"],
-  [2009, 0, 2941, 4303, 354, 5814],
-  [2010, 5, 2905, 2867, '=SUM(A4,2,3)', '=$B1'],
-  [2011, 4, 2517, 4822, 552, 6127],
-  [2012, '=SUM(A2:A5)', '=SUM(B5,E3)', '=A2/B2', 12, 4151],
-];
-
 /**
  * Activate the sheet plugin.
  */
-function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
+function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
+  const factory = new SheetFactory({
+    name: FACTORY,
+    fileExtensions: ['.ss'],
+    defaultFor: ['.ss'],
+    readOnly: true
+  });
+  const tracker = new InstanceTracker<Sheet>({ namespace: 'sheet' });
+
+  // Handle state restoration.
+  restorer.restore(tracker, {
+    command: 'docmanager:open',
+    args: widget => ({ path: widget.context.path, factory: FACTORY }),
+    name: widget => widget.context.path
+  });
+
+  app.docRegistry.addWidgetFactory(factory);
+  factory.widgetCreated.connect((sender, widget) => {
+    // Track the widget.
+    tracker.add(widget);
+    // Notify the instance tracker if restore data needs to update.
+    widget.context.pathChanged.connect(() => { tracker.save(widget); });
+  });
+
   const { commands, shell } = app;
   const category = 'Sheet';
 
-  commands.addCommand(CommandIDs.create, {
-    label: 'New Sheet',
+  commands.addCommand(CommandIDs.save, {
+    label: 'Save',
+    execute: () => {
+      //let context = docManager.contextForWidget(app.shell.currentWidget);
+      //return context.save();
+    }
+  });
+
+  commands.addCommand(CommandIDs.open, {
+    label: 'Open',
     execute: args => {
       let id = `jp-Sheet-${Private.id++}`;
-      let widget = new Sheet();
+
+      let widget = new Sheet({context:null});
       widget.id = id;
       widget.title.label = 'Sheet';
       widget.title.icon = 'SHEET_ICON_CLASS';
@@ -97,7 +128,7 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
       let container = document.getElementById(id);
 
       let hot = new Handsontable(container, {
-        data: sheetData,
+        data: [[]],
         rowHeaders: true,
         colHeaders: true,
         manualColumnResize: true,
@@ -121,7 +152,8 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
   let menu = new Menu({ commands });
   menu.title.label = category;
   [
-    CommandIDs.create
+    CommandIDs.open,
+    CommandIDs.save
   ].forEach(command => {
     palette.addItem({ command, category });
     menu.addItem({ command });
@@ -136,7 +168,7 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
       rank: 2,
       iconClass: SHEET_ICON_CLASS,
       callback: () => {
-        return commands.execute(CommandIDs.create);
+        return commands.execute(CommandIDs.open);
       }
     });
   }
