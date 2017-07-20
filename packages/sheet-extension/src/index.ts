@@ -106,7 +106,7 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
         minCols: 32,
         colWidths: 100,
         contextMenu: true,
-        formulas: true,
+        //formulas: true,
         outsideClickDeselects: false
       });
 

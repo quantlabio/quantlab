@@ -93,7 +93,7 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
         schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
   			editable: true,
         //droppable: true,
-  			aspectRatio: 1.9,
+  			aspectRatio: 2.0,
   			//scrollTime: '00:00',
         /*
         eventLimit: true,
@@ -172,7 +172,16 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
         ]
 
       });
-
+      /*
+      calendar.on('resize', function(){
+        let ar = $('#' + id + '.fc-view').width() / $('#' + id + '.fc-view').height();
+        calendar.fullCalendar(
+          'option',
+          'aspectRatio',
+          ar
+        );
+      });
+      */
       return widget;
 
     }
