@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/shortcuts-extension",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "QuantLab - Shortcuts Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,7 +12,7 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.1.2"
+    "@quantlab/application": "^0.1.3"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

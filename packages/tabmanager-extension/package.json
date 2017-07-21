@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/tabmanager-extension",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "QuantLab - Tab Manager Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@phosphor/algorithm": "^1.1.1",
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/application": "^0.1.2"
+    "@quantlab/application": "^0.1.3"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

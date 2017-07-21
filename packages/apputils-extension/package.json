@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/apputils-extension",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "QuantLab - Application Utilities Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,8 +12,8 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.1.2",
-    "@quantlab/apputils": "^0.1.2",
+    "@quantlab/application": "^0.1.3",
+    "@quantlab/apputils": "^0.1.3",
     "@quantlab/coreutils": "^0.1.1"
   },
   "devDependencies": {

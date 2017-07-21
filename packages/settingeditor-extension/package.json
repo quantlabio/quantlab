@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/settingeditor-extension",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "QuantLab - Setting Editor Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -17,9 +17,9 @@
     "@phosphor/signaling": "^1.2.1",
     "@phosphor/virtualdom": "^1.1.1",
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/application": "^0.1.2",
-    "@quantlab/apputils": "^0.1.2",
-    "@quantlab/codeeditor": "^0.1.2",
+    "@quantlab/application": "^0.1.3",
+    "@quantlab/apputils": "^0.1.3",
+    "@quantlab/codeeditor": "^0.1.3",
     "@quantlab/coreutils": "^0.1.1"
   },
   "devDependencies": {
