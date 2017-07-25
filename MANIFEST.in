@@ -1,4 +1,5 @@
 recursive-include quantlab/build *
+recursive-include quantlab/schemas *
 
 include package.json
 include LICENSE

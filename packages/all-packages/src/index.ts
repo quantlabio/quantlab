@@ -8,8 +8,6 @@ import "@quantlab/apputils-extension";
 import "@quantlab/calendar";
 import "@quantlab/calendar-extension";
 import "@quantlab/cells";
-import "@quantlab/chatbox";
-import "@quantlab/chatbox-extension";
 import "@quantlab/codeeditor";
 import "@quantlab/codemirror";
 import "@quantlab/codemirror-extension";

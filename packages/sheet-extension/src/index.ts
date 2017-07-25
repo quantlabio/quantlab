@@ -79,8 +79,8 @@ export default plugin;
 function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
   const factory = new SheetFactory({
     name: FACTORY,
-    fileExtensions: ['.ss'],
-    defaultFor: ['.ss'],
+    fileTypes: ['ss'],
+    defaultFor: ['ss'],
     readOnly: true
   });
   const tracker = new InstanceTracker<Sheet>({ namespace: 'sheet' });

@@ -11,7 +11,7 @@ from traitlets import Bool, Unicode
 
 from ._version import __version__
 from .extension import load_jupyter_server_extension
-from .commands import build, clean, get_app_dir
+from .commands import build, clean, get_app_dir, get_user_settings_dir
 
 
 build_aliases = dict(base_aliases)
@@ -68,13 +68,17 @@ class QuantLabCleanApp(JupyterApp):
 class QuantLabPathApp(JupyterApp):
     version = __version__
     description = """
-    Print the configured path to the QuantLab application
+    Print the configured paths for the QuantLab application
 
-    The path can be configured using the QUANTLAB_DIR environment variable.
+    The application path can be configured using the QUANTLAB_DIR environment variable.
+    The user settings path can be configured using the QUANTLAB_SETTINGS_DIR
+        environment variable or it will fall back to
+        `/quantlab/user-settings` in the default Jupyter configuration directory.
     """
 
     def start(self):
-        print(get_app_dir())
+        print('Application directory:   %s' % get_app_dir())
+        print('User Settings directory: %s' % get_user_settings_dir())
 
 
 quantlab_aliases = dict(aliases)
@@ -86,7 +90,7 @@ quantlab_flags['core-mode'] = (
     "Start the app in core mode."
 )
 quantlab_flags['dev-mode'] = (
-    {'QuantLabApp': {'dev_mode': True}},
+    {'QuantLabApp': {'core_mode': True}},
     "Start the app in dev mode for running from source."
 )
 
@@ -129,7 +133,8 @@ class QuantLabApp(NotebookApp):
     subcommands = dict(
         build=(QuantLabBuildApp, QuantLabBuildApp.description.splitlines()[0]),
         clean=(QuantLabCleanApp, QuantLabCleanApp.description.splitlines()[0]),
-        path=(QuantLabPathApp, QuantLabPathApp.description.splitlines()[0])
+        path=(QuantLabPathApp, QuantLabPathApp.description.splitlines()[0]),
+        paths=(QuantLabPathApp, QuantLabPathApp.description.splitlines()[0])
     )
 
     default_url = Unicode('/quantlab', config=True,

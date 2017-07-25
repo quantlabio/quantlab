@@ -79,8 +79,8 @@ export default plugin;
 function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
   const factory = new CalendarFactory({
     name: FACTORY,
-    fileExtensions: ['.cal'],
-    defaultFor: ['.cal'],
+    fileTypes: ['cal'],
+    defaultFor: ['cal'],
     readOnly: true
   });
   const tracker = new InstanceTracker<Calendar>({ namespace: 'calendar' });

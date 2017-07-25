@@ -13,6 +13,9 @@ import {
   IStateDB, PageConfig
 } from '@quantlab/coreutils';
 
+import {
+  h
+} from '@phosphor/virtualdom';
 
 /**
  * The command IDs used by the application plugin.
@@ -47,11 +50,16 @@ const mainPlugin: QuantLabPlugin<void> = {
     // Temporary build message for manual rebuild.
     let buildMessage = PageConfig.getOption('buildRequired');
     if (buildMessage) {
-      let body = document.createElement('div');
-      body.innerHTML = (
-        '<p>QuantLab build is out of date.<br>' +
-        'Please run <code>jupyter quantlab build</code> from<br>' +
-        'the command line and relaunch.</p>'
+      let body = h.div(
+        h.p(
+          'JupyterLab build is out of date',
+          h.br(),
+          'Please run',
+          h.code('jupyter lab build'),
+          'from',
+          h.br(),
+          'the command line and relaunch'
+        )
       );
       showDialog({
         title: 'Build Recommended',

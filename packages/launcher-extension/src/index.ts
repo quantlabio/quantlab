@@ -4,7 +4,7 @@
 import {
   IServiceManager
 } from '@quantlab/services';
-
+ 
 import {
   QuantLab, QuantLabPlugin
 } from '@quantlab/application';

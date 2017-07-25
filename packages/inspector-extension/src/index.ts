@@ -4,7 +4,7 @@
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
-
+ 
 import {
   ICommandPalette, InstanceTracker
 } from '@quantlab/apputils';

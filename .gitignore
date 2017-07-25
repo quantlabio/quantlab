@@ -3,6 +3,7 @@ build
 dist
 lib
 quantlab/build
+quantlab/schemas
 
 node_modules
 .cache

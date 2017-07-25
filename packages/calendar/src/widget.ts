@@ -137,7 +137,7 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
             right: 'timelineDay,agendaWeek,month'
       },
       defaultView: 'timelineDay',
-      resourceAreaWidth: '30%',
+      resourceAreaWidth: '20%',
       resourceColumns: JSON.parse(content).resourceColumns,
       resources: JSON.parse(content).resources,
       events: JSON.parse(content).events

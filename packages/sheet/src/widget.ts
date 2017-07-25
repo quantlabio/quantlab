@@ -24,12 +24,6 @@ import {
 import * as Handsontable
   from 'handsontable';
 
-
-
-
-
-
-
 /**
  * The class name added to a sheet widget.
  */

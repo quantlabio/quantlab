@@ -56,7 +56,12 @@ class InstallQuantLabExtensionApp(BaseExtensionApp):
         [install_extension(arg, self.app_dir, logger=self.log)
          for arg in self.extra_args]
         if self.should_build:
-            build(self.app_dir, logger=self.log)
+            try:
+                build(self.app_dir, logger=self.log)
+            except Exception as e:
+                for arg in self.extra_args:
+                    uninstall_extension(arg, self.app_dir, logger=self.log)
+                raise e
 
 
 class LinkQuantLabExtensionApp(BaseExtensionApp):
@@ -76,7 +81,12 @@ class LinkQuantLabExtensionApp(BaseExtensionApp):
         [link_package(arg, self.app_dir, logger=self.log)
          for arg in self.extra_args]
         if self.should_build:
-            build(self.app_dir, logger=self.log)
+            try:
+                build(self.app_dir, logger=self.log)
+            except Exception as e:
+                for arg in self.extra_args:
+                    unlink_package(arg, self.app_dir, logger=self.log)
+                raise e
 
 
 class UnlinkQuantLabExtensionApp(BaseExtensionApp):
@@ -110,15 +120,6 @@ class ListQuantLabExtensionsApp(BaseExtensionApp):
 
     def start(self):
         list_extensions(self.app_dir, logger=self.log)
-
-
-class ListLinkedQuantLabExtensionsApp(BaseExtensionApp):
-    description = "List the linked packages"
-
-    def start(self):
-        linked = _get_linked_packages(self.app_dir, logger=self.log)
-        for path in linked.values():
-            print(path)
 
 
 class EnableQuantLabExtensionsApp(BaseExtensionApp):
@@ -157,7 +158,6 @@ class QuantLabExtensionApp(JupyterApp):
         list=(ListQuantLabExtensionsApp, "List quantlab extensions"),
         link=(LinkQuantLabExtensionApp, "Link quantlab extension(s)"),
         unlink=(UnlinkQuantLabExtensionApp, "Unlink quantlab extension(s)"),
-        listlinked=(ListLinkedQuantLabExtensionsApp, "List linked quantlab extensions"),
         enable=(EnableQuantLabExtensionsApp, "Enable quantlab extension(s)"),
         disable=(DisableQuantLabExtensionsApp, "Disable quantlab extensions(s)")
     )

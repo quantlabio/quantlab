@@ -4,7 +4,7 @@
 import {
   Widget
 } from '@phosphor/widgets';
-
+ 
 import {
   QuantLab, QuantLabPlugin
 } from '@quantlab/application';

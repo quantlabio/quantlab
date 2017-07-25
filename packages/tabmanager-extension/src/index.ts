@@ -4,7 +4,7 @@
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
-
+ 
 import {
   each
 } from '@phosphor/algorithm';

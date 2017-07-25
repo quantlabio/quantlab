@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/application-top",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "scripts": {
     "build": "webpack",
     "publish": "node make-release.js"
@@ -51,7 +51,6 @@
     "@quantlab/inspector-extension": "^0.1.2",
     "@quantlab/launcher": "^0.1.2",
     "@quantlab/launcher-extension": "^0.1.2",
-    "@quantlab/markdownviewer": "^0.1.2",
     "@quantlab/markdownviewer-extension": "^0.1.2",
     "@quantlab/notebook": "^0.1.2",
     "@quantlab/notebook-extension": "^0.1.2",
@@ -111,6 +110,7 @@
     "css-loader": "^0.27.3",
     "file-loader": "^0.10.1",
     "fs-extra": "^2.1.2",
+    "glob": "^7.1.2",
     "handlebars": "^4.0.6",
     "json-loader": "^0.5.4",
     "sort-package-json": "^1.7.0",
@@ -169,6 +169,6 @@
       "@phosphor/widgets"
     ],
     "name": "QuantLab",
-    "version": "0.1.2"
+    "version": "0.1.4"
   }
 }

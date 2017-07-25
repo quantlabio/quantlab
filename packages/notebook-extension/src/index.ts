@@ -14,7 +14,7 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  IStateDB, PageConfig, PathExt
+  IStateDB, PageConfig, URLExt
 } from '@quantlab/coreutils';
 
 import {
@@ -42,10 +42,6 @@ import {
   Menu, Widget
 } from '@phosphor/widgets';
 
-import {
-  URLExt
-} from '@quantlab/coreutils';
-
 
 
 /**
@@ -63,6 +59,9 @@ namespace CommandIDs {
 
   export
   const restartRunAll = 'notebook:restart-run-all';
+
+  export
+  const reconnectToKernel = 'notebook:reconnect-to-kernel';
 
   export
   const changeKernel = 'notebook:change-kernel';
@@ -366,9 +365,9 @@ function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainM
 
   const factory = new NotebookWidgetFactory({
     name: FACTORY,
-    fileExtensions: ['.ipynb'],
+    fileTypes: ['notebook'],
     modelName: 'notebook',
-    defaultFor: ['.ipynb'],
+    defaultFor: ['notebook'],
     preferKernel: true,
     canStartKernel: true,
     rendermime: app.rendermime,
@@ -396,12 +395,6 @@ function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainM
   let registry = app.docRegistry;
   registry.addModelFactory(new NotebookModelFactory({}));
   registry.addWidgetFactory(factory);
-  registry.addFileType({
-    name: 'Notebook',
-    extension: '.ipynb',
-    contentType: 'notebook',
-    fileFormat: 'json'
-  });
   registry.addCreator({
     name: 'Notebook',
     fileType: 'Notebook',
@@ -446,6 +439,11 @@ function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainM
       for (let name in specs.kernelspecs) {
         let displayName = specs.kernelspecs[name].display_name;
         let rank = name === specs.default ? 0 : Infinity;
+        let kernelIconUrl = specs.kernelspecs[name].resources['logo-64x64'];
+        if (kernelIconUrl) {
+          let index = kernelIconUrl.indexOf('kernelspecs');
+          kernelIconUrl = baseUrl + kernelIconUrl.slice(index);
+        }
         launcher.add({
           displayName,
           category: 'Notebook',
@@ -453,7 +451,7 @@ function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainM
           iconClass: 'jp-NotebookRunningIcon',
           callback,
           rank,
-          kernelIconUrl: baseUrl + PathExt.removeSlash(specs.kernelspecs[name].resources["logo-64x64"])
+          kernelIconUrl
         });
       }
     });
@@ -566,7 +564,7 @@ function addCommands(app: QuantLab, services: IServiceManager, tracker: Notebook
         body: `Are you sure you want to close "${fileName}"?`,
         buttons: [Dialog.cancelButton(), Dialog.warnButton()]
       }).then(result => {
-        if (result.accept) {
+        if (result.button.accept) {
           return current.context.session.shutdown().then(() => {
             current.dispose();
           });
@@ -948,6 +946,21 @@ function addCommands(app: QuantLab, services: IServiceManager, tracker: Notebook
     },
     isEnabled: hasWidget
   });
+  commands.addCommand(CommandIDs.reconnectToKernel, {
+    label: 'Reconnect To Kernel',
+    execute: args => {
+      let current = getCurrent(args);
+      if (!current) {
+        return;
+      }
+      let kernel = current.context.session.kernel;
+      if (!kernel) {
+        return;
+      }
+      return kernel.reconnect();
+    },
+    isEnabled: hasWidget
+  });
   commands.addCommand(CommandIDs.createConsole, {
     label: 'Create Console for Notebook',
     execute: args => {
@@ -1141,6 +1154,7 @@ function populatePalette(palette: ICommandPalette): void {
     CommandIDs.editMode,
     CommandIDs.commandMode,
     CommandIDs.changeKernel,
+    CommandIDs.reconnectToKernel,
     CommandIDs.createConsole,
     CommandIDs.closeAndShutdown,
     CommandIDs.trust

@@ -4,7 +4,6 @@ import {
 
 import '@quantlab/theming/style/variables-light.css';
 
-
 /**
  * Initialization data for the light theme extension.
  */

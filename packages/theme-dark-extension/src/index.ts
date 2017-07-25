@@ -2,9 +2,7 @@ import {
   QuantLabPlugin
 } from '@quantlab/application';
 
-
 import '@quantlab/theming/style/variables-dark.css';
-
 
 /**
  * Initialization data for the dark theme extension.

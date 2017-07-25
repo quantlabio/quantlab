@@ -15,7 +15,7 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  PageConfig, PathExt
+  PageConfig
 } from '@quantlab/coreutils';
 
 import {
@@ -165,11 +165,19 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
   // Add a launcher item if the launcher is available.
   if (launcher) {
     manager.ready.then(() => {
-      let specs = manager.specs;
+      const specs = manager.specs;
+      if (!specs) {
+        return;
+      }
       let baseUrl = PageConfig.getBaseUrl();
       for (let name in specs.kernelspecs) {
         let displayName = specs.kernelspecs[name].display_name;
         let rank = name === specs.default ? 0 : Infinity;
+        let kernelIconUrl = specs.kernelspecs[name].resources['logo-64x64'];
+        if (kernelIconUrl) {
+          let index = kernelIconUrl.indexOf('kernelspecs');
+          kernelIconUrl = baseUrl + kernelIconUrl.slice(index);
+        }
         launcher.add({
           displayName,
           category: 'Console',
@@ -177,7 +185,7 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
           iconClass: 'jp-CodeConsoleIcon',
           callback,
           rank,
-          kernelIconUrl: baseUrl + PathExt.removeSlash(specs.kernelspecs[name].resources["logo-64x64"])
+          kernelIconUrl
         });
       }
     });
@@ -219,9 +227,7 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
     execute: (args: Partial<ConsolePanel.IOptions>) => {
       let path = args['path'];
       let widget = tracker.find(value => {
-        if (value.console.session.path === path) {
-          return true;
-        }
+        return value.console.session.path === path;
       });
       if (widget) {
         shell.activateById(widget.id);
@@ -233,6 +239,7 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
           if (model) {
             return createConsole(args);
           }
+          return Promise.reject(`No running console for path: ${path}`);
         });
       }
     },
@@ -349,7 +356,7 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
   commands.addCommand(command, {
     label: 'Close and Shutdown',
     execute: args => {
-      let current = getCurrent(args);
+      const current = getCurrent(args);
       if (!current) {
         return;
       }
@@ -358,7 +365,7 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
         body: `Are you sure you want to close "${current.title.label}"?`,
         buttons: [Dialog.cancelButton(), Dialog.warnButton()]
       }).then(result => {
-        if (result.accept) {
+        if (result.button.accept) {
           current.console.session.shutdown().then(() => {
             current.dispose();
           });
@@ -382,6 +389,7 @@ function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMai
           widget.console.inject(args['code'] as string);
           return true;
         }
+        return false;
       });
     },
     isEnabled: hasWidget

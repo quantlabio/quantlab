@@ -10,6 +10,10 @@ import {
 } from '@quantlab/apputils';
 
 import {
+  JSONExt
+} from '@phosphor/coreutils';
+
+import {
   FaqModel, FaqWidget
 } from './widget';
 
@@ -54,7 +58,7 @@ function activate(app: QuantLab, palette: ICommandPalette, restorer: ILayoutRest
   // Handle state restoration.
   restorer.restore(tracker, {
     command,
-    args: () => null,
+    args: () => JSONExt.emptyObject,
     name: () => 'faq'
   });
 
