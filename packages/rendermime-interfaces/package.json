@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/rendermime-interfaces",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "QuantLab - Interfaces for Mime Renderers",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

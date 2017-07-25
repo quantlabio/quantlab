@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/fileeditor-extension",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "QuantLab - Editor Widget Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,13 +12,13 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.1.3",
-    "@quantlab/apputils": "^0.1.3",
-    "@quantlab/codeeditor": "^0.1.3",
-    "@quantlab/coreutils": "^0.1.1",
-    "@quantlab/docregistry": "^0.1.3",
-    "@quantlab/fileeditor": "^0.1.3",
-    "@quantlab/launcher": "^0.1.3"
+    "@quantlab/application": "^0.1.4",
+    "@quantlab/apputils": "^0.1.4",
+    "@quantlab/codeeditor": "^0.1.4",
+    "@quantlab/coreutils": "^0.1.2",
+    "@quantlab/docregistry": "^0.1.4",
+    "@quantlab/fileeditor": "^0.1.4",
+    "@quantlab/launcher": "^0.1.4"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
