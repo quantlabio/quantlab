@@ -222,13 +222,11 @@
   background-image: url(icons/jupyter/terminal.svg);
 }
 
+
 .jp-CalendarIcon {
   background-image: url(icons/jupyter/calendar.svg);
 }
 
-.jp-SheetIcon {
-  background-image: url(icons/jupyter/sheet.svg);
-}
 
 .jp-TextEditorIcon {
   background-image: url(icons/jupyter/texteditor.svg);

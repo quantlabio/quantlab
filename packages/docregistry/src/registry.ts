@@ -1163,6 +1163,11 @@ namespace DocumentRegistry {
       iconClass: 'jp-MaterialIcon jp-SpreadsheetIcon'
     },
     {
+      name: 'ics',
+      extensions: ['.ics'],
+      iconClass: 'jp-MaterialIcon jp-CalendarIcon'
+    },
+    {
       name: 'r',
       mimeTypes: ['text/x-rsrc'],
       extensions: ['.r'],

@@ -22,7 +22,7 @@
     "@quantlab/coreutils": "^0.1.2",
     "@quantlab/docregistry": "^0.1.4",
     "@quantlab/services": "^0.1.4",
-    "handsontable": "^0.31.2"
+    "handsontable": "git://github.com/quantlabio/handsontable.git#0.31.2"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

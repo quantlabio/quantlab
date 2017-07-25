@@ -51,7 +51,7 @@ const FACTORY = 'Sheet';
 /**
  * The class name for the sheet icon in the default theme.
  */
-const SHEET_ICON_CLASS = 'jp-SheetIcon';
+const SHEET_ICON_CLASS = 'jp-SpreadsheetIcon';
 
 
 /**
@@ -79,9 +79,8 @@ export default plugin;
 function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
   const factory = new SheetFactory({
     name: FACTORY,
-    fileTypes: ['ss'],
-    defaultFor: ['ss'],
-    readOnly: true
+    fileTypes: ['xls'],
+    defaultFor: ['xls']
   });
   const tracker = new InstanceTracker<Sheet>({ namespace: 'sheet' });
 
@@ -93,11 +92,17 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   });
 
   app.docRegistry.addWidgetFactory(factory);
+  let ft = app.docRegistry.getFileType('xls');
   factory.widgetCreated.connect((sender, widget) => {
     // Track the widget.
     tracker.add(widget);
     // Notify the instance tracker if restore data needs to update.
     widget.context.pathChanged.connect(() => { tracker.save(widget); });
+
+    if (ft) {
+      widget.title.iconClass = ft.iconClass;
+      widget.title.iconLabel = ft.iconLabel;
+    }
   });
 
   const { commands, shell } = app;

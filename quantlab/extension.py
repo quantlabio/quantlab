@@ -6,6 +6,7 @@
 import os
 
 from quantlab_launcher import add_handlers, QuantLabConfig
+from notebook.utils import url_path_join as ujoin
 
 from .commands import (
     get_app_dir, list_extensions, should_build, get_user_settings_dir

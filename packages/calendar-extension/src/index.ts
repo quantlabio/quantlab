@@ -79,9 +79,8 @@ export default plugin;
 function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
   const factory = new CalendarFactory({
     name: FACTORY,
-    fileTypes: ['cal'],
-    defaultFor: ['cal'],
-    readOnly: true
+    fileTypes: ['ics'],
+    defaultFor: ['ics']
   });
   const tracker = new InstanceTracker<Calendar>({ namespace: 'calendar' });
 
@@ -93,11 +92,17 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   });
 
   app.docRegistry.addWidgetFactory(factory);
+  let ft = app.docRegistry.getFileType('ics');
   factory.widgetCreated.connect((sender, widget) => {
     // Track the widget.
     tracker.add(widget);
     // Notify the instance tracker if restore data needs to update.
     widget.context.pathChanged.connect(() => { tracker.save(widget); });
+
+    if (ft) {
+      widget.title.iconClass = ft.iconClass;
+      widget.title.iconLabel = ft.iconLabel;
+    }
   });
 
   const { commands, shell } = app;

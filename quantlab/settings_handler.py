@@ -95,5 +95,5 @@ class SettingsHandler(APIHandler):
         self.set_status(204)
 
 
-# The path for a lab settings section.
+# The path for a quantlab settings section.
 settings_path = r"/quantlab/api/settings/(?P<section_name>[\w.-]+)"

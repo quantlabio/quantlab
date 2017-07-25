@@ -93,7 +93,7 @@
     "fullcalendar": "^2.7.3",
     "fullcalendar-scheduler": "^1.6.2",
     "hot-formula-parser": "^2.1.0",
-    "handsontable": "^0.31.2",
+    "handsontable": "git://github.com/quantlabio/handsontable.git#0.31.2",
     "marked": "^0.3.6",
     "minimist": "^1.2.0",
     "moment": "^2.17.1",
