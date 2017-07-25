@@ -742,9 +742,9 @@ def _ensure_package(app_dir, name=None, version=None, logger=None):
 
     # Template the package.json file.
     data = _get_package_template(app_dir, logger)
-    data['jupyterlab']['name'] = name or 'JupyterLab'
+    data['quantlab']['name'] = name or 'QuantLab'
     if version:
-        data['jupyterlab']['version'] = version
+        data['quantlab']['version'] = version
 
     pkg_path = pjoin(staging, 'package.json')
     with open(pkg_path, 'w') as fid:
