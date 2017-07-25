@@ -4,11 +4,11 @@
 import expect = require('expect.js');
 
 import {
-  ObservableString 
-} from '@jupyterlab/coreutils';
+  ObservableString
+} from '@quantlab/coreutils';
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('ObservableString', () => {
 

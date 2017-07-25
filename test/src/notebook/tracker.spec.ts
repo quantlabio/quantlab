@@ -5,15 +5,15 @@ import expect = require('expect.js');
 
 import {
   Cell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   Context
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   INotebookModel, NotebookPanel, NotebookTracker
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   createNotebookContext

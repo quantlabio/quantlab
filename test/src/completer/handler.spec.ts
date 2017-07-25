@@ -9,23 +9,23 @@ import {
 
 import {
   KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   CodeEditor, CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   CodeMirrorEditor
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   Completer, CompletionHandler, CompleterModel
-} from '@jupyterlab/completer';
+} from '@quantlab/completer';
 
 import {
   createClientSession
@@ -82,7 +82,7 @@ class TestCompletionHandler extends CompletionHandler {
 }
 
 
-describe('@jupyterlab/completer', () => {
+describe('@quantlab/completer', () => {
 
   let session: IClientSession;
 

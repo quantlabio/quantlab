@@ -13,15 +13,15 @@ import {
 
 import {
   ClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   CodeConsole
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   CodeCell, CodeCellModel, RawCellModel, RawCell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   createClientSession

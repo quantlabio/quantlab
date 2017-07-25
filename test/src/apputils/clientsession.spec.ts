@@ -5,22 +5,22 @@ import expect = require('expect.js');
 
 import {
   Session, SessionManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   ClientSession, IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   acceptDialog, dismissDialog
 } from '../utils';
 
 
-describe('@jupyterlab/apputils', () => {
+describe('@quantlab/apputils', () => {
 
   describe('ClientSession', () => {
 

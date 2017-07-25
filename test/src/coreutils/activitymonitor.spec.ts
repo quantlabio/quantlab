@@ -9,7 +9,7 @@ import {
 
 import {
   ActivityMonitor
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
 
@@ -20,7 +20,7 @@ class TestObject {
 }
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('ActivityMonitor()', () => {
 

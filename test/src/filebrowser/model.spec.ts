@@ -5,23 +5,23 @@ import expect = require('expect.js');
 
 import {
   StateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   DocumentManager, IDocumentManager
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
-  DocumentRegistry
-} from '@jupyterlab/docregistry';
+  DocumentRegistry, TextModelFactory
+} from '@quantlab/docregistry';
 
 import {
   ServiceManager, Session
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   FileBrowserModel
-} from '@jupyterlab/filebrowser';
+} from '@quantlab/filebrowser';
 
 
 describe('filebrowser/model', () => {
@@ -38,7 +38,9 @@ describe('filebrowser/model', () => {
       open: widget => { /* no op */ }
     };
 
-    registry = new DocumentRegistry();
+    registry = new DocumentRegistry({
+      textModelFactory: new TextModelFactory()
+    });
     serviceManager = new ServiceManager();
     manager = new DocumentManager({
       registry, opener,

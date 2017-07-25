@@ -6,7 +6,7 @@ import expect = require('expect.js');
 import {
   DefaultSchemaValidator, IDataConnector, ISettingRegistry, SettingRegistry,
   Settings, StateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
 import {
@@ -21,12 +21,12 @@ class TestConnector extends StateDB implements IDataConnector<ISettingRegistry.I
   }
 
   fetch(id: string): Promise<ISettingRegistry.IPlugin | null> {
-    return super.fetch(id).then(user => {
-      if (!user && !this.schemas[id]) {
+    return super.fetch(id).then(data => {
+      if (!data && !this.schemas[id]) {
         return null;
       }
 
-      user = user || { };
+      let user = data as JSONObject || { };
 
       const schema = this.schemas[id] || { type: 'object' };
       const result = { data: { composite: { }, user }, id, schema };
@@ -37,7 +37,7 @@ class TestConnector extends StateDB implements IDataConnector<ISettingRegistry.I
 }
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('DefaultSchemaValidator', () => {
 

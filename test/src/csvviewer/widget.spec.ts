@@ -5,19 +5,19 @@ import expect = require('expect.js');
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   CSVViewer
-} from '@jupyterlab/csvviewer';
+} from '@quantlab/csvviewer';
 
 import {
   Context, DocumentRegistry, TextModelFactory
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 
 function createContext(): Context<DocumentRegistry.IModel> {

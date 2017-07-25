@@ -13,22 +13,22 @@ import {
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   Cell, CellModel, InputPrompt, Collapser,
   CodeCell, CodeCellModel, MarkdownCell,
   RawCell, RawCellModel, MarkdownCellModel,
   CellFooter, CellHeader, InputArea
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   OutputArea, OutputPrompt
-} from '@jupyterlab/outputarea';
+} from '@quantlab/outputarea';
 
 import {
   createBaseCellFactory, createCodeCellFactory, rendermime,

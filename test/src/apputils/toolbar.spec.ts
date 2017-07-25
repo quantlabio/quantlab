@@ -29,7 +29,7 @@ import {
 
 import {
   ClientSession, Toolbar, ToolbarButton
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   createClientSession
@@ -59,7 +59,7 @@ class LogToolbarButton extends ToolbarButton {
 }
 
 
-describe('@jupyterlab/apputils', () => {
+describe('@quantlab/apputils', () => {
 
   let widget: Toolbar<Widget>;
   let session: ClientSession;

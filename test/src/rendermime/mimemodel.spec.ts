@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   MimeModel
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 
 describe('rendermime/mimemodel', () => {

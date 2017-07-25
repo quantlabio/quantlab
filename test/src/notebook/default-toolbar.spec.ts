@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   toArray
@@ -17,27 +17,27 @@ import {
 
 import {
   Context, DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
  CodeCell, MarkdownCell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   NotebookActions
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
  ToolbarItems
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
  INotebookModel
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
  NotebookPanel
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   createNotebookContext
@@ -62,7 +62,7 @@ function startSession(context: DocumentRegistry.IContext<INotebookModel>): Promi
 }
 
 
-describe('@jupyterlab/notebook', () => {
+describe('@quantlab/notebook', () => {
 
   let context: Context<INotebookModel>;
 

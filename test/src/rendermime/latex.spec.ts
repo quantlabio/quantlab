@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   removeMath, replaceMath, typeset
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 
 describe('jupyter-ui', () => {

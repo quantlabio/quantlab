@@ -5,11 +5,11 @@ import expect = require('expect.js');
 
 import {
   OutputModel
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   OutputAreaModel
-} from '@jupyterlab/outputarea';
+} from '@quantlab/outputarea';
 
 import {
   DEFAULT_OUTPUTS
@@ -77,7 +77,7 @@ describe('outputarea/model', () => {
           called = true;
         });
         let output = model.get(0);
-        output.setData({ ...output.data, 'foo': 1 });
+        output.setData({ ...output.data });
         expect(called).to.be(true);
       });
 

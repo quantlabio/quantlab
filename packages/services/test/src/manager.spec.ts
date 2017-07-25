@@ -21,10 +21,6 @@ import {
 } from '../../lib/terminal';
 
 import {
-  CalendarManager
-} from '../../lib/calendar';
-
-import {
   KernelTester
 } from './utils';
 
@@ -75,14 +71,6 @@ describe('manager', () => {
 
       it('should be the terminal manager instance', () => {
         expect(manager.terminals).to.be.a(TerminalManager);
-      });
-
-    });
-
-    describe('#calendars', () => {
-
-      it('should be the calendar manager instance', () => {
-        expect(manager.calendars).to.be.a(CalendarManager);
       });
 
     });

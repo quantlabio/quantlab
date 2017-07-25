@@ -17,11 +17,11 @@ import {
 
 import {
   CodeEditor, CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   CodeMirrorEditor
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 
 class LogEditor extends CodeMirrorEditor {

@@ -5,23 +5,23 @@ import expect = require('expect.js');
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   CodeMirrorEditorFactory, CodeMirrorMimeTypeService
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   Context, DocumentRegistry, TextModelFactory
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   FileEditor, FileEditorFactory
-} from '@jupyterlab/fileeditor';
+} from '@quantlab/fileeditor';
 
 
 describe('fileeditor', () => {
@@ -127,7 +127,7 @@ describe('fileeditor', () => {
       },
       factoryOptions: {
         name: 'editor',
-        fileExtensions: ['*'],
+        fileTypes: ['*'],
         defaultFor: ['*']
       }
     });

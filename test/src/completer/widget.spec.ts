@@ -21,15 +21,15 @@ import {
 
 import {
   CodeEditor, CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   CodeMirrorEditor
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   Completer, CompleterModel
-} from '@jupyterlab/completer';
+} from '@quantlab/completer';
 
 
 const TEST_ITEM_CLASS = 'jp-TestItem';

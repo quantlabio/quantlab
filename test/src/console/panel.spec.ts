@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Message, MessageLoop
@@ -17,7 +17,7 @@ import {
 
 import {
   CodeConsole, ConsolePanel
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   dismissDialog

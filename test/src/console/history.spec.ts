@@ -5,23 +5,23 @@ import expect = require('expect.js');
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   KernelMessage
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   CodeMirrorEditor
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   ConsoleHistory
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   createClientSession

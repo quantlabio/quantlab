@@ -7,10 +7,10 @@ import {
 
 import {
   PageConfig
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('PageConfig', () => {
 

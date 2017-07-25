@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   Contents, ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Widget
@@ -13,7 +13,7 @@ import {
 
 import {
   Context, DocumentRegistry, TextModelFactory
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   waitForDialog, acceptDialog

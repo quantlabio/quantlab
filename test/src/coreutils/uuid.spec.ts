@@ -7,10 +7,10 @@ import {
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('uuid()', () => {
 

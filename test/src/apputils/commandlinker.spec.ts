@@ -17,10 +17,10 @@ import {
 
 import {
   CommandLinker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 
-describe('@jupyterlab/apputils', () => {
+describe('@quantlab/apputils', () => {
 
   describe('CommandLinker', () => {
 

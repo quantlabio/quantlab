@@ -7,13 +7,13 @@ import {
 
 import {
   PathExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
 const TESTPATH = 'foo/test/simple/test-path.js';
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('PathExt', () => {
 

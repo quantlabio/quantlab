@@ -5,15 +5,15 @@ import expect = require('expect.js');
 
 import {
   CodeMirrorEditorFactory
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   ObservableJSON
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   JSONEditor
-  } from '@jupyterlab/codeeditor';
+  } from '@quantlab/codeeditor';
 
 import {
   Message

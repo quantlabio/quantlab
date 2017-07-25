@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   ClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   each
@@ -13,19 +13,19 @@ import {
 
 import {
   CodeCell, MarkdownCell, RawCell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
  NotebookModel
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   NotebookActions
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   Notebook
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   acceptDialog, createClientSession, dismissDialog
@@ -42,7 +42,7 @@ const ERROR_INPUT = 'a = foo';
 const JUPYTER_CELL_MIME = 'application/vnd.jupyter.cells';
 
 
-describe('@jupyterlab/notebook', () => {
+describe('@quantlab/notebook', () => {
 
   describe('NotebookActions', () => {
 

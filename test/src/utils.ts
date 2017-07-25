@@ -9,27 +9,27 @@ import {
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   ClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   nbformat, uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   TextModelFactory, DocumentRegistry, Context
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   INotebookModel, NotebookModelFactory
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   IRenderMime, RenderMime, RenderedHTML, defaultRendererFactories
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 
 /**

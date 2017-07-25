@@ -17,7 +17,7 @@ import {
 
 import {
   ApplicationShell
-} from '@jupyterlab/application';
+} from '@quantlab/application';
 
 
 class ContentWidget extends Widget {

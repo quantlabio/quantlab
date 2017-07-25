@@ -5,15 +5,15 @@ import expect = require('expect.js');
 
 import {
   ApplicationShell, LayoutRestorer
-} from '@jupyterlab/application';
+} from '@quantlab/application';
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   StateDB
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   CommandRegistry
@@ -28,7 +28,7 @@ import {
 } from '@phosphor/widgets';
 
 
-const NAMESPACE = 'jupyterlab-layout-restorer-tests';
+const NAMESPACE = 'quantlab-layout-restorer-tests';
 
 
 describe('apputils', () => {

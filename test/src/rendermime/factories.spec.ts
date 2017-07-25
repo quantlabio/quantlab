@@ -13,17 +13,17 @@ import {
 
 import {
   defaultSanitizer
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   latexRendererFactory, pdfRendererFactory, svgRendererFactory,
   markdownRendererFactory, textRendererFactory, htmlRendererFactory,
   imageRendererFactory
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   MimeModel, IRenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 
 function createModel(mimeType: string, source: JSONValue, trusted = false): IRenderMime.IMimeModel {

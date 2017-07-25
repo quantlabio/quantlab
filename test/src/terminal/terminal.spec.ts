@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   TerminalSession
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Platform
@@ -21,7 +21,7 @@ import {
 
 import {
   Terminal
-} from '@jupyterlab/terminal';
+} from '@quantlab/terminal';
 
 
 class LogTerminal extends Terminal {

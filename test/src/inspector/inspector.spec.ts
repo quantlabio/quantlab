@@ -13,7 +13,7 @@ import {
 
 import {
   IInspector, InspectorPanel
-} from '@jupyterlab/inspector';
+} from '@quantlab/inspector';
 
 
 class TestInspectorPanel extends InspectorPanel {

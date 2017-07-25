@@ -17,15 +17,15 @@ import {
 
 import {
   CodeMirrorEditorFactory
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   ObservableJSON
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   CellTools, NotebookPanel, NotebookTracker, NotebookActions
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   createNotebookPanel, populateNotebook

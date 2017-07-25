@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   Platform
@@ -13,15 +13,15 @@ import {
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Context, DocumentRegistry, TextModelFactory
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   SaveHandler
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   acceptDialog, waitForDialog

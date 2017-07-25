@@ -5,11 +5,11 @@ import expect = require('expect.js');
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   KernelMessage, Session
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Signal
@@ -21,15 +21,15 @@ import {
 
 import {
   IClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   ForeignHandler
-} from '@jupyterlab/console';
+} from '@quantlab/console';
 
 import {
   CodeCellModel, CodeCell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   createCodeCellFactory
@@ -97,7 +97,7 @@ const relevantTypes = [
 }, new Set<string>());
 
 
-describe('@jupyterlab/console', () => {
+describe('@quantlab/console', () => {
 
   describe('ForeignHandler', () => {
 

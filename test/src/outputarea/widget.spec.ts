@@ -5,11 +5,11 @@ import expect = require('expect.js');
 
 import {
   ClientSession
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   Kernel
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Message
@@ -21,7 +21,7 @@ import {
 
 import {
   IOutputAreaModel, OutputAreaModel, OutputArea
-} from '@jupyterlab/outputarea';
+} from '@quantlab/outputarea';
 
 import {
   createClientSession, defaultRenderMime, DEFAULT_OUTPUTS

@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   Contents, ServiceManager, Session
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   toArray
@@ -21,7 +21,7 @@ import {
 
 import {
   MimeModel, IRenderMime, RenderedText, RenderMime
-} from '@jupyterlab/rendermime';
+} from '@quantlab/rendermime';
 
 import {
   defaultRenderMime, createFileContext

@@ -9,19 +9,19 @@ import {
 
 import {
   INotebookModel
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   NotebookPanel
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   NotebookWidgetFactory
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   Context
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   createNotebookContext
@@ -38,7 +38,7 @@ const contentFactory = createNotebookPanelFactory();
 function createFactory(): NotebookWidgetFactory {
   return new NotebookWidgetFactory({
     name: 'notebook',
-    fileExtensions: ['.ipynb'],
+    fileTypes: ['notebook'],
     rendermime,
     contentFactory,
     mimeTypeService

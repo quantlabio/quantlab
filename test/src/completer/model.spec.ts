@@ -9,11 +9,11 @@ import {
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   CompleterModel, Completer
-} from '@jupyterlab/completer';
+} from '@quantlab/completer';
 
 
 function makeState(text: string): Completer.ITextState {
@@ -371,9 +371,9 @@ describe('completer/model', () => {
         expect(model.createPatch(patch)).to.eql(want);
       });
 
-      it('should return null if original request or cursor are null', () => {
+      it('should return undefined if original request or cursor are null', () => {
         let model = new CompleterModel();
-        expect(model.createPatch('foo')).to.be(null);
+        expect(model.createPatch('foo')).to.be(undefined);
       });
 
       it('should handle line breaks in original value', () => {

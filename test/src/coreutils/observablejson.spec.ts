@@ -5,10 +5,10 @@ import expect = require('expect.js');
 
 import {
   IObservableJSON, ObservableJSON
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('ObservableJSON', () => {
 

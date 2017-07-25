@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   CommandRegistry
@@ -21,15 +21,15 @@ import {
 
 import {
   DocumentManager
-} from '@jupyterlab/docmanager';
+} from '@quantlab/docmanager';
 
 import {
   DocumentRegistry, TextModelFactory, ABCWidgetFactory
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   FileButtons, FileBrowserModel
-} from '@jupyterlab/filebrowser';
+} from '@quantlab/filebrowser';
 
 import {
   acceptDialog

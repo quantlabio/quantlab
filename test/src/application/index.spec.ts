@@ -4,27 +4,27 @@
 import expect = require('expect.js');
 
 import {
-  JupyterLab, ModuleLoader
-} from '@jupyterlab/application';
+  QuantLab, ModuleLoader
+} from '@quantlab/application';
 
 
-describe('JupyterLab', () => {
+describe('QuantLab', () => {
 
-  let lab: JupyterLab;
+  let lab: QuantLab;
   let loader = new ModuleLoader();
 
   beforeEach(() => {
-    lab = new JupyterLab();
+    lab = new QuantLab();
   });
 
   describe('#constructor()', () => {
 
-    it('should create a JupyterLab object', () => {
-      expect(lab).to.be.a(JupyterLab);
+    it('should create a QuantLab object', () => {
+      expect(lab).to.be.a(QuantLab);
     });
 
     it('should accept options', () => {
-      lab = new JupyterLab({
+      lab = new QuantLab({
         version: 'foo',
         gitDescription: 'foo',
         loader
@@ -47,7 +47,7 @@ describe('JupyterLab', () => {
     it('should be the info about the application', () => {
       expect(lab.info.version).to.be('unknown');
       expect(lab.info.gitDescription).to.be('unknown');
-      lab = new JupyterLab({
+      lab = new QuantLab({
         version: 'foo',
         gitDescription: 'foo'
       });
@@ -61,7 +61,7 @@ describe('JupyterLab', () => {
 
     it('should be the loader used by the application', () => {
       expect(lab.loader).to.be(null);
-      lab = new JupyterLab({ loader });
+      lab = new QuantLab({ loader });
       expect(lab.loader).to.be(loader);
     });
 

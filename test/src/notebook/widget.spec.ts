@@ -18,15 +18,15 @@ import {
 import {
   CodeCellModel, CodeCell, MarkdownCellModel, MarkdownCell,
   RawCellModel, RawCell, Cell
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   INotebookModel, NotebookModel
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   Notebook, StaticNotebook
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   DEFAULT_CONTENT, createNotebookFactory, rendermime, mimeTypeService,

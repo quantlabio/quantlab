@@ -7,10 +7,10 @@ import {
 
 import {
   URLExt
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('URLExt', () => {
 

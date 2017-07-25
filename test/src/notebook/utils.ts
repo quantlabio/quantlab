@@ -3,27 +3,27 @@
 
 import {
   editorServices
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 import {
   CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   Clipboard
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   NotebookPanel, Notebook, NotebookModel
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   Cell, CodeCell, CodeCellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   defaultRenderMime

@@ -15,10 +15,10 @@ import {
 
 import {
   Styling
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 
-describe('@jupyterlab/domutils', () => {
+describe('@quantlab/domutils', () => {
 
   describe('Styling', () => {
 

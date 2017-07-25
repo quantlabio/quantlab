@@ -7,7 +7,7 @@ import {
 
 import {
   VDomModel, VDomRenderer
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   h, VirtualNode
@@ -44,7 +44,7 @@ class TestWidgetNoModel extends VDomRenderer<null> {
 }
 
 
-describe('@jupyterlab/domutils', () => {
+describe('@quantlab/domutils', () => {
 
   describe('VDomModel', () => {
 

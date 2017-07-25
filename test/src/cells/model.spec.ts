@@ -9,15 +9,15 @@ import {
 
 import {
   IChangedArgs, nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   CellModel, RawCellModel, MarkdownCellModel, CodeCellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   OutputAreaModel
-} from '@jupyterlab/outputarea';
+} from '@quantlab/outputarea';
 
 import {
   DEFAULT_OUTPUTS

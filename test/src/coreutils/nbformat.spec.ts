@@ -7,13 +7,13 @@ import {
 
 import {
   nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 
 const VALIDATE = nbformat.validateMimeValue;
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('nbformat', () => {
 

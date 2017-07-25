@@ -9,11 +9,11 @@ import {
 
 import {
   CodeEditor
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   CodeMirrorEditor
-} from '@jupyterlab/codemirror';
+} from '@quantlab/codemirror';
 
 
 const UP_ARROW = 38;
@@ -101,13 +101,14 @@ describe('CodeMirrorEditor', () => {
   describe('#selectionStyle', () => {
 
     it('should be the selection style of the editor', () => {
-      expect(editor.selectionStyle).to.eql({});
+      expect(editor.selectionStyle).to.eql(CodeEditor.defaultSelectionStyle);
     });
 
     it('should be settable', () => {
       let style = {
         className: 'foo',
-        displayName: 'bar'
+        displayName: 'bar',
+        color: 'black'
       };
       editor.selectionStyle = style;
       expect(editor.selectionStyle).to.eql(style);

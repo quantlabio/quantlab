@@ -7,14 +7,14 @@ import {
 
 import {
   MarkdownCodeBlocks
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 const BLOCK1 = "Here is text\n\n```\na = 10\nb = 20\n```\n\nMore text.";
 const BLOCK2 = "Here is text\n\n```a = 10```\n\nMore text.";
 const BLOCK3 = "Here is text\n\n```python\na = 10\nb = 20\n```\n\nMore text.";
 
 
-describe('@jupyterlab/coreutils', () => {
+describe('@quantlab/coreutils', () => {
 
   describe('MarkdownCodeBlocks', () => {
 

@@ -5,7 +5,7 @@ import expect = require('expect.js');
 
 import {
   InstanceTracker
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   each

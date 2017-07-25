@@ -5,11 +5,11 @@ import expect = require('expect.js');
 
 import {
   uuid
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   Contents, ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   Message, MessageLoop
@@ -21,11 +21,11 @@ import {
 
 import {
   Base64ModelFactory, Context, DocumentRegistry
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   ImageViewer, ImageViewerFactory
-} from '@jupyterlab/imageviewer';
+} from '@quantlab/imageviewer';
 
 import {
   createFileContext
@@ -51,7 +51,7 @@ class LogImage extends ImageViewer {
 /**
  * The common image model.
  */
-const IMAGE: Contents.IModel = {
+const IMAGE: Partial<Contents.IModel> = {
   path: uuid() + '.png',
   type: 'file',
   mimetype: 'image/png',
@@ -198,8 +198,8 @@ describe('ImageViewerFactory', () => {
       let factory = new ImageViewerFactory({
         name: 'Image',
         modelName: 'base64',
-        fileExtensions: ['.png'],
-        defaultFor: ['.png']
+        fileTypes: ['png'],
+        defaultFor: ['png']
       });
       let context = createFileContext(IMAGE.path);
       expect(factory.createNew(context)).to.be.an(ImageViewer);

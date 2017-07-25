@@ -9,17 +9,17 @@ import {
 
 import {
   CodeEditorWrapper
-} from '@jupyterlab/codeeditor';
+} from '@quantlab/codeeditor';
 
 import {
   InputArea, InputPrompt, CodeCellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 
 const PROMPT_CLASS = 'jp-InputArea-prompt';
 
 
-describe('@jupyterlab/cells', () => {
+describe('@quantlab/cells', () => {
 
   const model = new CodeCellModel({});
 

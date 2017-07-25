@@ -5,23 +5,23 @@ import expect = require('expect.js');
 
 import {
   ServiceManager
-} from '@jupyterlab/services';
+} from '@quantlab/services';
 
 import {
   IChangedArgs
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   DocumentRegistry, Context
-} from '@jupyterlab/docregistry';
+} from '@quantlab/docregistry';
 
 import {
   INotebookModel, NotebookPanel, Notebook
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   Toolbar
-} from '@jupyterlab/apputils';
+} from '@quantlab/apputils';
 
 import {
   createNotebookContext
@@ -69,7 +69,7 @@ function createPanel(context: Context<INotebookModel>): LogNotebookPanel {
 }
 
 
-describe('@jupyterlab/notebook', () => {
+describe('@quantlab/notebook', () => {
 
   let context: Context<INotebookModel>;
   let manager: ServiceManager.IManager;

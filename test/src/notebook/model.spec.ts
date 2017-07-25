@@ -9,15 +9,15 @@ import {
 
 import {
   CodeCellModel
-} from '@jupyterlab/cells';
+} from '@quantlab/cells';
 
 import {
   nbformat
-} from '@jupyterlab/coreutils';
+} from '@quantlab/coreutils';
 
 import {
   NotebookModel
-} from '@jupyterlab/notebook';
+} from '@quantlab/notebook';
 
 import {
   DEFAULT_CONTENT
