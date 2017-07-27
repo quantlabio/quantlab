@@ -1,5 +1,5 @@
 {
-  "name": "@quantlab/sheet",
+  "name": "@quantlab/spreadsheet",
   "version": "0.1.2",
   "description": "QuantLab - Sheet Widget",
   "main": "lib/index.js",
@@ -22,7 +22,7 @@
     "@quantlab/coreutils": "^0.1.2",
     "@quantlab/docregistry": "^0.1.4",
     "@quantlab/services": "^0.1.4",
-    "handsontable": "git://github.com/quantlabio/handsontable.git#0.31.2"
+    "@quantlab/handsontable": "^0.31.3"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

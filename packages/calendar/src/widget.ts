@@ -24,11 +24,11 @@ import {
 import * as $
   from 'jquery';
 
-import 'fullcalendar';
+import '@quantlab/fullcalendar';
 
-import 'fullcalendar/dist/gcal.js';
+import '@quantlab/fullcalendar/dist/gcal.js';
 
-import 'fullcalendar-scheduler/dist/scheduler.js';
+//import 'fullcalendar-scheduler/dist/scheduler.js';
 
 /**
  * The class name added to a calendar widget.
@@ -125,18 +125,18 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
     let content = this._context.model.toString();
     this._calendar = $('#' + this.id);
     this._calendar.fullCalendar({
-      schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+      //schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
       editable: true,
       //droppable: true,
-      aspectRatio: 2.0,
+      //aspectRatio: 2.0,
       //scrollTime: '00:00',
       eventLimit: true,
       header:{
             left: 'today prev,next',
             center: 'title',
-            right: 'timelineDay,agendaWeek,month'
+            right: 'agendaDay,agendaWeek,month'
       },
-      defaultView: 'timelineDay',
+      defaultView: 'agendaDay',
       resourceAreaWidth: '20%',
       resourceColumns: JSON.parse(content).resourceColumns,
       resources: JSON.parse(content).resources,

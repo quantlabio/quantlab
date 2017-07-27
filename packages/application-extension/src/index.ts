@@ -52,10 +52,10 @@ const mainPlugin: QuantLabPlugin<void> = {
     if (buildMessage) {
       let body = h.div(
         h.p(
-          'JupyterLab build is out of date',
+          'QuantLab build is out of date',
           h.br(),
           'Please run',
-          h.code('jupyter lab build'),
+          h.code(' jupyter quantlab build '),
           'from',
           h.br(),
           'the command line and relaunch'

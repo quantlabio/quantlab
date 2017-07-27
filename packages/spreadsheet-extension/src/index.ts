@@ -22,13 +22,13 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  Sheet, SheetFactory
-} from '@quantlab/sheet';
+  Spreadsheet, SpreadsheetFactory
+} from '@quantlab/spreadsheet';
 
 //import 'hot-formula-parser/dist/formula-parser.js';
 
 import * as Handsontable
-  from 'handsontable';
+  from '@quantlab/handsontable';
 
 //import 'hot-formula-parser/dist/formula.js';
 
@@ -37,21 +37,21 @@ import * as Handsontable
  */
 namespace CommandIDs {
   export
-  const open = 'sheet:open';
+  const open = 'spreadsheet:open';
 
   export
-  const save = 'sheet:save';
+  const save = 'spreadsheet:save';
 };
 
 /**
- * The name of the factory that creates Sheet widgets.
+ * The name of the factory that creates Spreadsheet widgets.
  */
-const FACTORY = 'Sheet';
+const FACTORY = 'Spreadsheet';
 
 /**
  * The class name for the sheet icon in the default theme.
  */
-const SHEET_ICON_CLASS = 'jp-SpreadsheetIcon';
+const SPREADSHEET_ICON_CLASS = 'jp-SpreadsheetIcon';
 
 
 /**
@@ -59,7 +59,7 @@ const SHEET_ICON_CLASS = 'jp-SpreadsheetIcon';
  */
 const plugin: QuantLabPlugin<void> = {
   activate,
-  id: 'jupyter.extensions.sheet',
+  id: 'jupyter.extensions.spreadsheet',
   requires: [
     ILayoutRestorer, IServiceManager, IMainMenu, ICommandPalette
   ],
@@ -74,15 +74,15 @@ const plugin: QuantLabPlugin<void> = {
 export default plugin;
 
 /**
- * Activate the sheet plugin.
+ * Activate the spreadsheet plugin.
  */
 function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
-  const factory = new SheetFactory({
+  const factory = new SpreadsheetFactory({
     name: FACTORY,
     fileTypes: ['xls'],
     defaultFor: ['xls']
   });
-  const tracker = new InstanceTracker<Sheet>({ namespace: 'sheet' });
+  const tracker = new InstanceTracker<Spreadsheet>({ namespace: 'spreadsheet' });
 
   // Handle state restoration.
   restorer.restore(tracker, {
@@ -106,7 +106,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   });
 
   const { commands, shell } = app;
-  const category = 'Sheet';
+  const category = 'Spreadsheet';
 
   commands.addCommand(CommandIDs.save, {
     label: 'Save',
@@ -119,12 +119,12 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   commands.addCommand(CommandIDs.open, {
     label: 'Open',
     execute: args => {
-      let id = `jp-Sheet-${Private.id++}`;
+      let id = `jp-Spreadsheet-${Private.id++}`;
 
-      let widget = new Sheet({context:null});
+      let widget = new Spreadsheet({context:null});
       widget.id = id;
-      widget.title.label = 'Sheet';
-      widget.title.icon = 'SHEET_ICON_CLASS';
+      widget.title.label = 'Spreadsheet';
+      widget.title.icon = 'SPREADSHEET_ICON_CLASS';
       widget.title.closable = true;
 
       shell.addToMainArea(widget);
@@ -168,10 +168,10 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   // Add a launcher item if the launcher is available.
   if (launcher) {
     launcher.add({
-      displayName: 'Sheet',
+      displayName: 'Spreadsheet',
       category: 'Quantitative Finance',
       rank: 2,
-      iconClass: SHEET_ICON_CLASS,
+      iconClass: SPREADSHEET_ICON_CLASS,
       callback: () => {
         return commands.execute(CommandIDs.open);
       }

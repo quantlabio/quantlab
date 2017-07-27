@@ -6,6 +6,10 @@ import {
 } from '@phosphor/coreutils';
 
 import {
+  PathExt
+} from '@quantlab/coreutils';
+
+import {
   Message
 } from '@phosphor/messaging';
 
@@ -22,12 +26,17 @@ import {
 } from '@quantlab/docregistry';
 
 import * as Handsontable
-  from 'handsontable';
+  from '@quantlab/handsontable';
 
 /**
- * The class name added to a sheet widget.
+ * The class name added to a spreadsheet widget.
  */
-const SHEET_CLASS = 'jp-Sheet';
+const SPREADSHEET_CLASS = 'jp-Spreadsheet';
+
+/**
+ * The class name added to a dirty widget.
+ */
+//const DIRTY_CLASS = 'jp-mod-dirty';
 
 /**
  * The timeout to wait for change activity to have ceased before rendering.
@@ -35,19 +44,19 @@ const SHEET_CLASS = 'jp-Sheet';
 const RENDER_TIMEOUT = 1000;
 
 /**
- * A widget which manages a sheet session.
+ * A widget which manages a spreadsheet session.
  */
 export
-class Sheet extends Widget {
+class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
   /**
-   * Construct a new sheet widget.
+   * Construct a new spreadsheet widget.
    *
-   * @param options - The sheet configuration options.
+   * @param options - The spreadsheet configuration options.
    */
-  constructor(options: Sheet.IOptions) {
+  constructor(options: Spreadsheet.IOptions) {
     super();
 
-    this.addClass(SHEET_CLASS);
+    this.addClass(SPREADSHEET_CLASS);
 
     let context = this._context = options.context;
 
@@ -56,17 +65,18 @@ class Sheet extends Widget {
       context.pathChanged.connect(this._onPathChanged, this);
 
       this._context.ready.then(() => {
-        this._updateSheet();
+        //this._onContextReady();
+        this._updateSpreadsheet();
         this._ready.resolve(undefined);
         // Throttle the rendering rate of the widget.
         this._monitor = new ActivityMonitor({
           signal: context.model.contentChanged,
           timeout: RENDER_TIMEOUT
         });
-        this._monitor.activityStopped.connect(this._updateSheet, this);
+        this._monitor.activityStopped.connect(this._updateSpreadsheet, this);
       });
     }else{
-      this.title.label = 'Sheet';
+      this.title.label = 'Spreadsheet';
     }
 
   }
@@ -109,13 +119,14 @@ class Sheet extends Widget {
    * Handle a change in path.
    */
   private _onPathChanged(): void {
-    this.title.label = this._context.path.split('/').pop();
+    const path = this._context.path;
+    this.title.label = PathExt.basename(path.split(':').pop()!);
   }
 
   /**
    * Create the json model for the sheet.
    */
-  private _updateSheet(): void {
+  private _updateSpreadsheet(): void {
     let content = this._context.model.toString();
     let container = document.getElementById(this.id);
     this._sheet = new Handsontable(container, {
@@ -144,14 +155,14 @@ class Sheet extends Widget {
  * The namespace for `sheet` class statics.
  */
 export
-namespace Sheet {
+namespace Spreadsheet {
   /**
    * Options for the sheet widget.
    */
   export
   interface IOptions {
   /**
-   * The document context for the Sheet being rendered by the widget.
+   * The document context for the Spreadsheet being rendered by the widget.
    */
   context: DocumentRegistry.Context;
 
@@ -159,14 +170,14 @@ namespace Sheet {
 }
 
 /**
- * A widget factory for Sheet widgets.
+ * A widget factory for Spreadsheet widgets.
  */
 export
-class SheetFactory extends ABCWidgetFactory<Sheet, DocumentRegistry.IModel> {
+class SpreadsheetFactory extends ABCWidgetFactory<Spreadsheet, DocumentRegistry.IModel> {
   /**
    * Create a new widget given a context.
    */
-  protected createNewWidget(context: DocumentRegistry.Context): Sheet {
-    return new Sheet({ context });
+  protected createNewWidget(context: DocumentRegistry.Context): Spreadsheet {
+    return new Spreadsheet({ context });
   }
 }

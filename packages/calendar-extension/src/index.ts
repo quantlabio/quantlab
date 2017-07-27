@@ -28,9 +28,11 @@ import {
 import * as $
   from 'jquery';
 
-import 'fullcalendar';
+import '@quantlab/fullcalendar';
 
-import 'fullcalendar/dist/gcal.js';
+import '@quantlab/fullcalendar/dist/gcal.js';
+
+//import 'fullcalendar-scheduler/dist/scheduler.js';
 
 /**
  * The command IDs used by the calendar plugin.
@@ -132,17 +134,18 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
 
       let calendar:JQuery = $('#' + id);
       calendar.fullCalendar({
-        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-  			aspectRatio: 2.0,
+        //schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+  			//aspectRatio: 2.0,
         eventLimit: true,
         googleCalendarApiKey: 'AIzaSyDjh1p472rNVktbzltiO6NM7DRRNccx-t4',
         events: {
-          googleCalendarId: '41g8dii7l1mk3fqsr74ifl8o8s@group.calendar.google.com'
+          googleCalendarId: '41g8dii7l1mk3fqsr74ifl8o8s@group.calendar.google.com',
+          className: 'gcal-event'
         },
         header:{
               left: 'today prev,next',
               center: 'title',
-              right: 'agendaDay,agendaWeek,month'
+              right: 'month,agendaWeek,agendaDay'
         },
         defaultView: 'agendaWeek'
       });

@@ -3,19 +3,6 @@
 | Distributed under the terms of the Modified BSD License.
 |----------------------------------------------------------------------------*/
 
-@import url('~handsontable/dist/handsontable.full.css');
-
-.jp-Sheet {
-  width: 100%;
-  height: 100%;
-}
-
-/*
-td.formula {
-  background-color: cyan;
-}
-*/
-
-td.formula-error {
-  background-color: red;
-}
+import {
+  Widget
+} from '@phosphor/widgets';
