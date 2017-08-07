@@ -32,7 +32,7 @@ import '@quantlab/fullcalendar';
 
 import '@quantlab/fullcalendar/dist/gcal.js';
 
-//import 'fullcalendar-scheduler/dist/scheduler.js';
+import '@quantlab/fullcalendar-scheduler/dist/scheduler.js';
 
 /**
  * The command IDs used by the calendar plugin.
@@ -134,13 +134,13 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
 
       let calendar:JQuery = $('#' + id);
       calendar.fullCalendar({
-        //schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+        schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
   			//aspectRatio: 2.0,
         eventLimit: true,
         googleCalendarApiKey: 'AIzaSyDjh1p472rNVktbzltiO6NM7DRRNccx-t4',
         events: {
-          googleCalendarId: '41g8dii7l1mk3fqsr74ifl8o8s@group.calendar.google.com',
-          className: 'gcal-event'
+          googleCalendarId: '41g8dii7l1mk3fqsr74ifl8o8s@group.calendar.google.com'//,
+          //className: 'gcal-event'
         },
         header:{
               left: 'today prev,next',
@@ -171,7 +171,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   if (launcher) {
     launcher.add({
       displayName: 'Calendar',
-      category: 'Quantitative Finance',
+      category: 'Other',
       rank: 1,
       iconClass: CALENDAR_ICON_CLASS,
       callback: () => {

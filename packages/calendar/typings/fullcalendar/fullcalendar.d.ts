@@ -1,8 +1,8 @@
-// Type definitions for FullCalendar 2.7
+// Type definitions for FullCalendar 3.4
 // Project: http://fullcalendar.io/
 // Definitions by: Neil Stalker <https://github.com/nestalk>, Marcelo Camargo <https://github.com/hasellcamargo>, Patrick Niemann <https://github.com/panic175>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.3
+// TypeScript Version: 2.4.1
 
 /// <reference types="jquery"/>
 

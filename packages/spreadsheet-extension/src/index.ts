@@ -169,7 +169,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   if (launcher) {
     launcher.add({
       displayName: 'Spreadsheet',
-      category: 'Quantitative Finance',
+      category: 'Other',
       rank: 2,
       iconClass: SPREADSHEET_ICON_CLASS,
       callback: () => {

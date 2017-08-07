@@ -22,7 +22,8 @@
     "@quantlab/coreutils": "^0.1.2",
     "@quantlab/docregistry": "^0.1.4",
     "@quantlab/services": "^0.1.4",
-    "@quantlab/fullcalendar": "^2.7.6"
+    "@quantlab/fullcalendar": "^3.4.0",
+    "@quantlab/fullcalendar-scheduler": "^1.6.2"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

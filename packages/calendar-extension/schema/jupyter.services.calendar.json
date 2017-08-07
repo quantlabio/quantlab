@@ -1,0 +1,9 @@
+{
+  "title": "Calendar",
+  "description": "Calendar settings",
+  "properties": {
+    "ApiKey": { "type": "string", "title": "Api Key", "default": "" },
+    "Calendars": { "type": "array", "title": "Calendars", "default": [] }
+  },
+  "type": "object"
+}

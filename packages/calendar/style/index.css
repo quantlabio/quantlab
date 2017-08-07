@@ -4,7 +4,7 @@
 |----------------------------------------------------------------------------*/
 
 @import url('~@quantlab/fullcalendar/dist/fullcalendar.css');
-@import url('~fullcalendar-scheduler/dist/scheduler.css');
+@import url('~@quantlab/fullcalendar-scheduler/dist/scheduler.css');
 
 .jp-Calendar {
   min-width: 200px;

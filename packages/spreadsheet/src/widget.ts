@@ -139,10 +139,11 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
       minCols: 32,
       colWidths: 100,
       contextMenu: true,
-      //formulas: true,
+      formulas: true,
       outsideClickDeselects: false
     });
 
+    this._sheet.render();
   }
 
   private _context: DocumentRegistry.Context = null;
