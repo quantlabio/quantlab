@@ -25,12 +25,8 @@ import {
   Spreadsheet, SpreadsheetFactory
 } from '@quantlab/spreadsheet';
 
-//import 'hot-formula-parser/dist/formula-parser.js';
-
 import * as Handsontable
   from '@quantlab/handsontable';
-
-//import 'hot-formula-parser/dist/formula.js';
 
 /**
  * The command IDs used by the sheet plugin.
@@ -53,6 +49,10 @@ const FACTORY = 'Spreadsheet';
  */
 const SPREADSHEET_ICON_CLASS = 'jp-SpreadsheetIcon';
 
+/**
+ * The class name added to a dirty widget.
+ */
+const DIRTY_CLASS = 'jp-mod-dirty';
 
 /**
  * The default sheet extension.
@@ -79,8 +79,8 @@ export default plugin;
 function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
   const factory = new SpreadsheetFactory({
     name: FACTORY,
-    fileTypes: ['xls'],
-    defaultFor: ['xls']
+    fileTypes: ['spreadsheet'],
+    defaultFor: ['spreadsheet']
   });
   const tracker = new InstanceTracker<Spreadsheet>({ namespace: 'spreadsheet' });
 
@@ -92,7 +92,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   });
 
   app.docRegistry.addWidgetFactory(factory);
-  let ft = app.docRegistry.getFileType('xls');
+  let ft = app.docRegistry.getFileType('spreadsheet');
   factory.widgetCreated.connect((sender, widget) => {
     // Track the widget.
     tracker.add(widget);
@@ -111,8 +111,13 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
   commands.addCommand(CommandIDs.save, {
     label: 'Save',
     execute: () => {
-      //let context = docManager.contextForWidget(app.shell.currentWidget);
-      //return context.save();
+      const current = tracker.currentWidget;
+      const model = current.modelString();
+      tracker.currentWidget.context.model.fromString(model);
+      tracker.currentWidget.context.save().then(() => {
+        tracker.currentWidget.title.className = tracker.currentWidget.title.className.replace(DIRTY_CLASS, '');
+        tracker.currentWidget.context.model.dirty = false;
+      });
     }
   });
 
@@ -142,8 +147,8 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
         minCols: 32,
         colWidths: 100,
         contextMenu: true,
-        //formulas: true,
-        outsideClickDeselects: false
+        formulas: true,
+        comments: true
       });
 
       hot.render();
@@ -172,7 +177,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
       category: 'Other',
       rank: 2,
       iconClass: SPREADSHEET_ICON_CLASS,
-      callback: () => {
+      callback: cwd => {
         return commands.execute(CommandIDs.open);
       }
     });

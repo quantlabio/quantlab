@@ -36,12 +36,29 @@ const SPREADSHEET_CLASS = 'jp-Spreadsheet';
 /**
  * The class name added to a dirty widget.
  */
-//const DIRTY_CLASS = 'jp-mod-dirty';
+const DIRTY_CLASS = 'jp-mod-dirty';
 
 /**
  * The timeout to wait for change activity to have ceased before rendering.
  */
 const RENDER_TIMEOUT = 1000;
+
+/**
+ * filter item interface
+ */
+interface filterItem {
+  row: number;
+  col: number;
+}
+
+class hotModel {
+  data: any[];
+  cell?: any[];
+  colWidths?: any[]|Function|number|string;
+  customBorders?: boolean|any[];
+  mergeCells?: boolean|any[];
+  style: any[];
+}
 
 /**
  * A widget which manages a spreadsheet session.
@@ -56,16 +73,25 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
   constructor(options: Spreadsheet.IOptions) {
     super();
 
+    const context = this._context = options.context;
+
     this.addClass(SPREADSHEET_CLASS);
 
-    let context = this._context = options.context;
-
+    context.pathChanged.connect(this._onPathChanged, this);
+    context.ready.then(() => { this._onContextReady(); });
+    this._onPathChanged();
+/*
     if(context){
-      this.title.label = context.path.split('/').pop();
-      context.pathChanged.connect(this._onPathChanged, this);
 
       this._context.ready.then(() => {
-        //this._onContextReady();
+        const contextModel = this._context.model;
+
+        this._handleDirtyState();
+
+        // Wire signal connections.
+        contextModel.stateChanged.connect(this._onModelStateChanged, this);
+        contextModel.contentChanged.connect(this._onContentChanged, this);
+
         this._updateSpreadsheet();
         this._ready.resolve(undefined);
         // Throttle the rendering rate of the widget.
@@ -78,7 +104,7 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
     }else{
       this.title.label = 'Spreadsheet';
     }
-
+*/
   }
 
   /**
@@ -93,6 +119,43 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
    */
   get ready() {
     return this._ready.promise;
+  }
+
+  /**
+   * Handle actions that should be taken when the context is ready.
+   */
+  private _onContextReady(): void {
+    if (this.isDisposed) {
+      return;
+    }
+    const contextModel = this._context.model;
+
+    // Resolve the ready promise.
+    this._ready.resolve(undefined);
+
+    this._updateSpreadsheet();
+
+    // Throttle the rendering rate of the widget.
+    this._monitor = new ActivityMonitor({
+      signal: contextModel.contentChanged,
+      timeout: RENDER_TIMEOUT
+    });
+    this._monitor.activityStopped.connect(this._updateSpreadsheet, this);
+  }
+
+  /**
+   * get spreadsheet model
+   */
+  modelString(): string{
+    const opts: Handsontable.Options = this._sheet.getSettings();
+    let hot = new hotModel();
+    hot.data = this._sheet.getSourceData();
+    hot.cell = opts.cell;
+    hot.colWidths = opts.colWidths
+    hot.customBorders = opts.customBorders;
+    hot.mergeCells = opts.mergeCells;
+    hot.style = [];
+    return JSON.stringify(hot, null, 4);
   }
 
   /**
@@ -127,20 +190,39 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
    * Create the json model for the sheet.
    */
   private _updateSpreadsheet(): void {
-    let content = this._context.model.toString();
-    let container = document.getElementById(this.id);
+    let contextModel = this._context.model;
+    let title = this.title;
+    let content = JSON.parse(contextModel.toString());
+    const container = document.getElementById(this.id);
+
     this._sheet = new Handsontable(container, {
-      data: JSON.parse(content),
+      data: content.data,
       rowHeaders: true,
       colHeaders: true,
       manualColumnResize: true,
       manualRowResize: true,
       minRows: 128,
       minCols: 32,
-      colWidths: 100,
+      colWidths: content.colWidths,
       contextMenu: true,
       formulas: true,
-      outsideClickDeselects: false
+      comments: true,
+      mergeCells: content.mergeCells,
+      customBorders: content.customBorders,
+      cell: content.cell,
+      cells: function(row: number, col: number, prop:any){
+        var cellProperties = {};
+        cellProperties = content.style.filter( (item:filterItem) => item.row === row && item.col === col)[0];
+        return cellProperties;
+      },
+      afterChange: function(changes: Array<[number, number|string, any, any]>, source?: string) {
+        if (source != 'loadData'){
+          if(!contextModel.dirty){
+            contextModel.dirty = true;
+            title.className += ` ${DIRTY_CLASS}`;
+          }
+        }
+      }
     });
 
     this._sheet.render();
@@ -153,7 +235,7 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
 }
 
 /**
- * The namespace for `sheet` class statics.
+ * The namespace for `Spreadsheet` class statics.
  */
 export
 namespace Spreadsheet {
@@ -162,12 +244,13 @@ namespace Spreadsheet {
    */
   export
   interface IOptions {
-  /**
-   * The document context for the Spreadsheet being rendered by the widget.
-   */
-  context: DocumentRegistry.Context;
+    /**
+     * The document context for the Spreadsheet being rendered by the widget.
+     */
+    context: DocumentRegistry.Context;
 
   }
+
 }
 
 /**
