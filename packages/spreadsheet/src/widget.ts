@@ -167,6 +167,7 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
     if (monitor) {
       monitor.dispose();
     }
+    this._sheet.destroy();
     super.dispose();
   }
 
@@ -195,6 +196,10 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
     let content = JSON.parse(contextModel.toString());
     const container = document.getElementById(this.id);
 
+    if(this._sheet != null){
+      this._sheet.destroy();
+    }
+
     this._sheet = new Handsontable(container, {
       data: content.data,
       rowHeaders: true,
@@ -204,15 +209,18 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
       minRows: 128,
       minCols: 32,
       colWidths: content.colWidths,
+      //rowHeights: content.rowHeights,
       contextMenu: true,
       formulas: true,
       comments: true,
+      //columnSorting: true,
+      //sortIndicator: true,
       mergeCells: content.mergeCells,
       customBorders: content.customBorders,
       cell: content.cell,
       cells: function(row: number, col: number, prop:any){
         var cellProperties = {};
-        cellProperties = content.style.filter( (item:filterItem) => item.row === row && item.col === col)[0];
+        cellProperties = content.cell.filter( (item:filterItem) => item.row === row && item.col === col)[0];
         return cellProperties;
       },
       afterChange: function(changes: Array<[number, number|string, any, any]>, source?: string) {
@@ -224,6 +232,9 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
         }
       }
     });
+
+    this._sheet.formula.parser.setFunction('FOO', () => 1234);
+    this._sheet.formula.parser.setFunction('BAR', (params:any) => params[0] + params[1]);
 
     this._sheet.render();
   }

@@ -172,7 +172,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
     launcher.add({
       displayName: 'Calendar',
       category: 'Other',
-      rank: 1,
+      rank: 5,
       iconClass: CALENDAR_ICON_CLASS,
       callback: () => {
         return commands.execute(CommandIDs.open);

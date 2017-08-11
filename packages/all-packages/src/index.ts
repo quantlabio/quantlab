@@ -27,6 +27,8 @@ import "@quantlab/faq-extension";
 import "@quantlab/filebrowser";
 import "@quantlab/filebrowser-extension";
 import "@quantlab/help-extension";
+import "@quantlab/highcharts";
+import "@quantlab/highcharts-extension";
 import "@quantlab/imageviewer";
 import "@quantlab/imageviewer-extension";
 import "@quantlab/inspector";

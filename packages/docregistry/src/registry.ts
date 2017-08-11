@@ -536,9 +536,6 @@ class DocumentRegistry implements IDisposable {
     case 'notebook':
       return find(this._fileTypes, ft => ft.contentType === 'notebook') ||
         DocumentRegistry.defaultNotebookFileType;
-    case 'spreadsheet':
-      return find(this._fileTypes, ft => ft.contentType === 'spreadsheet') ||
-        DocumentRegistry.defaultSpreadsheetFileType;        
     default:
       // Find the best matching extension.
       if (model.name || model.path) {
@@ -1116,19 +1113,6 @@ namespace DocumentRegistry {
   };
 
   /**
-   * The default spreadsheet file type used by the document registry.
-   */
-  export
-  const defaultSpreadsheetFileType: IFileType = {
-    ...fileTypeDefaults,
-    name: 'spreadsheet',
-    extensions: ['.xls'],
-    contentType: 'spreadsheet',
-    fileFormat: 'json',
-    iconClass: 'jp-MaterialIcon jp-SpreadsheetIcon'
-  };
-
-  /**
    * The default directory file type used by the document registry.
    */
   export
@@ -1148,7 +1132,6 @@ namespace DocumentRegistry {
   const defaultFileTypes: ReadonlyArray<Partial<IFileType>> = [
     defaultTextFileType,
     defaultNotebookFileType,
-    defaultSpreadsheetFileType,
     defaultDirectoryFileType,
     {
       name: 'markdown',
@@ -1173,6 +1156,16 @@ namespace DocumentRegistry {
       extensions: ['.csv'],
       mimeTypes: ['text/csv'],
       iconClass: 'jp-MaterialIcon jp-SpreadsheetIcon'
+    },
+    {
+      name: 'xls',
+      extensions: ['.xls'],
+      iconClass: 'jp-MaterialIcon jp-SpreadsheetIcon'
+    },
+    {
+      name: 'hc',
+      extensions: ['.hc', '.hs', 'hm'],
+      iconClass: 'jp-MaterialIcon jp-ChartIcon'
     },
     {
       name: 'ics',

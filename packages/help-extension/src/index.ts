@@ -108,6 +108,10 @@ const RESOURCES = [
     text: 'Markdown Reference',
     url: 'https://help.github.com/articles/' +
       'getting-started-with-writing-and-formatting-on-github/'
+  },
+  {
+    text: 'QuantLibXL Reference',
+    url: 'http://quantlib.org/quantlibxl/allfunctions.html'
   }
 ];
 

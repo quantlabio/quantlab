@@ -39,6 +39,8 @@
     "@quantlab/fileeditor": "^0.1.4",
     "@quantlab/fileeditor-extension": "^0.1.4",
     "@quantlab/help-extension": "^0.1.4",
+    "@quantlab/highcharts": "^0.1.0",
+    "@quantlab/highcharts-extension": "^0.1.0",
     "@quantlab/imageviewer": "^0.1.4",
     "@quantlab/imageviewer-extension": "^0.1.4",
     "@quantlab/inspector": "^0.1.4",

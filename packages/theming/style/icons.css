@@ -228,6 +228,11 @@
 }
 
 
+.jp-ChartIcon {
+  background-image: url(icons/jupyter/highcharts.svg);
+}
+
+
 .jp-TextEditorIcon {
   background-image: url(icons/jupyter/texteditor.svg);
 }

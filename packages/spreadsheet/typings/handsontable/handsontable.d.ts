@@ -91,6 +91,9 @@ declare namespace __Handsontable {
         unlisten(): void;
         updateSettings(settings: Object, init?: boolean): void;
         validateCells(callback: Function): void;
+
+        //misc
+        formula: any;
     }
 }
 
@@ -434,6 +437,10 @@ declare namespace Handsontable {
         arrayMapper: ArrayMapper;
     }
 
+    interface Formula {
+        parser: any;
+    }
+
     interface Helper {
         arrayFilter(array: any[], predicate: Function): any[];
         arrayEach(array: any[], predicate: Function): void;
@@ -519,6 +526,7 @@ declare class Handsontable extends __Handsontable.Core {
     static utils: Handsontable.Utils;
     static renderers: Handsontable.Renderers;
     static editors: Handsontable.Editors;
+    static formula: Handsontable.Formula;
 }
 
 export = Handsontable;

@@ -22,9 +22,9 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  Spreadsheet, SpreadsheetFactory,
-  SheetTools
-} from '@quantlab/spreadsheet';
+  HighCharts, HighChartsFactory,
+  ChartTools
+} from '@quantlab/highcharts';
 
 /**
  * The command IDs used by the sheet plugin.
@@ -32,37 +32,29 @@ import {
 namespace CommandIDs {
 
   export
-  const save = 'spreadsheet:save';
+  const save = 'chart:save';
 };
 
-/**
- * The name of the factory that creates Spreadsheet widgets.
- */
-const FACTORY = 'Spreadsheet';
+const FACTORY = 'HighCharts';
 
 /**
  * The class name for the sheet icon in the default theme.
  */
-const SPREADSHEET_ICON_CLASS = 'jp-SpreadsheetIcon';
+const CHART_ICON_CLASS = 'jp-ChartIcon';
 
-/**
- * The class name added to a dirty widget.
- */
-const DIRTY_CLASS = 'jp-mod-dirty';
-
-const sheetToolsPlugin: QuantLabPlugin<void> = {
-  activate: activateSheetTools,
-  id: 'jupyter.extensions.sheet-tools',
+const chartToolsPlugin: QuantLabPlugin<void> = {
+  activate: activateChartTools,
+  id: 'jupyter.extensions.chart-tools',
   autoStart: false,
   requires: []
 };
 
 /**
- * The default sheet extension.
+ * The default chart extension.
  */
-const sheetPlugin: QuantLabPlugin<void> = {
-  activate: activateSpreadsheet,
-  id: 'jupyter.extensions.spreadsheet',
+const chartPlugin: QuantLabPlugin<void> = {
+  activate: activateHighCharts,
+  id: 'jupyter.extensions.highcharts',
   requires: [
     ILayoutRestorer, IServiceManager, IMainMenu, ICommandPalette
   ],
@@ -74,29 +66,26 @@ const sheetPlugin: QuantLabPlugin<void> = {
 /**
  * Export the plugin as default.
  */
- const plugins: QuantLabPlugin<any>[] = [sheetPlugin, sheetToolsPlugin];
+const plugins: QuantLabPlugin<any>[] = [chartPlugin, chartToolsPlugin];
 export default plugins;
 
-function activateSheetTools(app: QuantLab): void {
-  const id = 'sheet-tools';
-  const sheettools = new SheetTools();
-  sheettools.id = id;
-  sheettools.title.label = 'Spreadsheet';
+function activateChartTools(app: QuantLab): void {
+  const id = 'chart-tools';
+  const charttools = new ChartTools();
+  charttools.id = id;
+  charttools.title.label = 'Chart';
 
-  //app.shell.addToRightArea(sheettools);
-  //app.shell.activateById(sheettools.id);
+  //app.shell.addToRightArea(charttools);
+  //app.shell.activateById(charttools.id);
 }
 
-/**
- * Activate the spreadsheet plugin.
- */
-function activateSpreadsheet(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
-  const factory = new SpreadsheetFactory({
+function activateHighCharts(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
+  const factory = new HighChartsFactory({
     name: FACTORY,
-    fileTypes: ['xls'],
-    defaultFor: ['xls']
+    fileTypes: ['hc'],
+    defaultFor: ['hc']
   });
-  const tracker = new InstanceTracker<Spreadsheet>({ namespace: 'spreadsheet' });
+  const tracker = new InstanceTracker<HighCharts>({ namespace: 'highcharts' });
 
   // Handle state restoration.
   restorer.restore(tracker, {
@@ -106,7 +95,7 @@ function activateSpreadsheet(app: QuantLab, restorer: ILayoutRestorer, services:
   });
 
   app.docRegistry.addWidgetFactory(factory);
-  let ft = app.docRegistry.getFileType('spreadsheet');
+  let ft = app.docRegistry.getFileType('hc');
   factory.widgetCreated.connect((sender, widget) => {
     // Track the widget.
     tracker.add(widget);
@@ -120,17 +109,16 @@ function activateSpreadsheet(app: QuantLab, restorer: ILayoutRestorer, services:
   });
 
   const { commands } = app;
-  const category = 'Spreadsheet';
+  const category = 'Chart';
 
   commands.addCommand(CommandIDs.save, {
     label: 'Save',
     execute: () => {
-      const current = tracker.currentWidget;
-      const model = current.modelString();
-      tracker.currentWidget.context.model.fromString(model);
+      //const current = tracker.currentWidget;
+      //tracker.currentWidget.context.model.fromString(model);
       tracker.currentWidget.context.save().then(() => {
-        tracker.currentWidget.title.className = tracker.currentWidget.title.className.replace(DIRTY_CLASS, '');
-        tracker.currentWidget.context.model.dirty = false;
+        //tracker.currentWidget.title.className = tracker.currentWidget.title.className.replace(DIRTY_CLASS, '');
+        //tracker.currentWidget.context.model.dirty = false;
       });
     }
   });
@@ -149,13 +137,13 @@ function activateSpreadsheet(app: QuantLab, restorer: ILayoutRestorer, services:
   // Add a launcher item if the launcher is available.
   if (launcher) {
     launcher.add({
-      displayName: 'Spreadsheet',
+      displayName: 'Chart',
       category: 'Other',
-      rank: 2,
-      iconClass: SPREADSHEET_ICON_CLASS,
+      rank: 3,
+      iconClass: CHART_ICON_CLASS,
       callback: cwd => {
         return commands.execute('docmanager:new-untitled', {
-          path: cwd, type: 'spreadsheet', ext: '.xls', apiEndpoint: 'api/spreadsheet'
+          path: cwd, type: 'hc'
         }).then(model => {
           return commands.execute('docmanager:open', {
             path: model.path, factory: FACTORY

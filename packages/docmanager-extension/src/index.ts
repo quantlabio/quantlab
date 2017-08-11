@@ -4,7 +4,7 @@
 import {
   QuantLab, QuantLabPlugin
 } from '@quantlab/application';
- 
+
 import {
   ICommandPalette, IMainMenu
 } from '@quantlab/apputils';

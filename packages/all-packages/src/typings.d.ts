@@ -10,3 +10,6 @@
 /// <reference path="../../vega2-extension/typings/vega-embed/vega-embed.d.ts"/>
 /// <reference path="../../calendar/typings/fullcalendar/fullcalendar.d.ts"/>
 /// <reference path="../../spreadsheet/typings/handsontable/handsontable.d.ts"/>
+/// <reference path="../../highcharts/typings/highcharts/highcharts.d.ts"/>
+/// <reference path="../../highcharts/typings/highstock/highstock.d.ts"/>
+/// <reference path="../../highcharts/typings/highmaps/highmaps.d.ts"/>

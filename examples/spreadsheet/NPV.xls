@@ -20,24 +20,15 @@
         {"row": 0, "col": 0, "rowspan": 1, "colspan": 4}
     ],
     "cell": [
-      {"row": 0, "col": 0, "className": "htCenter"},
-      {"row": 1, "col": 0, "className": "htRight"},
+      {"row": 0, "col": 0, "className": "htCenter", "fontWeight": "bold"},
+      {"row": 1, "col": 0, "className": "htRight", "fontStyle": "italic"},
       {"row": 1, "col": 1, "comment": {"value": "percent is not working, need to use number"}},
-      {"row": 3, "col": 0, "className": "htCenter"},
-      {"row": 3, "col": 1, "className": "htCenter"},
-      {"row": 3, "col": 2, "className": "htCenter"},
-      {"row": 11, "col": 0, "className": "htRight"},
-      {"row": 12, "col": 0, "className": "htRight"},
-      {"row": 13, "col": 0, "className": "htRight"}
-    ],
-    "style":[
-      {"row": 0, "col": 0, "fontWeight": "bold"},
-      {"row": 3, "col": 0, "fontWeight": "bold"},
-      {"row": 3, "col": 1, "fontWeight": "bold"},
-      {"row": 3, "col": 2, "fontWeight": "bold"},
-      {"row": 11, "col": 0, "background": "yellow"},
-      {"row": 12, "col": 0, "background": "yellow"},
-      {"row": 13, "col": 0, "background": "yellow"},
+      {"row": 3, "col": 0, "className": "htCenter", "fontWeight": "bold"},
+      {"row": 3, "col": 1, "className": "htCenter", "fontWeight": "bold"},
+      {"row": 3, "col": 2, "className": "htCenter", "fontWeight": "bold"},
+      {"row": 11, "col": 0, "className": "htRight", "background": "yellow"},
+      {"row": 12, "col": 0, "className": "htRight", "background": "yellow"},
+      {"row": 13, "col": 0, "className": "htRight", "background": "yellow"},
       {"row": 11, "col": 1, "color": "blue"},
       {"row": 12, "col": 1, "color": "blue"},
       {"row": 13, "col": 1, "color": "blue"}
@@ -45,30 +36,13 @@
     "customBorders": [
       {
         "range": {
-          "from": {
-            "row": 3,
-            "col": 0
-          },
-          "to": {
-            "row": 8,
-            "col": 3
-          }
+          "from": {"row": 3, "col": 0},
+          "to": {"row": 8, "col": 3}
         },
-        "top": {
-          "width": 2,
-          "color": "#5292F7"
-        },
-        "left": {
-          "width": 2,
-          "color": "orange"
-        },
-        "bottom": {
-          "width": 2,
-          "color": "red"
-        },
-        "right": {
-          "width": 2,
-          "color": "magenta"
-        }
-      }]
+        "top": {"width": 2, "color": "#5292F7"},
+        "left": {"width": 2, "color": "orange"},
+        "bottom": {"width": 2, "color": "red"},
+        "right": {"width": 2, "color": "magenta"}
+      }
+   ]
 }

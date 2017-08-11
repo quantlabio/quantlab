@@ -1,7 +1,7 @@
 {
-  "name": "@quantlab/spreadsheet",
-  "version": "0.1.2",
-  "description": "QuantLab - Spreadsheet Widget",
+  "name": "@quantlab/highcharts",
+  "version": "0.1.0",
+  "description": "QuantLab - HightCharts Widget",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -22,7 +22,7 @@
     "@quantlab/coreutils": "^0.1.2",
     "@quantlab/docregistry": "^0.1.4",
     "@quantlab/services": "^0.1.4",
-    "@quantlab/handsontable": "^0.33.4"
+    "highcharts": "^5.0.14"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
