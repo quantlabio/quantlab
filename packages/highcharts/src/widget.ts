@@ -109,8 +109,7 @@ class HighCharts extends Widget implements DocumentRegistry.IReadyWidget {
 
     const path = this._context.path;
     let ext = PathExt.basename(path.split(':').pop()!);
-    let pieces = ext.split('.');
-    ext = pieces[pieces.length-1];
+    ext = ext.split('.').pop();
 
     if(ext == 'hc')
       this._chart = Highcharts.chart(this.id, content);

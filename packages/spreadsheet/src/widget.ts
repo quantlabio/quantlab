@@ -191,9 +191,19 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
    * Create the json model for the sheet.
    */
   private _updateSpreadsheet(): void {
-    let contextModel = this._context.model;
+
     let title = this.title;
-    let content = JSON.parse(contextModel.toString());
+    let contextModel = this._context.model;
+    let content:any = {};
+
+    if(contextModel.toString() == ''){
+      content.colWidths = 100;
+      content.data = [[]];
+      content.cell = [];
+    } else {
+      content = JSON.parse(contextModel.toString());
+    }
+
     const container = document.getElementById(this.id);
 
     if(this._sheet != null){

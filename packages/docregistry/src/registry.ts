@@ -1163,6 +1163,11 @@ namespace DocumentRegistry {
       iconClass: 'jp-MaterialIcon jp-SpreadsheetIcon'
     },
     {
+      name: 'js',
+      extensions: ['.js'],
+      iconClass: 'jp-MaterialIcon jp-JavaScriptIcon'
+    },
+    {
       name: 'hc',
       extensions: ['.hc', '.hs', 'hm'],
       iconClass: 'jp-MaterialIcon jp-ChartIcon'

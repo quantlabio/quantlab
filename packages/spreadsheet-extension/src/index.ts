@@ -106,7 +106,7 @@ function activateSpreadsheet(app: QuantLab, restorer: ILayoutRestorer, services:
   });
 
   app.docRegistry.addWidgetFactory(factory);
-  let ft = app.docRegistry.getFileType('spreadsheet');
+  let ft = app.docRegistry.getFileType('xls');
   factory.widgetCreated.connect((sender, widget) => {
     // Track the widget.
     tracker.add(widget);
@@ -155,12 +155,29 @@ function activateSpreadsheet(app: QuantLab, restorer: ILayoutRestorer, services:
       iconClass: SPREADSHEET_ICON_CLASS,
       callback: cwd => {
         return commands.execute('docmanager:new-untitled', {
-          path: cwd, type: 'spreadsheet', ext: '.xls', apiEndpoint: 'api/spreadsheet'
+          path: cwd, type: 'file'
         }).then(model => {
+          model.type = 'xls';
+
+          let oldPath = model.path;
+          let newPath = model.path.split('.');
+          let newName = model.name.split('.');
+
+          newPath.pop();
+          newPath = newPath.join() + '.xls';
+          newName.pop();
+          newName = newName.join() + '.xls';
+
+          model.path = newPath;
+          model.name = newName;
+
+          services.contents.rename(oldPath, newPath);
+
           return commands.execute('docmanager:open', {
             path: model.path, factory: FACTORY
-          });
-        });
+          })
+
+        })
       }
     });
   }

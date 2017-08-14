@@ -132,7 +132,7 @@ function activateHighCharts(app: QuantLab, restorer: ILayoutRestorer, services: 
     palette.addItem({ command, category });
     menu.addItem({ command });
   });
-  mainMenu.addMenu(menu, {rank: 70});
+  mainMenu.addMenu(menu, {rank: 80});
 
   // Add a launcher item if the launcher is available.
   if (launcher) {
