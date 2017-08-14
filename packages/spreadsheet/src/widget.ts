@@ -187,6 +187,10 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
     this.title.label = PathExt.basename(path.split(':').pop()!);
   }
 
+  protected onResize(msg: Widget.ResizeMessage): void {
+    this._sheet.updateSettings({width:msg.width, height:msg.height});
+  }
+
   /**
    * Create the json model for the sheet.
    */

@@ -118,17 +118,33 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
     this.title.label = this._context.path.split('/').pop();
   }
 
+  protected onResize(msg: Widget.ResizeMessage): void {
+    if(this._calendar != null)
+      this._calendar.fullCalendar('option', 'aspectRatio', msg.width/(msg.height - 66));
+  }
+
   /**
    * Create the json model for the calendar.
    */
   private _updateCalendar(): void {
-    let content = this._context.model.toString();
+
+    let contextModel = this._context.model;
+    let content:any = {};
+
+    if(contextModel.toString() == ''){
+      content.resourceColumns = [];
+      content.resources = [];
+      content.events = [];
+    } else {
+      content = JSON.parse(contextModel.toString());
+    }
+
     this._calendar = $('#' + this.id);
     this._calendar.fullCalendar({
       schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
       editable: true,
       //droppable: true,
-      aspectRatio: 2.0,
+      aspectRatio: this._calendar.width()/(this._calendar.height()-66),
       //scrollTime: '00:00',
       eventLimit: true,
       header:{
@@ -138,9 +154,9 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
       },
       defaultView: 'timelineWeek',
       resourceAreaWidth: '20%',
-      resourceColumns: JSON.parse(content).resourceColumns,
-      resources: JSON.parse(content).resources,
-      events: JSON.parse(content).events
+      resourceColumns: content.resourceColumns,
+      resources: content.resources,
+      events: content.events
     });
   }
 

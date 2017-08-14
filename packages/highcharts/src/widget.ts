@@ -103,9 +103,17 @@ class HighCharts extends Widget implements DocumentRegistry.IReadyWidget {
     this.title.label = PathExt.basename(path.split(':').pop()!);
   }
 
+  protected onResize(msg: Widget.ResizeMessage): void {
+    this._chart.setSize(msg.width, msg.height, false);
+  }
+
   private _updateHighCharts(): void {
     let contextModel = this._context.model;
     let content = JSON.parse(contextModel.toString());
+    content.credits = {
+      enabled: false
+    };
+    content.reflow = false;
 
     const path = this._context.path;
     let ext = PathExt.basename(path.split(':').pop()!);

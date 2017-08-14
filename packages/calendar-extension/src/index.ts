@@ -174,8 +174,31 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
       category: 'Other',
       rank: 5,
       iconClass: CALENDAR_ICON_CLASS,
-      callback: () => {
-        return commands.execute(CommandIDs.open);
+      callback: cwd => {
+        return commands.execute('docmanager:new-untitled', {
+          path: cwd, type: 'file'
+        }).then(model => {
+          model.type = 'ics';
+
+          let oldPath = model.path;
+          let newPath = model.path.split('.');
+          let newName = model.name.split('.');
+
+          newPath.pop();
+          newPath = newPath.join() + '.ics';
+          newName.pop();
+          newName = newName.join() + '.ics';
+
+          model.path = newPath;
+          model.name = newName;
+
+          services.contents.rename(oldPath, newPath);
+
+          return commands.execute('docmanager:open', {
+            path: model.path, factory: FACTORY
+          })
+
+        })
       }
     });
   }

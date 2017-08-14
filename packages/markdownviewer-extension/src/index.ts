@@ -51,6 +51,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer) {
       name: FACTORY,
       primaryFileType,
       fileTypes: ['markdown'],
+      defaultFor: ['markdown'],
       rendermime: app.rendermime
     });
     app.docRegistry.addWidgetFactory(factory);
