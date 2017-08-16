@@ -112,6 +112,15 @@
       },
       "type": "object"
     },
+    "spreadsheet:save": {
+      "default": { },
+      "properties": {
+        "command": { "default": "spreadsheet:save" },
+        "keys": { "default": ["Accel S"] },
+        "selector": { "default": ".jp-Spreadsheet" }
+      },
+      "type": "object"
+    },
     "filebrowser:toggle-main": {
       "default": { },
       "properties": {

@@ -10,24 +10,37 @@ import {
 } from '@quantlab/application';
 
 import {
-  InstanceTracker, ICommandPalette, IMainMenu
+  ICommandPalette, IMainMenu
 } from '@quantlab/apputils';
+
+import {
+  IEditorServices
+} from '@quantlab/codeeditor';
+
+import {
+  IStateDB
+} from '@quantlab/coreutils';
 
 import {
   ILauncher
 } from '@quantlab/launcher';
 
 import {
-  Menu
+  Menu, Widget
 } from '@phosphor/widgets';
 
 import {
-  HighCharts, HighChartsFactory,
-  ChartTools
+  Message, MessageLoop
+} from '@phosphor/messaging';
+
+import {
+  HighChartsFactory,
+  IChartTools, ChartTools,
+  IChartTracker, ChartTracker
 } from '@quantlab/highcharts';
 
 /**
- * The command IDs used by the sheet plugin.
+ * The command IDs used by the chart plugin.
  */
 namespace CommandIDs {
 
@@ -38,23 +51,25 @@ namespace CommandIDs {
 const FACTORY = 'HighCharts';
 
 /**
- * The class name for the sheet icon in the default theme.
+ * The class name for the chart icon in the default theme.
  */
 const CHART_ICON_CLASS = 'jp-ChartIcon';
 
-const chartToolsPlugin: QuantLabPlugin<void> = {
+const chartToolsPlugin: QuantLabPlugin<IChartTools> = {
   activate: activateChartTools,
+  provides: IChartTools,
   id: 'jupyter.extensions.chart-tools',
-  autoStart: false,
-  requires: []
+  autoStart: true,
+  requires: [IChartTracker, IEditorServices, IStateDB]
 };
 
 /**
  * The default chart extension.
  */
-const chartPlugin: QuantLabPlugin<void> = {
-  activate: activateHighCharts,
+const chartPlugin: QuantLabPlugin<IChartTracker> = {
+  activate: activateCharts,
   id: 'jupyter.extensions.highcharts',
+  provides: IChartTracker,
   requires: [
     ILayoutRestorer, IServiceManager, IMainMenu, ICommandPalette
   ],
@@ -69,23 +84,75 @@ const chartPlugin: QuantLabPlugin<void> = {
 const plugins: QuantLabPlugin<any>[] = [chartPlugin, chartToolsPlugin];
 export default plugins;
 
-function activateChartTools(app: QuantLab): void {
+function activateChartTools(app: QuantLab, tracker: IChartTracker, editorServices: IEditorServices, state: IStateDB): Promise<IChartTools> {
   const id = 'chart-tools';
-  const charttools = new ChartTools();
-  charttools.id = id;
-  charttools.title.label = 'Chart';
+  const charttools = new ChartTools({tracker});
+  const slideShow = ChartTools.createSlideShowSelector();
+  const nbConvert = ChartTools.createNBConvertSelector();
+  const editorFactory = editorServices.factoryService.newInlineEditor
+    .bind(editorServices.factoryService);
+  const metadataEditor = new ChartTools.MetadataEditorTool({ editorFactory });
 
-  //app.shell.addToRightArea(charttools);
-  //app.shell.activateById(charttools.id);
+  // Create message hook for triggers to save to the database.
+  const hook = (sender: any, message: Message): boolean => {
+    switch (message) {
+      case Widget.Msg.ActivateRequest:
+        state.save(id, { open: true });
+        break;
+      case Widget.Msg.AfterHide:
+      case Widget.Msg.CloseRequest:
+        state.remove(id);
+        break;
+      default:
+        break;
+    }
+    return true;
+  };
+
+  charttools.title.label = 'Chart Tools';
+  charttools.id = id;
+  charttools.addItem({ tool: slideShow, rank: 2 });
+  charttools.addItem({ tool: nbConvert, rank: 3 });
+  charttools.addItem({ tool: metadataEditor, rank: 4 });
+  MessageLoop.installMessageHook(charttools, hook);
+
+  // Wait until the application has finished restoring before rendering.
+  Promise.all([state.fetch(id), app.restored]).then(([args]) => {
+    const open = (args && args['open'] as boolean) || false;
+
+    // After initial restoration, check if the chart tools should render.
+    if (tracker.size) {
+      app.shell.addToLeftArea(charttools);
+      if (open) {
+        app.shell.activateById(charttools.id);
+      }
+    }
+
+    // For all subsequent widget changes, check if the chart tools should render.
+    app.shell.currentChanged.connect((sender, args) => {
+      // If there are any open chart, add chart tools to the side panel if
+      // it is not already there.
+      if (tracker.size) {
+        if (!charttools.isAttached) {
+          app.shell.addToLeftArea(charttools);
+        }
+        return;
+      }
+      // If there are no chart, close chart tools.
+      charttools.close();
+    });
+  });
+
+  return Promise.resolve(charttools);
 }
 
-function activateHighCharts(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): void {
+function activateCharts(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): IChartTracker {
   const factory = new HighChartsFactory({
     name: FACTORY,
     fileTypes: ['hc'],
     defaultFor: ['hc']
   });
-  const tracker = new InstanceTracker<HighCharts>({ namespace: 'highcharts' });
+  const tracker = new ChartTracker({ namespace: 'highcharts' });
 
   // Handle state restoration.
   restorer.restore(tracker, {
@@ -143,7 +210,7 @@ function activateHighCharts(app: QuantLab, restorer: ILayoutRestorer, services: 
       iconClass: CHART_ICON_CLASS,
       callback: cwd => {
         return commands.execute('docmanager:new-untitled', {
-          path: cwd, type: 'hc'
+          path: cwd, type: 'file'
         }).then(model => {
           return commands.execute('docmanager:open', {
             path: model.path, factory: FACTORY
@@ -152,4 +219,6 @@ function activateHighCharts(app: QuantLab, restorer: ILayoutRestorer, services: 
       }
     });
   }
+
+  return tracker;
 }

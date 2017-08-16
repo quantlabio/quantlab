@@ -3,5 +3,6 @@
 
 import '../style/index.css';
 
+export * from './tracker';
 export * from './tools';
 export * from './widget';

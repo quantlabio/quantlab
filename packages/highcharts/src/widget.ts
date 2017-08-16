@@ -104,7 +104,8 @@ class HighCharts extends Widget implements DocumentRegistry.IReadyWidget {
   }
 
   protected onResize(msg: Widget.ResizeMessage): void {
-    this._chart.setSize(msg.width, msg.height, false);
+    if(this._chart != null)
+      this._chart.setSize(msg.width, msg.height, false);
   }
 
   private _updateHighCharts(): void {

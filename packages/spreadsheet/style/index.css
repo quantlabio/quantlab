@@ -3,7 +3,18 @@
 | Distributed under the terms of the Modified BSD License.
 |----------------------------------------------------------------------------*/
 
+/*-----------------------------------------------------------------------------
+| Imports
+|----------------------------------------------------------------------------*/
+
+@import './toolbar.css';
+
 @import url('~@quantlab/handsontable/dist/handsontable.full.css');
+
+
+/*-----------------------------------------------------------------------------
+| Spreadsheet
+|----------------------------------------------------------------------------*/
 
 .jp-Spreadsheet {
   width: 100%;
@@ -18,4 +29,74 @@ td.formula {
 
 td.formula-error {
   background-color: red;
+}
+
+/*-----------------------------------------------------------------------------
+| Cell toolbar
+|----------------------------------------------------------------------------*/
+
+
+.jp-CellTools {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color1);
+  font-size: var(--jp-ui-font-size1);
+}
+
+
+.jp-ActiveCellTool {
+  padding: 12px;
+  border-bottom: 1px solid var(--jp-border-color1);
+  background-color: var(--jp-border-color3);
+}
+
+
+.jp-ActiveCellTool .jp-InputArea-prompt {
+  flex: 0 0 auto;
+  padding-left: 0px;
+}
+
+
+.jp-ActiveCellTool .jp-InputArea-editor {
+  flex: 1 1 auto;
+  background-color: white;
+  border-color: var(--jp-border-color1);
+}
+
+
+.jp-CellTools-tool:not(:first-child) {
+  border-top: 1px solid var(--md-grey-300);
+}
+
+
+.jp-MetadataEditorTool {
+  flex-direction: column;
+}
+
+
+.jp-KeySelector {
+  padding: 12px;
+}
+
+
+.jp-KeySelector .jp-select-wrapper {
+  background: white;
+}
+
+
+.jp-KeySelector select.jp-mod-styled {
+  font-size: var(--jp-ui-font-size1);
+  color: var(--jp-ui-font-color0);
+}
+
+
+.jp-KeySelector .jp-select-wrapper:not(.jp-mod-focused) {
+  border: var(--jp-border-width) solid var(--jp-border-color1);
+}
+
+
+.jp-KeySelector label {
+  line-height: 1.4;
 }

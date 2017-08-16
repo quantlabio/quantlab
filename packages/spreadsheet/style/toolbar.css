@@ -1,0 +1,50 @@
+/*-----------------------------------------------------------------------------
+| Copyright (c) QuantLab Development Team.
+| Distributed under the terms of the Modified BSD License.
+|----------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------------
+| Variables
+|----------------------------------------------------------------------------*/
+
+
+/*-----------------------------------------------------------------------------
+| Styles
+|----------------------------------------------------------------------------*/
+
+
+.jp-SpreadsheetPanel-toolbar {
+  padding: 2px;
+  height: 28px;
+  box-shadow: var(--jp-toolbar-box-shadow);
+  background: var(--jp-toolbar-background);
+  z-index: 1;
+}
+
+
+/* Top-level toolbar item */
+.jp-Toolbar-item.jp-Spreadsheet-toolbarCellType  {
+}
+
+
+/* select wrapper */
+.jp-Toolbar-item.jp-Spreadsheet-toolbarCellType .jp-select-wrapper {
+  height: 100%;
+}
+
+
+.jp-Toolbar-item.jp-Spreadsheet-toolbarCellType .jp-select-wrapper.jp-mod-focused {
+  border: none;
+  box-shadow: none;
+}
+
+
+/* Actual select element */
+.jp-Spreadsheet-toolbarCellType select.jp-Spreadsheet-toolbarCellTypeDropdown {
+  font-size: var(--jp-ui-font-size1);
+  background-size: 16px;
+  padding-right: 16px;
+  border: none;
+  border-radius: 0;
+  outline: none;
+}

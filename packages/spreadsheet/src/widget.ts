@@ -18,12 +18,24 @@ import {
 } from '@phosphor/widgets';
 
 import {
+  Cell
+} from '@quantlab/cells';
+
+import {
+  ISignal, Signal
+} from '@phosphor/signaling';
+
+import {
   ActivityMonitor
 } from '@quantlab/coreutils';
 
 import {
   ABCWidgetFactory, DocumentRegistry
 } from '@quantlab/docregistry';
+
+import {
+  Session
+} from '@quantlab/services';
 
 import * as Handsontable
   from '@quantlab/handsontable';
@@ -57,7 +69,6 @@ class hotModel {
   colWidths?: any[]|Function|number|string;
   customBorders?: boolean|any[];
   mergeCells?: boolean|any[];
-  style: any[];
 }
 
 /**
@@ -80,31 +91,34 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
     context.pathChanged.connect(this._onPathChanged, this);
     context.ready.then(() => { this._onContextReady(); });
     this._onPathChanged();
-/*
-    if(context){
 
-      this._context.ready.then(() => {
-        const contextModel = this._context.model;
+  }
 
-        this._handleDirtyState();
+  get session(): Session.ISession {
+    return this._session;
+  }
 
-        // Wire signal connections.
-        contextModel.stateChanged.connect(this._onModelStateChanged, this);
-        contextModel.contentChanged.connect(this._onContentChanged, this);
+  set session(value: Session.ISession) {
+    this._session = value;
+  }
 
-        this._updateSpreadsheet();
-        this._ready.resolve(undefined);
-        // Throttle the rendering rate of the widget.
-        this._monitor = new ActivityMonitor({
-          signal: context.model.contentChanged,
-          timeout: RENDER_TIMEOUT
-        });
-        this._monitor.activityStopped.connect(this._updateSpreadsheet, this);
-      });
-    }else{
-      this.title.label = 'Spreadsheet';
-    }
-*/
+  get activeCell(): Cell {
+    return this._activeCell;
+  }
+
+  /**
+   * A signal emitted when the selection state of the notebook changes.
+   */
+  get selectionChanged(): ISignal<this, void> {
+    return this._selectionChanged;
+  }
+
+  /**
+   * A signal emitted when the active cell changes.
+   *
+   */
+  get activeCellChanged(): ISignal<this, Cell> {
+    return this._activeCellChanged;
   }
 
   /**
@@ -154,7 +168,6 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
     hot.colWidths = opts.colWidths
     hot.customBorders = opts.customBorders;
     hot.mergeCells = opts.mergeCells;
-    hot.style = [];
     return JSON.stringify(hot, null, 4);
   }
 
@@ -188,7 +201,8 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
   }
 
   protected onResize(msg: Widget.ResizeMessage): void {
-    this._sheet.updateSettings({width:msg.width, height:msg.height});
+    if(this._sheet != null)
+      this._sheet.updateSettings({width:msg.width, height:msg.height});
   }
 
   /**
@@ -247,8 +261,9 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
       }
     });
 
-    this._sheet.formula.parser.setFunction('FOO', () => 1234);
-    this._sheet.formula.parser.setFunction('BAR', (params:any) => params[0] + params[1]);
+    this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITION', (params:any) => params[0] + params[1]);
+
+    this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITIONEIGENVALUES', (params:any) => params[0] + params[1]);
 
     this._sheet.render();
   }
@@ -257,6 +272,10 @@ class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
   private _ready = new PromiseDelegate<void>();
   private _monitor: ActivityMonitor<any, any> = null;
   private _sheet: Handsontable = null;
+  private _session: Session.ISession = null;
+  private _activeCell: Cell = null;
+  private _selectionChanged = new Signal<this, void>(this);
+  private _activeCellChanged = new Signal<this, Cell>(this);
 }
 
 /**
