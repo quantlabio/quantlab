@@ -29,6 +29,9 @@ import * as Highcharts from 'highcharts';
 
 import * as Highstock from 'highcharts/highstock';
 
+import * as Highmaps from 'highcharts/highmaps';
+import 'highcharts/modules/data';
+
 const HIGHCHARTS_CLASS = 'jp-HighCharts';
 
 //const DIRTY_CLASS = 'jp-mod-dirty';
@@ -124,6 +127,9 @@ class HighCharts extends Widget implements DocumentRegistry.IReadyWidget {
       this._chart = Highcharts.chart(this.id, content);
     else if(ext == 'hs')
       this._chart = new Highstock.StockChart(this.id, content);
+    else if(ext == 'hm'){
+      this._chart = Highmaps.mapChart(this.id, content);
+    }
 
   }
 

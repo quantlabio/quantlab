@@ -6,7 +6,7 @@
 import * as highcharts from 'highcharts';
 import * as geojson from 'geojson';
 
-declare module 'highcharts' {
+declare namespace Highmaps {
     interface Static {
         mapChart(renderTo: string | HTMLElement, options: MapOptions, callback?: (chart: highcharts.ChartObject) => void): highcharts.ChartObject;
     }
@@ -50,3 +50,7 @@ declare module 'highcharts' {
 
     interface ColorAxis {}
 }
+
+declare const Highmaps: Highmaps.Static;
+export = Highmaps;
+export as namespace Highmaps;
