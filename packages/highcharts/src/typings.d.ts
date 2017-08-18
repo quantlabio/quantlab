@@ -4,3 +4,8 @@
 /// <reference path="../typings/highcharts/highcharts.d.ts"/>
 /// <reference path="../typings/highstock/highstock.d.ts"/>
 /// <reference path="../typings/highmaps/highmaps.d.ts"/>
+
+declare module "*.json" {
+    const value: any;
+    export default value;
+}

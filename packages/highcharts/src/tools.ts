@@ -370,17 +370,14 @@ namespace ChartTools {
    * Create a slideshow selector.
    */
   export
-  function createSlideShowSelector(): KeySelector {
+  function createCategorySelector(): KeySelector {
     let options: KeySelector.IOptions = {
-      key: 'slideshow',
-      title: 'Slide Type',
+      key: 'category',
+      title: 'Category',
       optionsMap: {
-        '-': '-',
-        'Slide': 'slide',
-        'Sub-Slide': 'subslide',
-        'Fragment': 'fragment',
-        'Skip': 'skip',
-        'Notes': 'notes'
+        'Chart': 'chart',
+        'Stock': 'stock',
+        'Map': 'map'
       }
     };
     return new KeySelector(options);
@@ -393,9 +390,9 @@ namespace ChartTools {
   function createNBConvertSelector(): KeySelector {
     return new KeySelector({
       key: 'raw_mimetype',
-      title: 'Raw NBConvert Format',
+      title: 'Type',
       optionsMap: {
-        'None': '-',
+        '-': '-',
         'LaTeX': 'text/latex',
         'reST': 'text/restructuredtext',
         'HTML': 'text/html',

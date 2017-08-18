@@ -29,7 +29,10 @@
     "watch": "tsc -w"
   },
   "quantlab": {
-    "extension": true
+    "extension": true,
+    "schemas": [
+      "schema/jupyter.services.calendar.json"
+    ]
   },
   "repository": {
     "type": "git",

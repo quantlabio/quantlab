@@ -63,7 +63,9 @@ const SPREADSHEET_ICON_CLASS = 'jp-SpreadsheetIcon';
  */
 const DIRTY_CLASS = 'jp-mod-dirty';
 
-
+/**
+ * The sheet tools extension.
+ */
 const sheetToolsPlugin: QuantLabPlugin<ISheetTools> = {
   activate: activateSheetTools,
   provides: ISheetTools,
@@ -73,9 +75,9 @@ const sheetToolsPlugin: QuantLabPlugin<ISheetTools> = {
 };
 
 /**
- * The default sheet extension.
+ * The spreadsheet widget tracker provider.
  */
-const sheetPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
+const trackerPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
   activate: activateSpreadsheet,
   id: 'jupyter.extensions.spreadsheet',
   provides: ISpreadsheetTracker,
@@ -90,7 +92,7 @@ const sheetPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
 /**
  * Export the plugin as default.
  */
- const plugins: QuantLabPlugin<any>[] = [sheetPlugin, sheetToolsPlugin];
+const plugins: QuantLabPlugin<any>[] = [trackerPlugin, sheetToolsPlugin];
 export default plugins;
 
 function activateSheetTools(app: QuantLab, tracker: ISpreadsheetTracker, editorServices: IEditorServices, state: IStateDB): Promise<ISheetTools> {
@@ -119,7 +121,7 @@ function activateSheetTools(app: QuantLab, tracker: ISpreadsheetTracker, editorS
     return true;
   };
 
-  sheettools.title.label = 'Sheet Tools';
+  sheettools.title.label = 'Spreadsheet';
   sheettools.id = id;
   sheettools.addItem({ tool: activeCellTool, rank: 1 });
   sheettools.addItem({ tool: slideShow, rank: 2 });

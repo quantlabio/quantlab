@@ -55,6 +55,9 @@ const FACTORY = 'HighCharts';
  */
 const CHART_ICON_CLASS = 'jp-ChartIcon';
 
+/**
+ * The chart tools extension.
+ */
 const chartToolsPlugin: QuantLabPlugin<IChartTools> = {
   activate: activateChartTools,
   provides: IChartTools,
@@ -64,9 +67,9 @@ const chartToolsPlugin: QuantLabPlugin<IChartTools> = {
 };
 
 /**
- * The default chart extension.
+ * The chart widget tracker provider.
  */
-const chartPlugin: QuantLabPlugin<IChartTracker> = {
+const trackerPlugin: QuantLabPlugin<IChartTracker> = {
   activate: activateCharts,
   id: 'jupyter.extensions.highcharts',
   provides: IChartTracker,
@@ -81,13 +84,13 @@ const chartPlugin: QuantLabPlugin<IChartTracker> = {
 /**
  * Export the plugin as default.
  */
-const plugins: QuantLabPlugin<any>[] = [chartPlugin, chartToolsPlugin];
+const plugins: QuantLabPlugin<any>[] = [trackerPlugin, chartToolsPlugin];
 export default plugins;
 
 function activateChartTools(app: QuantLab, tracker: IChartTracker, editorServices: IEditorServices, state: IStateDB): Promise<IChartTools> {
   const id = 'chart-tools';
   const charttools = new ChartTools({tracker});
-  const slideShow = ChartTools.createSlideShowSelector();
+  const category = ChartTools.createCategorySelector();
   const nbConvert = ChartTools.createNBConvertSelector();
   const editorFactory = editorServices.factoryService.newInlineEditor
     .bind(editorServices.factoryService);
@@ -109,11 +112,11 @@ function activateChartTools(app: QuantLab, tracker: IChartTracker, editorService
     return true;
   };
 
-  charttools.title.label = 'Chart Tools';
+  charttools.title.label = 'Highcharts';
   charttools.id = id;
-  charttools.addItem({ tool: slideShow, rank: 2 });
-  charttools.addItem({ tool: nbConvert, rank: 3 });
-  charttools.addItem({ tool: metadataEditor, rank: 4 });
+  charttools.addItem({ tool: category, rank: 1 });
+  charttools.addItem({ tool: nbConvert, rank: 2 });
+  charttools.addItem({ tool: metadataEditor, rank: 3 });
   MessageLoop.installMessageHook(charttools, hook);
 
   // Wait until the application has finished restoring before rendering.

@@ -41,9 +41,6 @@ import {
   DocumentRegistry
 } from '@quantlab/docregistry';
 
-import {
-  ISpreadsheetModel
-} from './model';
 
 import {
   Spreadsheet

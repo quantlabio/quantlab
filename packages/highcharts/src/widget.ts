@@ -26,11 +26,15 @@ import {
 } from '@quantlab/docregistry';
 
 import * as Highcharts from 'highcharts';
-
+import Highmore = require('highcharts/highcharts-more');
+import High3D = require('highcharts/highcharts-3d');
+import HighDrag3D = require('highcharts/modules/draggable-3d');
+import HighGauge = require('highcharts/modules/solid-gauge');
+//import HighData = require('highcharts/modules/data');
+//import HighExport = require('highcharts/modules/exporting');
 import * as Highstock from 'highcharts/highstock';
-
 import * as Highmaps from 'highcharts/highmaps';
-import 'highcharts/modules/data';
+
 
 const HIGHCHARTS_CLASS = 'jp-HighCharts';
 
@@ -51,6 +55,7 @@ class HighCharts extends Widget implements DocumentRegistry.IReadyWidget {
     context.pathChanged.connect(this._onPathChanged, this);
     context.ready.then(() => { this._onContextReady(); });
     this._onPathChanged();
+
   }
 
   get context(): DocumentRegistry.Context {
@@ -86,7 +91,9 @@ class HighCharts extends Widget implements DocumentRegistry.IReadyWidget {
     if (monitor) {
       monitor.dispose();
     }
+    //while(this._chart.series.length > 0) this._chart.series[0].remove(true);
     this._chart.destroy();
+    this._chart = null;
     super.dispose();
   }
 
@@ -119,15 +126,18 @@ class HighCharts extends Widget implements DocumentRegistry.IReadyWidget {
     };
     content.reflow = false;
 
-    const path = this._context.path;
-    let ext = PathExt.basename(path.split(':').pop()!);
-    ext = ext.split('.').pop();
+    if(this._chart != null){
+      this._chart.destroy();
+    }
 
-    if(ext == 'hc')
+    if(content.category == 'chart'){
       this._chart = Highcharts.chart(this.id, content);
-    else if(ext == 'hs')
+    }
+    if(content.category == 'stock'){
       this._chart = new Highstock.StockChart(this.id, content);
-    else if(ext == 'hm'){
+    }
+    if(content.category == 'map'){
+      //content.mapData = worldGeo;
       this._chart = Highmaps.mapChart(this.id, content);
     }
 
@@ -153,6 +163,16 @@ namespace HighCharts {
 
 export
 class HighChartsFactory extends ABCWidgetFactory<HighCharts, DocumentRegistry.IModel> {
+  constructor(options:DocumentRegistry.IWidgetFactoryOptions){
+    super(options);
+    Highmore(Highcharts);
+    High3D(Highcharts);
+    HighDrag3D(Highcharts);
+    HighGauge(Highcharts);
+    //HighData(Highcharts);
+    //HighExport(Highcharts);
+  }
+
   /**
    * Create a new widget given a context.
    */

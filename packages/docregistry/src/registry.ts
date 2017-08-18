@@ -1169,7 +1169,7 @@ namespace DocumentRegistry {
     },
     {
       name: 'hc',
-      extensions: ['.hc', '.hs', '.hm'],
+      extensions: ['.hc'],
       iconClass: 'jp-MaterialIcon jp-ChartIcon'
     },
     {

@@ -2,193 +2,408 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  JSONObject
-} from '@phosphor/coreutils';
+  each
+} from '@phosphor/algorithm';
 
 import {
-  IDisposable
-} from '@phosphor/disposable';
+  DocumentModel, DocumentRegistry
+} from '@quantlab/docregistry';
 
 import {
-  ISignal, Signal
-} from '@phosphor/signaling';
+  ICellModel, ICodeCellModel, IRawCellModel, IMarkdownCellModel,
+  CodeCellModel, RawCellModel, MarkdownCellModel, CellModel
+} from '@quantlab/cells';
 
 import {
-  IModelDB, ModelDB, IObservableValue, ObservableValue,
-  IObservableMap, IChangedArgs
+  IObservableJSON, IObservableUndoableList, uuid,
+  IObservableList, nbformat, IModelDB
 } from '@quantlab/coreutils';
 
+import {
+  CellList
+} from './celllist';
+
+
+/**
+ * The definition of a model object for a notebook widget.
+ */
+export
+interface ISpreadsheetModel extends DocumentRegistry.IModel {
+  /**
+   * The list of cells in the notebook.
+   */
+  readonly cells: IObservableUndoableList<ICellModel>;
 
   /**
-   * A zero-based position in the editor.
+   * The cell model factory for the notebook.
    */
-  export
-  interface IPosition extends JSONObject {
-    /**
-     * The cell row number.
-     */
-    readonly row: number;
+  readonly contentFactory: SpreadsheetModel.IContentFactory;
 
-    /**
-     * The cell column number.
-     */
-    readonly col: number;
+  /**
+   * The major version number of the nbformat.
+   */
+  readonly nbformat: number;
+
+  /**
+   * The minor version number of the nbformat.
+   */
+  readonly nbformatMinor: number;
+
+  /**
+   * The metadata associated with the notebook.
+   */
+  readonly metadata: IObservableJSON;
+}
+
+
+/**
+ * An implementation of a spreadsheet Model.
+ */
+export
+class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
+  /**
+   * Construct a new spreadsheet model.
+   */
+  constructor(options: SpreadsheetModel.IOptions = {}) {
+    super(options.languagePreference, options.modelDB);
+    let factory = (
+      options.contentFactory || SpreadsheetModel.defaultContentFactory
+    );
+    let cellDB = this.modelDB.view('cells');
+    factory.modelDB = cellDB;
+    this.contentFactory = factory;
+    this._cells = new CellList(this.modelDB, this.contentFactory);
+    // Add an initial code cell by default.
+    if (!this._cells.length) {
+      this._cells.push(factory.createCodeCell({}));
+    }
+    this._cells.changed.connect(this._onCellsChanged, this);
+
+    // Handle initial metadata.
+    let metadata = this.modelDB.createMap('metadata');
+    if (!metadata.has('language_info')) {
+      let name = options.languagePreference || '';
+      metadata.set('language_info', { name });
+    }
+    this._ensureMetadata();
+    metadata.changed.connect(this.triggerContentChange, this);
   }
 
   /**
-   * A range.
+   * The cell model factory for the notebook.
    */
-  export
-  interface IRange extends JSONObject {
-    /**
-     * The position of the first cell in the current range.
-     *
-     * #### Notes
-     * If this position is greater than [end] then the range is considered
-     * to be backward.
-     */
-    readonly start: IPosition;
+  readonly contentFactory: SpreadsheetModel.IContentFactory;
 
-    /**
-     * The position of the last cell in the current range.
-     *
-     * #### Notes
-     * If this position is less than [start] then the range is considered
-     * to be backward.
-     */
-    readonly end: IPosition;
+  /**
+   * The metadata associated with the notebook.
+   */
+  get metadata(): IObservableJSON {
+    return this.modelDB.get('metadata') as IObservableJSON;
   }
 
   /**
-   * A cell selection.
+   * Get the observable list of notebook cells.
    */
-  export
-  interface ICellSelection extends IRange {
-    /**
-     * The uuid of the text selection owner.
-     */
-    readonly uuid: string;
-
+  get cells(): IObservableUndoableList<ICellModel> {
+    return this._cells;
   }
 
   /**
-   * A spreadsheet model.
+   * The major version number of the nbformat.
    */
-  export
-  interface IModel extends IDisposable {
-    /**
-     * A signal emitted when data changes.
-     */
-    sheetChanged: ISignal<IModel, IChangedArgs<string>>;
-
-    /**
-     * The cell data stored in the model.
-     */
-    readonly value: IObservableValue;
-
-    /**
-     * The currently selected code.
-     */
-    readonly selections: IObservableMap<ICellSelection[]>;
-
-    /**
-     * The underlying `IModelDB` instance in which model
-     * data is stored.
-     */
-    readonly modelDB: IModelDB;
+  get nbformat(): number {
+    return this._nbformat;
   }
 
   /**
-   * The default implementation of the spreadsheet model.
+   * The minor version number of the nbformat.
    */
-  export
-  class SheetModel implements IModel {
-    /**
-     * Construct a new Model.
-     */
-    constructor(options?: SheetModel.IOptions) {
-      options = options || {};
+  get nbformatMinor(): number {
+    return this._nbformatMinor;
+  }
 
-      if (options.modelDB) {
-        this.modelDB = options.modelDB;
-      } else {
-        this.modelDB = new ModelDB();
+  /**
+   * The default kernel name of the document.
+   */
+  get defaultKernelName(): string {
+    let spec = this.metadata.get('kernelspec') as nbformat.IKernelspecMetadata;
+    return spec ? spec.name : '';
+  }
+
+  /**
+   * The default kernel language of the document.
+   */
+  get defaultKernelLanguage(): string {
+    let info = this.metadata.get('language_info') as nbformat.ILanguageInfoMetadata;
+    return info ? info.name : '';
+  }
+
+  /**
+   * Dispose of the resources held by the model.
+   */
+  dispose(): void {
+    // Do nothing if already disposed.
+    if (this.cells === null) {
+      return;
+    }
+    let cells = this.cells;
+    this._cells = null;
+    cells.dispose();
+    super.dispose();
+  }
+
+  /**
+   * Serialize the model to a string.
+   */
+  toString(): string {
+    return JSON.stringify(this.toJSON());
+  }
+
+  /**
+   * Deserialize the model from a string.
+   *
+   * #### Notes
+   * Should emit a [contentChanged] signal.
+   */
+  fromString(value: string): void {
+    this.fromJSON(JSON.parse(value));
+  }
+
+  /**
+   * Serialize the model to JSON.
+   */
+  toJSON(): nbformat.ISpreadsheetContent {
+    let cells: nbformat.ICell[] = [];
+    for (let i = 0; i < this.cells.length; i++) {
+      let cell = this.cells.get(i);
+      cells.push(cell.toJSON());
+    }
+    this._ensureMetadata();
+    let metadata = Object.create(null) as nbformat.INotebookMetadata;
+    for (let key of this.metadata.keys()) {
+      metadata[key] = JSON.parse(JSON.stringify(this.metadata.get(key)));
+    }
+    return {
+      metadata,
+      nbformat_minor: this._nbformatMinor,
+      nbformat: this._nbformat,
+      cells
+    };
+  }
+
+  /**
+   * Deserialize the model from JSON.
+   *
+   * #### Notes
+   * Should emit a [contentChanged] signal.
+   */
+  fromJSON(value: nbformat.ISpreadsheetContent): void {
+    let cells: ICellModel[] = [];
+    let factory = this.contentFactory;
+    for (let cell of value.cells) {
+      switch (cell.cell_type) {
+      case 'code':
+        cells.push(factory.createCodeCell({ cell }));
+        break;
+      case 'markdown':
+        cells.push(factory.createMarkdownCell({ cell }));
+        break;
+      case 'raw':
+        cells.push(factory.createRawCell({ cell }));
+        break;
+      default:
+        continue;
       }
-
-      let value = this.modelDB.createValue('value');
-      value.set(options.value);
-      value.changed.connect(this._onSheetChanged, this);
     }
+    this.cells.beginCompoundOperation();
+    this.cells.clear();
+    this.cells.pushAll(cells);
+    this.cells.endCompoundOperation();
 
-    /**
-     * The underlying `IModelDB` instance in which model
-     * data is stored.
-     */
-    readonly modelDB: IModelDB;
+    let oldValue = 0;
+    let newValue = 0;
+    this._nbformatMinor = nbformat.MINOR_VERSION;
+    this._nbformat = nbformat.MAJOR_VERSION;
 
-    /**
-     * A signal emitted when a sheet data changes.
-     */
-    get sheetChanged(): ISignal<this, IChangedArgs<string>> {
-      return this._sheetChanged;
+    if (value.nbformat !== this._nbformat) {
+      oldValue = this._nbformat;
+      this._nbformat = newValue = value.nbformat;
+      this.triggerStateChange({ name: 'nbformat', oldValue, newValue });
     }
-
-    /**
-     * Get the data of the model.
-     */
-    get value(): IObservableValue {
-      return this.modelDB.get('value') as IObservableValue;
+    if (value.nbformat_minor > this._nbformatMinor) {
+      oldValue = this._nbformatMinor;
+      this._nbformatMinor = newValue = value.nbformat_minor;
+      this.triggerStateChange({ name: 'nbformatMinor', oldValue, newValue });
     }
-
-    /**
-     * Get the selections for the model.
-     */
-    get selections(): IObservableMap<ICellSelection[]> {
-      return this.modelDB.get('selections') as IObservableMap<ICellSelection[]>;
-    }
-
-    /**
-     * Whether the model is disposed.
-     */
-    get isDisposed(): boolean {
-      return this._isDisposed;
-    }
-
-    /**
-     * Dipose of the resources used by the model.
-     */
-    dispose(): void {
-      if (this._isDisposed) {
-        return;
+    // Update the metadata.
+    this.metadata.clear();
+    let metadata = value.metadata;
+    for (let key in metadata) {
+      // orig_nbformat is not intended to be stored per spec.
+      if (key === 'orig_nbformat') {
+        continue;
       }
-      this._isDisposed = true;
-      Signal.clearData(this);
+      this.metadata.set(key, metadata[key]);
     }
+    this._ensureMetadata();
+    this.dirty = true;
+  }
 
-    private _onSheetChanged(sheet: IObservableValue, args: ObservableValue.IChangedArgs): void {
-      this._sheetChanged.emit({
-        name: 'sheet',
-        oldValue: args.oldValue as string,
-        newValue: args.newValue as string
+  /**
+   * Handle a change in the cells list.
+   */
+  private _onCellsChanged(list: IObservableList<ICellModel>, change: IObservableList.IChangedArgs<ICellModel>): void {
+    switch (change.type) {
+    case 'add':
+      each(change.newValues, cell => {
+        cell.contentChanged.connect(this.triggerContentChange, this);
+      });
+      break;
+    case 'remove':
+      each(change.oldValues, cell => {
+      });
+      break;
+    case 'set':
+      each(change.newValues, cell => {
+        cell.contentChanged.connect(this.triggerContentChange, this);
+      });
+      each(change.oldValues, cell => {
+      });
+      break;
+    default:
+      return;
+    }
+    let factory = this.contentFactory;
+    // Add code cell if there are no cells remaining.
+    if (!this.cells.length) {
+      // Add the cell in a new context to avoid triggering another
+      // cell changed event during the handling of this signal.
+      requestAnimationFrame(() => {
+        if (!this.isDisposed && !this.cells.length) {
+          this.cells.push(factory.createCodeCell({}));
+        }
       });
     }
-
-    private _isDisposed = false;
-    private _sheetChanged = new Signal<this, IChangedArgs<string>>(this);
+    this.triggerContentChange();
   }
 
+  /**
+   * Make sure we have the required metadata fields.
+   */
+  private _ensureMetadata(): void {
+    let metadata = this.metadata;
+    if (!metadata.has('language_info')) {
+      metadata.set('language_info', { name: '' });
+    }
+    if (!metadata.has('kernelspec')) {
+      metadata.set('kernelspec', { name: '', display_name: '' });
+    }
+  }
+
+  private _cells: CellList;
+  private _nbformat = nbformat.MAJOR_VERSION;
+  private _nbformatMinor = nbformat.MINOR_VERSION;
+}
+
+
+/**
+ * The namespace for the `SpreadsheetModel` class statics.
+ */
+export
+namespace SpreadsheetModel {
+  /**
+   * An options object for initializing a notebook model.
+   */
   export
-  namespace SheetModel {
+  interface IOptions {
+    /**
+     * The language preference for the model.
+     */
+    languagePreference?: string;
+
+    /**
+     * A factory for creating cell models.
+     *
+     * The default is a shared factory instance.
+     */
+    contentFactory?: IContentFactory;
+
+    /**
+     * An optional modelDB for storing notebook data.
+     */
+    modelDB?: IModelDB;
+  }
+
+  /**
+   * A factory for creating spreadsheet model content.
+   */
+  export
+  interface IContentFactory {
+    /**
+     * The factory for output area models.
+     */
+    readonly cellContentFactory: CellModel.IContentFactory;
+
+    modelDB: IModelDB;
+
+  }
+
+  /**
+   * The default implementation of an `IContentFactory`.
+   */
+  export
+  class ContentFactory {
+    /**
+     * Create a new cell model factory.
+     */
+    constructor(options: ContentFactory.IOptions) {
+      this.codeCellContentFactory = (options.codeCellContentFactory ||
+        CodeCellModel.defaultContentFactory
+      );
+      this._modelDB = options.modelDB || null;
+    }
+
+    /**
+     * The factory for code cell content.
+     */
+    readonly cellContentFactory: CellModel.IContentFactory;
+
+    get modelDB(): IModelDB {
+      return this._modelDB;
+    }
+
+    set modelDB(db: IModelDB) {
+      this._modelDB = db;
+    }
+
+    private _modelDB: IModelDB;
+  }
+
+  /**
+   * A namespace for the notebook model content factory.
+   */
+  export
+  namespace ContentFactory {
+    /**
+     * The options used to initialize a `ContentFactory`.
+     */
     export
     interface IOptions {
       /**
-       * The initial value of the model.
+       * The factory for code cell model content.
        */
-      value?: string;
+      codeCellContentFactory?: CodeCellModel.IContentFactory;
 
       /**
-       * An optional modelDB for storing model state.
+       * The modelDB in which to place new content.
        */
       modelDB?: IModelDB;
     }
   }
+
+  /**
+   * The default `ContentFactory` instance.
+   */
+  export
+  const defaultContentFactory = new ContentFactory({});
+}
