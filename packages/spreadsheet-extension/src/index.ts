@@ -2,10 +2,6 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  Session, IServiceManager
-} from '@quantlab/services';
-
-import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
@@ -26,42 +22,104 @@ import {
 } from '@quantlab/launcher';
 
 import {
-  Menu, Widget
-} from '@phosphor/widgets';
+  SheetTools, ISheetTools, ISpreadsheetTracker,
+  SpreadsheetModelFactory, SpreadsheetPanel, SpreadsheetTracker, SpreadsheetFactory
+} from '@quantlab/spreadsheet';
+
+import {
+  IServiceManager
+} from '@quantlab/services';
+
+import {
+  ReadonlyJSONObject
+} from '@phosphor/coreutils';
 
 import {
   Message, MessageLoop
 } from '@phosphor/messaging';
 
 import {
-  SpreadsheetFactory,
-  SheetTools, ISheetTools,
-  ISpreadsheetTracker, SpreadsheetTracker
-} from '@quantlab/spreadsheet';
+  Menu, Widget
+} from '@phosphor/widgets';
+
+
 
 /**
  * The command IDs used by the sheet plugin.
  */
 namespace CommandIDs {
+  export
+  const interrupt = 'spreadsheet:interrupt-kernel';
 
   export
-  const save = 'spreadsheet:save';
+  const restart = 'spreadsheet:restart-kernel';
+
+  export
+  const reconnectToKernel = 'spreadsheet:reconnect-to-kernel';
+
+  export
+  const changeKernel = 'spreadsheet:change-kernel';
+
+  export
+  const createConsole = 'spreadsheet:create-console';
+
+  export
+  const exportToFormat = 'spreadsheet:export-to-format';
 };
 
-/**
- * The name of the factory that creates Spreadsheet widgets.
- */
-const FACTORY = 'Spreadsheet';
 
 /**
- * The class name for the sheet icon in the default theme.
+ * The class name for the spreadsheet icon from the default theme.
  */
 const SPREADSHEET_ICON_CLASS = 'jp-SpreadsheetIcon';
 
 /**
- * The class name added to a dirty widget.
+ * The name of the factory that creates Spreadsheet.
  */
-const DIRTY_CLASS = 'jp-mod-dirty';
+const FACTORY = 'Spreadsheet';
+
+/**
+ * The allowed Export To ... formats and their human readable labels.
+ */
+const EXPORT_TO_FORMATS = [
+  { 'format': 'html', 'label': 'HTML' },
+  { 'format': 'excel', 'label': 'Excel' },
+  { 'format': 'pdf', 'label': 'PDF' }
+];
+
+
+/**
+ * The spreadsheet widget tracker provider.
+ */
+export
+const trackerPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
+  id: 'jupyter.extensions.spreadsheet',
+  provides: ISpreadsheetTracker,
+  requires: [
+    IServiceManager,
+    IMainMenu,
+    ICommandPalette,
+    SpreadsheetPanel.IContentFactory,
+    ILayoutRestorer
+  ],
+  optional: [ILauncher],
+  activate: activateSpreadsheet,
+  autoStart: true
+};
+
+
+/**
+ * The spreadsheet cell factory provider.
+ */
+export
+const contentFactoryPlugin: QuantLabPlugin<SpreadsheetPanel.IContentFactory> = {
+  id: 'jupyter.services.spreadsheet-renderer',
+  provides: SpreadsheetPanel.IContentFactory,
+  autoStart: true,
+  activate: (app: QuantLab) => {
+    return new SpreadsheetPanel.ContentFactory();
+  }
+};
 
 /**
  * The sheet tools extension.
@@ -74,30 +132,22 @@ const sheetToolsPlugin: QuantLabPlugin<ISheetTools> = {
   requires: [ISpreadsheetTracker, IEditorServices, IStateDB]
 };
 
-/**
- * The spreadsheet widget tracker provider.
- */
-const trackerPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
-  activate: activateSpreadsheet,
-  id: 'jupyter.extensions.spreadsheet',
-  provides: ISpreadsheetTracker,
-  requires: [
-    ILayoutRestorer, IServiceManager, IMainMenu, ICommandPalette
-  ],
-  optional: [ILauncher],
-  autoStart: true
-};
+
+
 
 
 /**
  * Export the plugin as default.
  */
-const plugins: QuantLabPlugin<any>[] = [trackerPlugin, sheetToolsPlugin];
+const plugins: QuantLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin, sheetToolsPlugin];
 export default plugins;
 
+/**
+ * Activate the sheet tools extension.
+ */
 function activateSheetTools(app: QuantLab, tracker: ISpreadsheetTracker, editorServices: IEditorServices, state: IStateDB): Promise<ISheetTools> {
   const id = 'sheet-tools';
-  const sheettools = new SheetTools({tracker});
+  const sheettools = new SheetTools({ tracker });
   const activeCellTool = new SheetTools.ActiveCellTool();
   const slideShow = SheetTools.createSlideShowSelector();
   const nbConvert = SheetTools.createNBConvertSelector();
@@ -159,127 +209,255 @@ function activateSheetTools(app: QuantLab, tracker: ISpreadsheetTracker, editorS
   return Promise.resolve(sheettools);
 }
 
+
 /**
  * Activate the spreadsheet plugin.
  */
-function activateSpreadsheet(app: QuantLab, restorer: ILayoutRestorer, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, launcher: ILauncher | null): ISpreadsheetTracker {
+function activateSpreadsheet(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: SpreadsheetPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): ISpreadsheetTracker {
   const factory = new SpreadsheetFactory({
     name: FACTORY,
-    fileTypes: ['xls'],
-    defaultFor: ['xls']
+    fileTypes: ['spreadsheet'],
+    modelName: 'text',
+    defaultFor: ['spreadsheet'],
+    //preferKernel: true,
+    canStartKernel: true,
+    contentFactory: contentFactory
   });
 
+  const { commands } = app;
   const tracker = new SpreadsheetTracker({ namespace: 'spreadsheet' });
 
   // Handle state restoration.
   restorer.restore(tracker, {
     command: 'docmanager:open',
-    args: widget => ({ path: widget.context.path, factory: FACTORY }),
-    name: widget => widget.context.path
+    args: panel => ({ path: panel.context.path, factory: FACTORY }),
+    name: panel => panel.context.path,
+    when: services.ready
   });
 
-  app.docRegistry.addWidgetFactory(factory);
-  let ft = app.docRegistry.getFileType('xls');
+  // Update the command registry when the spreadsheet state changes.
+  tracker.currentChanged.connect(() => {
+    if (tracker.size <= 1) {
+      commands.notifyCommandChanged(CommandIDs.interrupt);
+    }
+  });
+
+  let registry = app.docRegistry;
+  registry.addModelFactory(new SpreadsheetModelFactory({}));
+  registry.addWidgetFactory(factory);
+  registry.addCreator({
+    name: 'Spreadsheet',
+    fileType: 'spreadsheet',
+    widgetName: 'Spreadsheet'
+  });
+
+  addCommands(app, services, tracker);
+  populatePalette(palette);
+
+  let id = 0; // The ID counter for spreadsheet panels.
+
   factory.widgetCreated.connect((sender, widget) => {
-    // Track the widget.
-    tracker.add(widget);
+    // If the spreadsheet panel does not have an ID, assign it one.
+    widget.id = widget.id || `spreadsheet-${++id}`;
+    widget.title.icon = SPREADSHEET_ICON_CLASS;
+
     // Notify the instance tracker if restore data needs to update.
     widget.context.pathChanged.connect(() => { tracker.save(widget); });
+    // Add the spreadsheet panel to the tracker.
+    tracker.add(widget);
+  });
 
-    if (ft) {
-      widget.title.iconClass = ft.iconClass;
-      widget.title.iconLabel = ft.iconLabel;
-    }
+  // Add main menu spreadsheet menu.
+  mainMenu.addMenu(createMenu(app), { rank: 60 });
 
-    // start node.js kernel
-    Session.startNew({
-      kernelName: 'javascript',
-      path: widget.context.path
-    }).then( session => {
-      widget.session = session;
-
-      let future = session.kernel.requestExecute({ code: 'const ql = require("quantlib");\n;ql'});
-
-      future.done.then( msg => {
-        //console.log(msg.content);
+  // The launcher callback.
+  let callback = (cwd: string, name: string) => {
+    return commands.execute(
+      'docmanager:new-untitled', { path: cwd, type: 'spreadsheet' }
+    ).then(model => {
+      return commands.execute('docmanager:open', {
+        path: model.path, factory: FACTORY,
+        kernel: { name }
       });
-      future.onIOPub = (msg) => {
-        //console.log(msg.content);
-        if(msg.content.hasOwnProperty('data')){
-          //console.log(msg.content.data);
-        }
-      };
-      future.onReply = (msg) => {
-        //console.log(msg.content);
-      };
     });
-
-  });
-
-  const { commands } = app;
-  const category = 'Spreadsheet';
-
-  commands.addCommand(CommandIDs.save, {
-    label: 'Save',
-    execute: () => {
-      const current = tracker.currentWidget;
-      const model = current.modelString();
-      tracker.currentWidget.context.model.fromString(model);
-      tracker.currentWidget.context.save().then(() => {
-        tracker.currentWidget.title.className = tracker.currentWidget.title.className.replace(DIRTY_CLASS, '');
-        tracker.currentWidget.context.model.dirty = false;
-      });
-    }
-  });
-
-  // Add command palette and menu items.
-  let menu = new Menu({ commands });
-  menu.title.label = category;
-  [
-    CommandIDs.save
-  ].forEach(command => {
-    palette.addItem({ command, category });
-    menu.addItem({ command });
-  });
-  mainMenu.addMenu(menu, {rank: 70});
+  };
 
   // Add a launcher item if the launcher is available.
   if (launcher) {
-    launcher.add({
-      displayName: 'Spreadsheet',
-      category: 'Other',
-      rank: 2,
-      iconClass: SPREADSHEET_ICON_CLASS,
-      callback: cwd => {
-        return commands.execute('docmanager:new-untitled', {
-          path: cwd, type: 'file'
-        }).then(model => {
-
-          //model.type = 'xls';
-          //let oldPath = model.path;
-          //let newPath = model.path.split('.');
-          //let newName = model.name.split('.');
-
-          //newPath.pop();
-          //newPath = newPath.join() + '.xls';
-          //newName.pop();
-          //newName = newName.join() + '.xls';
-
-          //model.path = newPath;
-          //model.name = newName;
-
-          //return services.contents.rename(oldPath, newPath).then( model => {
-
-            return commands.execute('docmanager:open', {
-              path: model.path, factory: FACTORY
-            })
-
-          //})
-
-        })
-      }
+    services.ready.then(() => {
+      launcher.add({
+        displayName: 'Spreadsheet',
+        category: 'Other',
+        name: name,
+        iconClass: SPREADSHEET_ICON_CLASS,
+        callback: callback,
+        rank: 2
+      })
     });
+
   }
 
+  app.contextMenu.addItem({ type: 'separator', selector: '.jp-Spreadsheet', rank: 0 });
+  app.contextMenu.addItem({command: CommandIDs.createConsole, selector: '.jp-Spreadsheet', rank: 3});
+
   return tracker;
+}
+
+
+/**
+ * Add the spreadsheet commands to the application's command registry.
+ */
+function addCommands(app: QuantLab, services: IServiceManager, tracker: SpreadsheetTracker): void {
+  const { commands, shell } = app;
+
+  // Get the current widget and activate unless the args specify otherwise.
+  function getCurrent(args: ReadonlyJSONObject): SpreadsheetPanel | null {
+    let widget = tracker.currentWidget;
+    let activate = args['activate'] !== false;
+    if (activate && widget) {
+      shell.activateById(widget.id);
+    }
+    return widget;
+  }
+
+  /**
+   * Whether there is an active spreadsheet.
+   */
+  function hasWidget(): boolean {
+    return tracker.currentWidget !== null;
+  }
+
+  commands.addCommand(CommandIDs.restart, {
+    label: 'Restart Kernel',
+    execute: args => {
+      let current = getCurrent(args);
+      if (!current) {
+        return;
+      }
+      current.session.restart();
+    },
+    isEnabled: hasWidget
+  });
+  commands.addCommand(CommandIDs.interrupt, {
+    label: 'Interrupt Kernel',
+    execute: args => {
+      let current = getCurrent(args);
+      if (!current) {
+        return;
+      }
+      let kernel = current.context.session.kernel;
+      if (kernel) {
+        return kernel.interrupt();
+      }
+    },
+    isEnabled: hasWidget
+  });
+  commands.addCommand(CommandIDs.changeKernel, {
+    label: 'Change Kernel',
+    execute: args => {
+      let current = getCurrent(args);
+      if (!current) {
+        return;
+      }
+      return current.context.session.selectKernel();
+    },
+    isEnabled: hasWidget
+  });
+  commands.addCommand(CommandIDs.reconnectToKernel, {
+    label: 'Reconnect To Kernel',
+    execute: args => {
+      let current = getCurrent(args);
+      if (!current) {
+        return;
+      }
+      let kernel = current.context.session.kernel;
+      if (!kernel) {
+        return;
+      }
+      return kernel.reconnect();
+    },
+    isEnabled: hasWidget
+  });
+  commands.addCommand(CommandIDs.createConsole, {
+    label: 'Create Console for Spreadsheet',
+    execute: args => {
+      let current = getCurrent(args);
+      if (!current) {
+        return;
+      }
+      let widget = tracker.currentWidget;
+      if (!widget) {
+        return;
+      }
+      let options: ReadonlyJSONObject = {
+        path: widget.context.path,
+        preferredLanguage: widget.context.model.defaultKernelLanguage,
+        activate: args['activate']
+      };
+      return commands.execute('console:create', options);
+    },
+    isEnabled: hasWidget
+  });
+  commands.addCommand(CommandIDs.exportToFormat, {
+    label: args => {
+        let formatLabel = (args['label']) as string;
+        return (args['isPalette'] ? 'Export To ' : '') + formatLabel;
+    },
+    execute: args => {
+      let current = getCurrent(args);
+      if (!current) {
+        return;
+      }
+    },
+    isEnabled: hasWidget
+  });
+}
+
+
+/**
+ * Populate the application's command palette with spreadsheet commands.
+ */
+function populatePalette(palette: ICommandPalette): void {
+  let category = 'Spreadsheet Operations';
+  [
+    CommandIDs.interrupt,
+    CommandIDs.restart,
+    CommandIDs.changeKernel,
+    CommandIDs.reconnectToKernel,
+    CommandIDs.createConsole,
+    CommandIDs.exportToFormat
+  ].forEach(command => { palette.addItem({ command, category }); });
+
+  EXPORT_TO_FORMATS.forEach(exportToFormat => {
+    let args = { 'format': exportToFormat['format'], 'label': exportToFormat['label'], 'isPalette': true };
+    palette.addItem({ command: CommandIDs.exportToFormat, category: category, args: args });
+  });
+
+}
+
+
+/**
+ * Creates a menu for the spreadsheet.
+ */
+function createMenu(app: QuantLab): Menu {
+  let { commands } = app;
+  let menu = new Menu({ commands });
+
+  let exportTo = new Menu({ commands } );
+
+  menu.title.label = 'Spreadsheet';
+
+  exportTo.title.label = "Export to ...";
+  EXPORT_TO_FORMATS.forEach(exportToFormat => {
+    exportTo.addItem({ command: CommandIDs.exportToFormat, args: exportToFormat });
+  });
+
+  menu.addItem({ command: CommandIDs.interrupt });
+  menu.addItem({ command: CommandIDs.restart });
+  menu.addItem({ command: CommandIDs.changeKernel });
+  menu.addItem({ type: 'separator' });
+  menu.addItem({ command: CommandIDs.createConsole });
+  menu.addItem({ type: 'submenu', submenu: exportTo });
+
+  return menu;
 }

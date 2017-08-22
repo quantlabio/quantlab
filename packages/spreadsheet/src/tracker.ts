@@ -6,10 +6,6 @@ import {
 } from '@quantlab/apputils';
 
 import {
-  Cell
-} from '@quantlab/cells';
-
-import {
   Token
 } from '@phosphor/coreutils';
 
@@ -18,22 +14,26 @@ import {
 } from '@phosphor/signaling';
 
 import {
+  SpreadsheetPanel
+} from './panel';
+
+import {
   Spreadsheet
-} from './';
+} from './widget';
 
 
 /**
  * An object that tracks spreadsheet widgets.
  */
 export
-interface ISpreadsheetTracker extends IInstanceTracker<Spreadsheet> {
+interface ISpreadsheetTracker extends IInstanceTracker<SpreadsheetPanel> {
   /**
    * The currently focused cell.
    *
    * #### Notes
    * If there is no cell with the focus, then this value is `null`.
    */
-  readonly activeCell: Cell;
+  readonly activeCell: any;
 
   /**
    * A signal emitted when the current active cell changes.
@@ -41,7 +41,7 @@ interface ISpreadsheetTracker extends IInstanceTracker<Spreadsheet> {
    * #### Notes
    * If there is no cell with the focus, then `null` will be emitted.
    */
-  readonly activeCellChanged: ISignal<this, Cell>;
+  readonly activeCellChanged: ISignal<this, void>;
 
   /**
    * A signal emitted when the selection state changes.
@@ -60,7 +60,7 @@ const ISpreadsheetTracker = new Token<ISpreadsheetTracker>('jupyter.services.spr
 
 
 export
-class SpreadsheetTracker extends InstanceTracker<Spreadsheet> implements ISpreadsheetTracker {
+class SpreadsheetTracker extends InstanceTracker<SpreadsheetPanel> implements ISpreadsheetTracker {
   /**
    * The currently focused cell.
    *
@@ -68,12 +68,12 @@ class SpreadsheetTracker extends InstanceTracker<Spreadsheet> implements ISpread
    * This is a read-only property. If there is no cell with the focus, then this
    * value is `null`.
    */
-  get activeCell(): Cell {
+  get activeCell(): any {
     let widget = this.currentWidget;
     if (!widget) {
       return null;
     }
-    return widget.activeCell || null;
+    return widget.spreadsheet.activeCell || null;
   }
 
   /**
@@ -82,7 +82,7 @@ class SpreadsheetTracker extends InstanceTracker<Spreadsheet> implements ISpread
    * #### Notes
    * If there is no cell with the focus, then `null` will be emitted.
    */
-  get activeCellChanged(): ISignal<this, Cell> {
+  get activeCellChanged(): ISignal<this, void> {
     return this._activeCellChanged;
   }
 
@@ -98,10 +98,10 @@ class SpreadsheetTracker extends InstanceTracker<Spreadsheet> implements ISpread
    *
    * @param panel - The spreadsheet panel being added.
    */
-  add(sheet: Spreadsheet): Promise<void> {
-    const promise = super.add(sheet);
-    sheet.activeCellChanged.connect(this._onActiveCellChanged, this);
-    sheet.selectionChanged.connect(this._onSelectionChanged, this);
+  add(panel: SpreadsheetPanel): Promise<void> {
+    const promise = super.add(panel);
+    panel.spreadsheet.activeCellChanged.connect(this._onActiveCellChanged, this);
+    panel.spreadsheet.selectionChanged.connect(this._onSelectionChanged, this);
     return promise;
   }
 
@@ -116,7 +116,7 @@ class SpreadsheetTracker extends InstanceTracker<Spreadsheet> implements ISpread
   /**
    * Handle the current change event.
    */
-  protected onCurrentChanged(widget: Spreadsheet): void {
+  protected onCurrentChanged(widget: SpreadsheetPanel): void {
     // Store an internal reference to active cell to prevent false positives.
     let activeCell = this.activeCell;
     if (activeCell && activeCell === this._activeCell) {
@@ -129,12 +129,12 @@ class SpreadsheetTracker extends InstanceTracker<Spreadsheet> implements ISpread
     }
 
     // Since the spreadsheet has changed, immediately signal an active cell change
-    this._activeCellChanged.emit(widget.activeCell || null);
+    this._activeCellChanged.emit(widget.spreadsheet.activeCell || null);
   }
 
-  private _onActiveCellChanged(sender: Spreadsheet, cell: Cell): void {
+  private _onActiveCellChanged(sender: Spreadsheet, cell: any): void {
     // Check if the active cell change happened for the current spreadsheet.
-    if (this.currentWidget && this.currentWidget === sender) {
+    if (this.currentWidget && this.currentWidget.spreadsheet === sender) {
       this._activeCell = cell || null;
       this._activeCellChanged.emit(this._activeCell);
     }
@@ -142,12 +142,12 @@ class SpreadsheetTracker extends InstanceTracker<Spreadsheet> implements ISpread
 
   private _onSelectionChanged(sender: Spreadsheet): void {
     // Check if the selection change happened for the current spreadsheet.
-    if (this.currentWidget && this.currentWidget === sender) {
+    if (this.currentWidget && this.currentWidget.spreadsheet === sender) {
       this._selectionChanged.emit(void 0);
     }
   }
 
-  private _activeCell: Cell | null = null;
-  private _activeCellChanged = new Signal<this, Cell>(this);
+  private _activeCell: any | null = null;
+  private _activeCellChanged = new Signal<this, void>(this);
   private _selectionChanged = new Signal<this, void>(this);
 }

@@ -16,9 +16,33 @@
 | Spreadsheet
 |----------------------------------------------------------------------------*/
 
-.jp-Spreadsheet {
-  width: 100%;
+
+.jp-SpreadsheetPanel {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+}
+
+.jp-Spreadsheet {
+  height: 100%;
+  width: 100%;
+}
+/*
+.jp-Spreadsheet {
+  flex: 1 1 auto;
+  padding: var(--jp-notebook-padding);
+  min-width: 50px;
+  min-height: 50px;
+  outline: none;
+  overflow: auto;
+  background: var(--jp-layout-color1);
+}
+*/
+
+.jp-Spreadsheet::after {
+  display: block;
+  content: '';
+  min-height: var(--jp-notebook-scroll-padding);
 }
 
 /*

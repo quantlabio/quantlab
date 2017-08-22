@@ -2,14 +2,6 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  PromiseDelegate
-} from '@phosphor/coreutils';
-
-import {
-  PathExt
-} from '@quantlab/coreutils';
-
-import {
   Message
 } from '@phosphor/messaging';
 
@@ -18,24 +10,12 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  Cell
-} from '@quantlab/cells';
-
-import {
   ISignal, Signal
 } from '@phosphor/signaling';
 
 import {
-  ActivityMonitor
-} from '@quantlab/coreutils';
-
-import {
-  ABCWidgetFactory, DocumentRegistry
-} from '@quantlab/docregistry';
-
-import {
-  Session
-} from '@quantlab/services';
+  ISpreadsheetModel
+} from './model';
 
 import * as Handsontable
   from '@quantlab/handsontable';
@@ -45,15 +25,254 @@ import * as Handsontable
  */
 const SPREADSHEET_CLASS = 'jp-Spreadsheet';
 
-/**
- * The class name added to a dirty widget.
- */
-const DIRTY_CLASS = 'jp-mod-dirty';
 
 /**
- * The timeout to wait for change activity to have ceased before rendering.
+ * A widget which manages a spreadsheet session.
  */
-const RENDER_TIMEOUT = 1000;
+export
+class Spreadsheet extends Widget {
+  /**
+   * Construct a new spreadsheet widget.
+   *
+   * @param options - The spreadsheet configuration options.
+   */
+  constructor(options: Spreadsheet.IOptions) {
+    super();
+    this.addClass(SPREADSHEET_CLASS);
+
+  }
+
+  /**
+   * A signal emitted when the model of the notebook changes.
+   */
+  get modelChanged(): ISignal<this, void> {
+    return this._modelChanged;
+  }
+
+  /**
+   * A signal emitted when the model content changes.
+   *
+   * #### Notes
+   * This is a convenience signal that follows the current model.
+   */
+  get modelContentChanged(): ISignal<this, void> {
+    return this._modelContentChanged;
+  }
+
+  /**
+   * The cell factory used by the widget.
+   */
+  readonly contentFactory: Spreadsheet.IContentFactory;
+
+  /**
+   * The model for the widget.
+   */
+  get model(): ISpreadsheetModel {
+    return this._model;
+  }
+  set model(newValue: ISpreadsheetModel) {
+    newValue = newValue || null;
+    if (this._model === newValue) {
+      return;
+    }
+    let oldValue = this._model;
+    this._model = newValue;
+
+    if (oldValue && oldValue.modelDB.isCollaborative) {
+      oldValue.modelDB.connected.then(() => {
+        oldValue.modelDB.collaborators.changed.disconnect(
+          this._onCollaboratorsChanged, this);
+      });
+    }
+    if (newValue && newValue.modelDB.isCollaborative) {
+      newValue.modelDB.connected.then(() => {
+        newValue.modelDB.collaborators.changed.connect(
+          this._onCollaboratorsChanged, this);
+      });
+    }
+
+    // Trigger private, protected, and public changes.
+    this._onModelChanged(oldValue, newValue);
+    this.onModelChanged(oldValue, newValue);
+    this._modelChanged.emit(void 0);
+  }
+
+  get activeCell(): any {
+    return this._activeCell;
+  }
+
+  /**
+   * A signal emitted when the selection state of the notebook changes.
+   */
+  get selectionChanged(): ISignal<this, void> {
+    return this._selectionChanged;
+  }
+
+  /**
+   * A signal emitted when the active cell changes.
+   *
+   */
+  get activeCellChanged(): ISignal<this, void> {
+    return this._activeCellChanged;
+  }
+
+  /**
+   * Handle a new model.
+   *
+   * #### Notes
+   * This method is called after the model change has been handled
+   * internally and before the `modelChanged` signal is emitted.
+   * The default implementation is a no-op.
+   */
+  protected onModelChanged(oldValue: ISpreadsheetModel, newValue: ISpreadsheetModel): void {
+    // No-op.
+  }
+
+  /**
+   * Handle changes to the notebook model content.
+   *
+   * #### Notes
+   * The default implementation emits the `modelContentChanged` signal.
+   */
+  protected onModelContentChanged(model: ISpreadsheetModel, args: void): void {
+    this._modelContentChanged.emit(void 0);
+  }
+
+  /**
+   * Handle a new model on the widget.
+   */
+  private _onModelChanged(oldValue: ISpreadsheetModel, newValue: ISpreadsheetModel): void {
+    if (oldValue) {
+      oldValue.contentChanged.disconnect(this.onModelContentChanged, this);
+    }
+
+    newValue.contentChanged.connect(this.onModelContentChanged, this);
+  }
+
+  /**
+   * get spreadsheet model
+   */
+  modelJSON(): any{
+    const opts: Handsontable.Options = this._sheet.getSettings();
+    let hot = new hotModel();
+    hot.data = this._sheet.getSourceData();
+    hot.cell = opts.cell;
+    hot.colWidths = opts.colWidths
+    hot.customBorders = opts.customBorders;
+    hot.mergeCells = opts.mergeCells;
+    //return JSON.stringify(hot, null, 4);
+    return hot;
+  }
+
+  /**
+   * Dispose of the resources held by the sheet widget.
+   */
+  dispose(): void {
+    // Do nothing if already disposed.
+    if (this.isDisposed) {
+      return;
+    }
+    this._model = null;
+    this._sheet.destroy();
+    super.dispose();
+  }
+
+  /**
+   * Handle `'activate-request'` messages.
+   */
+  protected onActivateRequest(msg: Message): void {
+    this.node.tabIndex = -1;
+    this.node.focus();
+  }
+
+  protected onResize(msg: Widget.ResizeMessage): void {
+    if(this._sheet != null)
+      this._sheet.updateSettings({width:msg.width, height:msg.height});
+  }
+
+  createSheet(pwid:any): void {
+    let contextModel = this._model;
+    let content:any = {};
+
+    if(contextModel.toString() == ''){
+      content.colWidths = 100;
+      content.data = [[]];
+      content.cell = [];
+    } else {
+      content = JSON.parse(contextModel.toString());
+    }
+
+    content.cells = [];
+
+    const container = document.getElementById(pwid).children[1];
+
+    if(this._sheet != null){
+      this._sheet.destroy();
+    }
+
+    let parent = this;
+
+    this._sheet = new Handsontable(container, {
+      data: content.data,
+      rowHeaders: true,
+      colHeaders: true,
+      manualColumnResize: true,
+      manualRowResize: true,
+      minRows: 128,
+      minCols: 32,
+      colWidths: content.colWidths,
+      //rowHeights: content.rowHeights,
+      contextMenu: false,
+      formulas: true,
+      comments: true,
+      //columnSorting: true,
+      //sortIndicator: true,
+      mergeCells: content.mergeCells,
+      customBorders: content.customBorders,
+      cell: content.cell,
+      cells: function(row: number, col: number, prop:any){
+        var cellProperties = {};
+        cellProperties = content.cell.filter( (item:filterItem) => item.row === row && item.col === col)[0];
+        return cellProperties;
+      },
+      afterChange: function(changes: Array<[number, number|string, any, any]>, source?: string) {
+        if (source != 'loadData'){
+          parent._model.dirty = true;
+        }
+      }
+    });
+
+    this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITION', (params:any) => params[0] + params[1]);
+
+    this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITIONEIGENVALUES', (params:any) => params[0] + params[1]);
+
+    this._sheet.render();
+  }
+
+  /**
+   * Handle an update to the collaborators.
+   */
+  private _onCollaboratorsChanged(): void {
+    // If there are selections corresponding to non-collaborators,
+    // they are stale and should be removed.
+    //for (let i = 0; i < this.widgets.length; i++) {
+      //let cell = this.widgets[i];
+      //for (let key of cell.model.selections.keys()) {
+        //if (!this._model.modelDB.collaborators.has(key)) {
+          //cell.model.selections.delete(key);
+        //}
+      //}
+    //}
+  }
+
+  private _model: ISpreadsheetModel = null;
+  private _sheet: Handsontable = null;
+  private _activeCell: any = null;
+  private _modelChanged = new Signal<this, void>(this);
+  private _modelContentChanged = new Signal<this, void>(this);
+  private _selectionChanged = new Signal<this, void>(this);
+  private _activeCellChanged = new Signal<this, void>(this);
+}
 
 /**
  * filter item interface
@@ -72,240 +291,26 @@ class hotModel {
 }
 
 /**
- * A widget which manages a spreadsheet session.
- */
-export
-class Spreadsheet extends Widget implements DocumentRegistry.IReadyWidget {
-  /**
-   * Construct a new spreadsheet widget.
-   *
-   * @param options - The spreadsheet configuration options.
-   */
-  constructor(options: Spreadsheet.IOptions) {
-    super();
-
-    const context = this._context = options.context;
-
-    this.addClass(SPREADSHEET_CLASS);
-
-    context.pathChanged.connect(this._onPathChanged, this);
-    context.ready.then(() => { this._onContextReady(); });
-    this._onPathChanged();
-
-  }
-
-  get session(): Session.ISession {
-    return this._session;
-  }
-
-  set session(value: Session.ISession) {
-    this._session = value;
-  }
-
-  get activeCell(): Cell {
-    return this._activeCell;
-  }
-
-  /**
-   * A signal emitted when the selection state of the notebook changes.
-   */
-  get selectionChanged(): ISignal<this, void> {
-    return this._selectionChanged;
-  }
-
-  /**
-   * A signal emitted when the active cell changes.
-   *
-   */
-  get activeCellChanged(): ISignal<this, Cell> {
-    return this._activeCellChanged;
-  }
-
-  /**
-   * The Sheet widget's context.
-   */
-  get context(): DocumentRegistry.Context {
-    return this._context;
-  }
-
-  /**
-   * A promise that resolves when the sheet is ready.
-   */
-  get ready() {
-    return this._ready.promise;
-  }
-
-  /**
-   * Handle actions that should be taken when the context is ready.
-   */
-  private _onContextReady(): void {
-    if (this.isDisposed) {
-      return;
-    }
-    const contextModel = this._context.model;
-
-    // Resolve the ready promise.
-    this._ready.resolve(undefined);
-
-    this._updateSpreadsheet();
-
-    // Throttle the rendering rate of the widget.
-    this._monitor = new ActivityMonitor({
-      signal: contextModel.contentChanged,
-      timeout: RENDER_TIMEOUT
-    });
-    this._monitor.activityStopped.connect(this._updateSpreadsheet, this);
-  }
-
-  /**
-   * get spreadsheet model
-   */
-  modelString(): string{
-    const opts: Handsontable.Options = this._sheet.getSettings();
-    let hot = new hotModel();
-    hot.data = this._sheet.getSourceData();
-    hot.cell = opts.cell;
-    hot.colWidths = opts.colWidths
-    hot.customBorders = opts.customBorders;
-    hot.mergeCells = opts.mergeCells;
-    return JSON.stringify(hot, null, 4);
-  }
-
-  /**
-   * Dispose of the resources held by the sheet widget.
-   */
-  dispose(): void {
-    let monitor = this._monitor;
-    this._monitor = null;
-    if (monitor) {
-      monitor.dispose();
-    }
-    this._sheet.destroy();
-    super.dispose();
-  }
-
-  /**
-   * Handle `'activate-request'` messages.
-   */
-  protected onActivateRequest(msg: Message): void {
-    this.node.tabIndex = -1;
-    this.node.focus();
-  }
-
-  /**
-   * Handle a change in path.
-   */
-  private _onPathChanged(): void {
-    const path = this._context.path;
-    this.title.label = PathExt.basename(path.split(':').pop()!);
-  }
-
-  protected onResize(msg: Widget.ResizeMessage): void {
-    if(this._sheet != null)
-      this._sheet.updateSettings({width:msg.width, height:msg.height});
-  }
-
-  /**
-   * Create the json model for the sheet.
-   */
-  private _updateSpreadsheet(): void {
-
-    let title = this.title;
-    let contextModel = this._context.model;
-    let content:any = {};
-
-    if(contextModel.toString() == ''){
-      content.colWidths = 100;
-      content.data = [[]];
-      content.cell = [];
-    } else {
-      content = JSON.parse(contextModel.toString());
-    }
-
-    const container = document.getElementById(this.id);
-
-    if(this._sheet != null){
-      this._sheet.destroy();
-    }
-
-    this._sheet = new Handsontable(container, {
-      data: content.data,
-      rowHeaders: true,
-      colHeaders: true,
-      manualColumnResize: true,
-      manualRowResize: true,
-      minRows: 128,
-      minCols: 32,
-      colWidths: content.colWidths,
-      //rowHeights: content.rowHeights,
-      contextMenu: true,
-      formulas: true,
-      comments: true,
-      //columnSorting: true,
-      //sortIndicator: true,
-      mergeCells: content.mergeCells,
-      customBorders: content.customBorders,
-      cell: content.cell,
-      cells: function(row: number, col: number, prop:any){
-        var cellProperties = {};
-        cellProperties = content.cell.filter( (item:filterItem) => item.row === row && item.col === col)[0];
-        return cellProperties;
-      },
-      afterChange: function(changes: Array<[number, number|string, any, any]>, source?: string) {
-        if (source != 'loadData'){
-          if(!contextModel.dirty){
-            contextModel.dirty = true;
-            title.className += ` ${DIRTY_CLASS}`;
-          }
-        }
-      }
-    });
-
-    this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITION', (params:any) => params[0] + params[1]);
-
-    this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITIONEIGENVALUES', (params:any) => params[0] + params[1]);
-
-    this._sheet.render();
-  }
-
-  private _context: DocumentRegistry.Context = null;
-  private _ready = new PromiseDelegate<void>();
-  private _monitor: ActivityMonitor<any, any> = null;
-  private _sheet: Handsontable = null;
-  private _session: Session.ISession = null;
-  private _activeCell: Cell = null;
-  private _selectionChanged = new Signal<this, void>(this);
-  private _activeCellChanged = new Signal<this, Cell>(this);
-}
-
-/**
  * The namespace for `Spreadsheet` class statics.
  */
 export
 namespace Spreadsheet {
   /**
-   * Options for the sheet widget.
+   * Options for the spreadsheet widget.
    */
   export
   interface IOptions {
-    /**
-     * The document context for the Spreadsheet being rendered by the widget.
-     */
-    context: DocumentRegistry.Context;
+
 
   }
 
-}
-
-/**
- * A widget factory for Spreadsheet widgets.
- */
-export
-class SpreadsheetFactory extends ABCWidgetFactory<Spreadsheet, DocumentRegistry.IModel> {
   /**
-   * Create a new widget given a context.
+   * A factory for creating spreadsheet content.
+   *
    */
-  protected createNewWidget(context: DocumentRegistry.Context): Spreadsheet {
-    return new Spreadsheet({ context });
+  export
+  interface IContentFactory {
+
   }
+
 }

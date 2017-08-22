@@ -6,10 +6,6 @@ import {
 } from '@quantlab/services';
 
 import {
-  each
-} from '@phosphor/algorithm';
-
-import {
   PromiseDelegate, Token
 } from '@phosphor/coreutils';
 
@@ -30,10 +26,6 @@ import {
 } from '@quantlab/apputils';
 
 import {
-  IEditorMimeTypeService
-} from '@quantlab/codeeditor';
-
-import {
   IChangedArgs
 } from '@quantlab/coreutils';
 
@@ -41,10 +33,13 @@ import {
   DocumentRegistry
 } from '@quantlab/docregistry';
 
-
 import {
   Spreadsheet
 } from './widget';
+
+import {
+  ISpreadsheetModel
+} from './model';
 
 
 /**
@@ -78,20 +73,22 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
     super();
     this.addClass(SPREADSHEET_PANEL_CLASS);
 
+    let contentFactory = this.contentFactory = (
+      options.contentFactory || SpreadsheetPanel.defaultContentFactory
+    );
+
     let layout = this.layout = new PanelLayout();
 
     // Toolbar
     let toolbar = new Toolbar();
     toolbar.addClass(SPREADSHEET_PANEL_TOOLBAR_CLASS);
 
-    // Notebook
-    let nbOptions = {
-      rendermime: this.rendermime,
+    // spreadsheet
+    let ssOptions = {
       languagePreference: options.languagePreference,
-      contentFactory: contentFactory,
-      mimeTypeService: options.mimeTypeService
+      contentFactory: contentFactory
     };
-    let spreadsheet = this.spreadsheet = contentFactory.createNotebook(nbOptions);
+    let spreadsheet = this.spreadsheet = contentFactory.createSpreadsheet(ssOptions);
     spreadsheet.addClass(SPREADSHEET_PANEL_SPREADSHEET_CLASS);
 
     layout.addWidget(toolbar);
@@ -174,15 +171,11 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
 
     if (!oldValue) {
       newValue.ready.then(() => {
-        if (this.ISpreadsheetModel.widgets.length === 1) {
-          let model = this.ISpreadsheetModel.widgets[0].model;
-          if (model.type === 'code' && model.value.text === '') {
-            this.ISpreadsheetModel.mode = 'edit';
-          }
-        }
+
         this._ready.resolve(undefined);
       });
     }
+
   }
 
   /**
@@ -286,7 +279,7 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
       return;
     }
     let context = newValue;
-    this.notebook.model = newValue.model;
+    this.spreadsheet.model = newValue.model;
     this._handleDirtyState();
     newValue.model.stateChanged.connect(this.onModelStateChanged, this);
     context.session.kernelChanged.connect(this._onKernelChanged, this);
@@ -297,14 +290,19 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
         if (this.isDisposed) {
           return;
         }
-        let model = newValue.model;
+
+        this.spreadsheet.createSheet(this.id);
+
+        //let model = newValue.model;
         // Clear the undo state of the cells.
+        /*
         if (model) {
           model.cells.clearUndo();
           each(this.spreadsheet.widgets, widget => {
             widget.editor.clearHistory();
           });
         }
+        */
       });
     }
 
@@ -343,11 +341,11 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
       if (this.isDisposed) {
         return;
       }
-      this.model.metadata.set('kernelspec', {
-        name: kernel.name,
-        display_name: spec.display_name,
-        language: spec.language
-      });
+      //this.model.metadata.set('kernelspec', {
+      //  name: kernel.name,
+      //  display_name: spec.display_name,
+      //  language: spec.language
+      //});
     });
   }
 
@@ -390,13 +388,14 @@ export namespace SpreadsheetPanel {
      * The content factory for the panel.
      */
     contentFactory?: IContentFactory;
+
   }
 
   /**
    * A content factory interface for SpreadsheetPanels.
    */
   export
-  interface IContentFactory extends Spreadsheet.IContentFactory {
+  interface IContentFactory {
     /**
      * Create a new content area for the panel.
      */
@@ -408,7 +407,7 @@ export namespace SpreadsheetPanel {
    * The default implementation of an `IContentFactory`.
    */
   export
-  class ContentFactory extends Spreadsheet.ContentFactory implements IContentFactory {
+  class ContentFactory implements IContentFactory {
     /**
      * Create a new content area for the panel.
      */

@@ -202,7 +202,7 @@ function activateCharts(app: QuantLab, restorer: ILayoutRestorer, services: ISer
     palette.addItem({ command, category });
     menu.addItem({ command });
   });
-  mainMenu.addMenu(menu, {rank: 80});
+  mainMenu.addMenu(menu, {rank: 70});
 
   // Add a launcher item if the launcher is available.
   if (launcher) {

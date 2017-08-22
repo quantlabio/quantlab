@@ -112,7 +112,7 @@ namespace Contents {
    * A contents file type.
    */
   export
-  type ContentType = 'notebook' | 'file' | 'directory';
+  type ContentType = 'notebook' | 'spreadsheet' | 'file' | 'directory';
 
 
   /**

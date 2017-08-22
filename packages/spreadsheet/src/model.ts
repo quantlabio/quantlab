@@ -2,40 +2,21 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  each
-} from '@phosphor/algorithm';
-
-import {
   DocumentModel, DocumentRegistry
 } from '@quantlab/docregistry';
 
 import {
-  ICellModel, ICodeCellModel, IRawCellModel, IMarkdownCellModel,
-  CodeCellModel, RawCellModel, MarkdownCellModel, CellModel
-} from '@quantlab/cells';
-
-import {
-  IObservableJSON, IObservableUndoableList, uuid,
-  IObservableList, nbformat, IModelDB
+  IObservableJSON, nbformat, IModelDB
 } from '@quantlab/coreutils';
-
-import {
-  CellList
-} from './celllist';
 
 
 /**
- * The definition of a model object for a notebook widget.
+ * The definition of a model object for a spreadsheet widget.
  */
 export
 interface ISpreadsheetModel extends DocumentRegistry.IModel {
   /**
-   * The list of cells in the notebook.
-   */
-  readonly cells: IObservableUndoableList<ICellModel>;
-
-  /**
-   * The cell model factory for the notebook.
+   * The content factory for the spreadsheet.
    */
   readonly contentFactory: SpreadsheetModel.IContentFactory;
 
@@ -50,7 +31,7 @@ interface ISpreadsheetModel extends DocumentRegistry.IModel {
   readonly nbformatMinor: number;
 
   /**
-   * The metadata associated with the notebook.
+   * The metadata associated with the spreadsheet.
    */
   readonly metadata: IObservableJSON;
 }
@@ -69,15 +50,9 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
     let factory = (
       options.contentFactory || SpreadsheetModel.defaultContentFactory
     );
-    let cellDB = this.modelDB.view('cells');
+    let cellDB = this.modelDB.view('data');
     factory.modelDB = cellDB;
     this.contentFactory = factory;
-    this._cells = new CellList(this.modelDB, this.contentFactory);
-    // Add an initial code cell by default.
-    if (!this._cells.length) {
-      this._cells.push(factory.createCodeCell({}));
-    }
-    this._cells.changed.connect(this._onCellsChanged, this);
 
     // Handle initial metadata.
     let metadata = this.modelDB.createMap('metadata');
@@ -90,22 +65,15 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
   }
 
   /**
-   * The cell model factory for the notebook.
+   * The cell model factory for the spreadsheet.
    */
   readonly contentFactory: SpreadsheetModel.IContentFactory;
 
   /**
-   * The metadata associated with the notebook.
+   * The metadata associated with the spreadsheet.
    */
   get metadata(): IObservableJSON {
     return this.modelDB.get('metadata') as IObservableJSON;
-  }
-
-  /**
-   * Get the observable list of notebook cells.
-   */
-  get cells(): IObservableUndoableList<ICellModel> {
-    return this._cells;
   }
 
   /**
@@ -142,13 +110,7 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
    * Dispose of the resources held by the model.
    */
   dispose(): void {
-    // Do nothing if already disposed.
-    if (this.cells === null) {
-      return;
-    }
-    let cells = this.cells;
-    this._cells = null;
-    cells.dispose();
+
     super.dispose();
   }
 
@@ -172,12 +134,8 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
   /**
    * Serialize the model to JSON.
    */
-  toJSON(): nbformat.ISpreadsheetContent {
-    let cells: nbformat.ICell[] = [];
-    for (let i = 0; i < this.cells.length; i++) {
-      let cell = this.cells.get(i);
-      cells.push(cell.toJSON());
-    }
+  toJSON(): any {
+
     this._ensureMetadata();
     let metadata = Object.create(null) as nbformat.INotebookMetadata;
     for (let key of this.metadata.keys()) {
@@ -186,8 +144,7 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
     return {
       metadata,
       nbformat_minor: this._nbformatMinor,
-      nbformat: this._nbformat,
-      cells
+      nbformat: this._nbformat
     };
   }
 
@@ -197,28 +154,7 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
    * #### Notes
    * Should emit a [contentChanged] signal.
    */
-  fromJSON(value: nbformat.ISpreadsheetContent): void {
-    let cells: ICellModel[] = [];
-    let factory = this.contentFactory;
-    for (let cell of value.cells) {
-      switch (cell.cell_type) {
-      case 'code':
-        cells.push(factory.createCodeCell({ cell }));
-        break;
-      case 'markdown':
-        cells.push(factory.createMarkdownCell({ cell }));
-        break;
-      case 'raw':
-        cells.push(factory.createRawCell({ cell }));
-        break;
-      default:
-        continue;
-      }
-    }
-    this.cells.beginCompoundOperation();
-    this.cells.clear();
-    this.cells.pushAll(cells);
-    this.cells.endCompoundOperation();
+  fromJSON(value: any): void {
 
     let oldValue = 0;
     let newValue = 0;
@@ -246,45 +182,8 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
       this.metadata.set(key, metadata[key]);
     }
     this._ensureMetadata();
-    this.dirty = true;
-  }
 
-  /**
-   * Handle a change in the cells list.
-   */
-  private _onCellsChanged(list: IObservableList<ICellModel>, change: IObservableList.IChangedArgs<ICellModel>): void {
-    switch (change.type) {
-    case 'add':
-      each(change.newValues, cell => {
-        cell.contentChanged.connect(this.triggerContentChange, this);
-      });
-      break;
-    case 'remove':
-      each(change.oldValues, cell => {
-      });
-      break;
-    case 'set':
-      each(change.newValues, cell => {
-        cell.contentChanged.connect(this.triggerContentChange, this);
-      });
-      each(change.oldValues, cell => {
-      });
-      break;
-    default:
-      return;
-    }
-    let factory = this.contentFactory;
-    // Add code cell if there are no cells remaining.
-    if (!this.cells.length) {
-      // Add the cell in a new context to avoid triggering another
-      // cell changed event during the handling of this signal.
-      requestAnimationFrame(() => {
-        if (!this.isDisposed && !this.cells.length) {
-          this.cells.push(factory.createCodeCell({}));
-        }
-      });
-    }
-    this.triggerContentChange();
+    this.dirty = true;
   }
 
   /**
@@ -300,7 +199,6 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
     }
   }
 
-  private _cells: CellList;
   private _nbformat = nbformat.MAJOR_VERSION;
   private _nbformatMinor = nbformat.MINOR_VERSION;
 }
@@ -312,7 +210,7 @@ class SpreadsheetModel extends DocumentModel implements ISpreadsheetModel {
 export
 namespace SpreadsheetModel {
   /**
-   * An options object for initializing a notebook model.
+   * An options object for initializing a spreadsheet model.
    */
   export
   interface IOptions {
@@ -322,14 +220,14 @@ namespace SpreadsheetModel {
     languagePreference?: string;
 
     /**
-     * A factory for creating cell models.
+     * A factory for creating spreadsheet models.
      *
      * The default is a shared factory instance.
      */
     contentFactory?: IContentFactory;
 
     /**
-     * An optional modelDB for storing notebook data.
+     * An optional modelDB for storing spreadsheet data.
      */
     modelDB?: IModelDB;
   }
@@ -339,10 +237,6 @@ namespace SpreadsheetModel {
    */
   export
   interface IContentFactory {
-    /**
-     * The factory for output area models.
-     */
-    readonly cellContentFactory: CellModel.IContentFactory;
 
     modelDB: IModelDB;
 
@@ -354,19 +248,12 @@ namespace SpreadsheetModel {
   export
   class ContentFactory {
     /**
-     * Create a new cell model factory.
+     * Create a new content factory.
      */
     constructor(options: ContentFactory.IOptions) {
-      this.codeCellContentFactory = (options.codeCellContentFactory ||
-        CodeCellModel.defaultContentFactory
-      );
+
       this._modelDB = options.modelDB || null;
     }
-
-    /**
-     * The factory for code cell content.
-     */
-    readonly cellContentFactory: CellModel.IContentFactory;
 
     get modelDB(): IModelDB {
       return this._modelDB;
@@ -380,7 +267,7 @@ namespace SpreadsheetModel {
   }
 
   /**
-   * A namespace for the notebook model content factory.
+   * A namespace for the spreadsheet model content factory.
    */
   export
   namespace ContentFactory {
@@ -389,11 +276,6 @@ namespace SpreadsheetModel {
      */
     export
     interface IOptions {
-      /**
-       * The factory for code cell model content.
-       */
-      codeCellContentFactory?: CodeCellModel.IContentFactory;
-
       /**
        * The modelDB in which to place new content.
        */

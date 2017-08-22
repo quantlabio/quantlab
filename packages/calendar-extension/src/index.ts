@@ -165,7 +165,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, services: IServiceMa
     palette.addItem({ command, category });
     menu.addItem({ command });
   });
-  mainMenu.addMenu(menu, {rank: 60});
+  mainMenu.addMenu(menu, {rank: 80});
 
   // Add a launcher item if the launcher is available.
   if (launcher) {
