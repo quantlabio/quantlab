@@ -47,9 +47,9 @@ import {
  */
 const SPREADSHEET_PANEL_CLASS = 'jp-SpreadsheetPanel';
 
-const SPREADSHEET_PANEL_TOOLBAR_CLASS = 'jp-Spreadsheet-toolbar';
+const SPREADSHEET_TOOLBAR_CLASS = 'jp-Spreadsheet-toolbar';
 
-const SPREADSHEET_PANEL_SPREADSHEET_CLASS = 'jp-SpreadsheetPanel-spreadsheet';
+const SPREADSHEET_CLASS = 'jp-Spreadsheet';
 
 /**
  * The class name added to a dirty widget.
@@ -81,7 +81,7 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
 
     // Toolbar
     let toolbar = new Toolbar();
-    toolbar.addClass(SPREADSHEET_PANEL_TOOLBAR_CLASS);
+    toolbar.addClass(SPREADSHEET_TOOLBAR_CLASS);
 
     // spreadsheet
     let ssOptions = {
@@ -89,7 +89,7 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
       contentFactory: contentFactory
     };
     let spreadsheet = this.spreadsheet = contentFactory.createSpreadsheet(ssOptions);
-    spreadsheet.addClass(SPREADSHEET_PANEL_SPREADSHEET_CLASS);
+    spreadsheet.addClass(SPREADSHEET_CLASS);
 
     layout.addWidget(toolbar);
     layout.addWidget(this.spreadsheet);

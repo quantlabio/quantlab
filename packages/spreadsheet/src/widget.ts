@@ -23,7 +23,7 @@ import * as Handsontable
 /**
  * The class name added to a spreadsheet widget.
  */
-const SPREADSHEET_CLASS = 'jp-Spreadsheet';
+//const SPREADSHEET_CLASS = 'jp-Spreadsheet';
 
 
 /**
@@ -38,7 +38,7 @@ class Spreadsheet extends Widget {
    */
   constructor(options: Spreadsheet.IOptions) {
     super();
-    this.addClass(SPREADSHEET_CLASS);
+    //this.addClass(SPREADSHEET_CLASS);
 
   }
 
@@ -189,61 +189,18 @@ class Spreadsheet extends Widget {
     for(r = r1; r <= r2; r++){
       for(c = c1; c <= c2; c++){
         let existing = cell.filter( (item:filterItem) => item.row === r && item.col === c)[0];
-        switch(property){
-          case 'fontWeight':
-            if(existing != null){
-              if(existing.fontWeight == value)
-                existing.fontWeight = '';
-              else
-                existing.fontWeight = value;
-            }else{
-              cell.push({row: r, col: c, fontWeight: value})
-            }
-            break;
-          case 'fontStyle':
-            if(existing != null){
-              if(existing.fontStyle == value)
-                existing.fontStyle = '';
-              else
-                existing.fontStyle = value;
-            }else{
-              cell.push({row: r, col: c, fontStyle: value})
-            }
-            break;
-          case 'className':
-            if(existing != null){
-              if(existing.className == value)
-                existing.className = '';
-              else
-                existing.className = value;
-            }else{
-              cell.push({row: r, col: c, className: value})
-            }
-            break;
-          case 'background':
-            if(existing != null){
-              if(existing.background == value)
-                existing.background = '';
-              else
-                existing.background = value;
-            }else{
-              cell.push({row: r, col: c, background: value})
-            }
-            break;
-          case 'color':
-            if(existing != null){
-              if(existing.color == value)
-                existing.color = '';
-              else
-                existing.color = value;
-            }else{
-              cell.push({row: r, col: c, color: value})
-            }
-            break;
-          default:
-            break;
+        if(existing != null && existing != undefined){
+          if(existing.hasOwnProperty(property) && existing[property] == value)
+            existing[property] = '';
+          else
+            existing[property] = value;
+        }else{
+          let cellStyle:any = {};
+          cellStyle['row'] = r;
+          cellStyle['col'] = c;
+          cellStyle[property] = value;
+          cell.push(cellStyle);
         }
-
       }
     }
 

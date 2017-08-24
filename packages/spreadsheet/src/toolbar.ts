@@ -310,7 +310,8 @@ function createColorSwitcherNode(prompt: string): HTMLElement {
     let option = document.createElement('option');
     option.value = t.toLowerCase();
     option.textContent = t;
-    option.style.backgroundColor = t;
+    if(option.value != prompt)
+      option.style.backgroundColor = t;
     select.appendChild(option);
   }
   select.className = TOOLBAR_DROPDOWN_CLASS;
