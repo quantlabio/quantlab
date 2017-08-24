@@ -26,10 +26,6 @@ import {
 } from '@quantlab/apputils';
 
 import {
-  Cell, ICellModel
-} from '@quantlab/cells';
-
-import {
   CodeEditor, CodeEditorWrapper, JSONEditor
 } from '@quantlab/codeeditor';
 
@@ -106,7 +102,7 @@ class SheetTools extends Widget {
   /**
    * The active cell widget.
    */
-  get activeCell(): Cell | null {
+  get activeCell(): any | null {
     return this._tracker.activeCell;
   }
 
@@ -193,7 +189,7 @@ class SheetTools extends Widget {
 
   private _items: Private.IRankItem[] = [];
   private _tracker: ISpreadsheetTracker;
-  private _prevActive: ICellModel | null;
+  private _prevActive: any | null;
 }
 
 
@@ -560,21 +556,23 @@ namespace SheetTools {
     /**
      * Get the value for the data.
      */
-    private _getValue(cell: Cell): JSONValue {
-      return cell.model.metadata.get(this.key);
+    private _getValue(cell: any): any {
+      //return cell.model.metadata.get(this.key);
+      return cell;
     }
 
     /**
      * Set the value for the data.
      */
-    private _setValue(cell: Cell, value: JSONValue): void {
-      cell.model.metadata.set(this.key, value);
+    private _setValue(cell: any, value: any): void {
+      //cell.model.metadata.set(this.key, value);
+      cell  = value;
     }
 
     private _changeGuard = false;
     private _validCellTypes: string[];
-    private _getter: (cell: Cell) => JSONValue;
-    private _setter: (cell: Cell, value: JSONValue) => void;
+    private _getter: (cell: any) => any;
+    private _setter: (cell: any, value: any) => void;
   }
 
   /**
@@ -614,7 +612,7 @@ namespace SheetTools {
        *
        * @returns The appropriate value for the selector.
        */
-      getter?: (cell: Cell) => JSONValue;
+      getter?: (cell: any) => any;
 
       /**
        * An optional value setter for the selector.
@@ -627,7 +625,7 @@ namespace SheetTools {
        * The setter should set the appropriate metadata value
        * given the value of the selector.
        */
-      setter?: (cell: Cell, value: JSONValue) => void;
+      setter?: (cell: any, value: any) => void;
     }
   }
 

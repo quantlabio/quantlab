@@ -47,7 +47,7 @@ import {
  */
 const SPREADSHEET_PANEL_CLASS = 'jp-SpreadsheetPanel';
 
-const SPREADSHEET_PANEL_TOOLBAR_CLASS = 'jp-SpreadsheetPanel-toolbar';
+const SPREADSHEET_PANEL_TOOLBAR_CLASS = 'jp-Spreadsheet-toolbar';
 
 const SPREADSHEET_PANEL_SPREADSHEET_CLASS = 'jp-SpreadsheetPanel-spreadsheet';
 
@@ -330,7 +330,7 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
    * Update the kernel language.
    */
   private _updateLanguage(language: KernelMessage.ILanguageInfo): void {
-    this.model.metadata.set('language_info', language);
+    //this.model.metadata.set('language_info', language);
   }
 
   /**

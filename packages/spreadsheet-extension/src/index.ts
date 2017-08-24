@@ -171,7 +171,7 @@ function activateSheetTools(app: QuantLab, tracker: ISpreadsheetTracker, editorS
     return true;
   };
 
-  sheettools.title.label = 'Spreadsheet';
+  sheettools.title.label = 'Sheet Tools';
   sheettools.id = id;
   sheettools.addItem({ tool: activeCellTool, rank: 1 });
   sheettools.addItem({ tool: slideShow, rank: 2 });
@@ -273,7 +273,7 @@ function activateSpreadsheet(app: QuantLab, services: IServiceManager, mainMenu:
   // The launcher callback.
   let callback = (cwd: string, name: string) => {
     return commands.execute(
-      'docmanager:new-untitled', { path: cwd, type: 'spreadsheet' }
+      'docmanager:new-untitled', { path: cwd, type: 'file' }
     ).then(model => {
       return commands.execute('docmanager:open', {
         path: model.path, factory: FACTORY,
@@ -297,8 +297,8 @@ function activateSpreadsheet(app: QuantLab, services: IServiceManager, mainMenu:
 
   }
 
-  app.contextMenu.addItem({ type: 'separator', selector: '.jp-Spreadsheet', rank: 0 });
-  app.contextMenu.addItem({command: CommandIDs.createConsole, selector: '.jp-Spreadsheet', rank: 3});
+  //app.contextMenu.addItem({ type: 'separator', selector: '.jp-Spreadsheet', rank: 0 });
+  //app.contextMenu.addItem({command: CommandIDs.createConsole, selector: '.jp-Spreadsheet', rank: 3});
 
   return tracker;
 }

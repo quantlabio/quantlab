@@ -165,6 +165,93 @@ class Spreadsheet extends Widget {
   }
 
   /**
+   * spreadsheet format functions
+   */
+  style(property:string, value:string): void {
+    let parent = this;
+    let cell = this._sheet.getSettings().cell;
+
+    let r:number, c:number, r1:number, r2:number, c1:number, c2:number;
+    if(parent._r1 <= parent._r2){
+      r1 = parent._r1;
+      r2 = parent._r2;
+    }else{
+      r1 = parent._r2;
+      r2 = parent._r1;
+    }
+    if(parent._c1 <= parent._c2){
+      c1 = parent._c1;
+      c2 = parent._c2;
+    }else{
+      c1 = parent._c2;
+      c2 = parent._c1;
+    }
+    for(r = r1; r <= r2; r++){
+      for(c = c1; c <= c2; c++){
+        let existing = cell.filter( (item:filterItem) => item.row === r && item.col === c)[0];
+        switch(property){
+          case 'fontWeight':
+            if(existing != null){
+              if(existing.fontWeight == value)
+                existing.fontWeight = '';
+              else
+                existing.fontWeight = value;
+            }else{
+              cell.push({row: r, col: c, fontWeight: value})
+            }
+            break;
+          case 'fontStyle':
+            if(existing != null){
+              if(existing.fontStyle == value)
+                existing.fontStyle = '';
+              else
+                existing.fontStyle = value;
+            }else{
+              cell.push({row: r, col: c, fontStyle: value})
+            }
+            break;
+          case 'className':
+            if(existing != null){
+              if(existing.className == value)
+                existing.className = '';
+              else
+                existing.className = value;
+            }else{
+              cell.push({row: r, col: c, className: value})
+            }
+            break;
+          case 'background':
+            if(existing != null){
+              if(existing.background == value)
+                existing.background = '';
+              else
+                existing.background = value;
+            }else{
+              cell.push({row: r, col: c, background: value})
+            }
+            break;
+          case 'color':
+            if(existing != null){
+              if(existing.color == value)
+                existing.color = '';
+              else
+                existing.color = value;
+            }else{
+              cell.push({row: r, col: c, color: value})
+            }
+            break;
+          default:
+            break;
+        }
+
+      }
+    }
+
+    this._sheet.updateSettings({cell: cell});
+    this._model.dirty = true;
+  }
+
+  /**
    * Dispose of the resources held by the sheet widget.
    */
   dispose(): void {
@@ -222,11 +309,12 @@ class Spreadsheet extends Widget {
       minCols: 32,
       colWidths: content.colWidths,
       //rowHeights: content.rowHeights,
-      contextMenu: false,
+      contextMenu: true,
       formulas: true,
       comments: true,
       //columnSorting: true,
       //sortIndicator: true,
+      outsideClickDeselects: false,
       mergeCells: content.mergeCells,
       customBorders: content.customBorders,
       cell: content.cell,
@@ -240,6 +328,14 @@ class Spreadsheet extends Widget {
           parent._model.dirty = true;
         }
       }
+    });
+
+    this._sheet.addHook('afterSelection',function(r1: number, c1: number, r2: number, c2: number, preventScrolling:boolean){
+      parent._activeCell = parent._sheet.getDataAtCell(r1,c1);
+      parent._r1 = r1;
+      parent._r2 = r2;
+      parent._c1 = c1;
+      parent._c2 = c2;
     });
 
     this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITION', (params:any) => params[0] + params[1]);
@@ -272,6 +368,10 @@ class Spreadsheet extends Widget {
   private _modelContentChanged = new Signal<this, void>(this);
   private _selectionChanged = new Signal<this, void>(this);
   private _activeCellChanged = new Signal<this, void>(this);
+  private _r1: number;
+  private _c1: number;
+  private _r2: number;
+  private _c2: number
 }
 
 /**

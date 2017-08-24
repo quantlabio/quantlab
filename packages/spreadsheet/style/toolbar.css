@@ -23,24 +23,24 @@
 
 
 /* Top-level toolbar item */
-.jp-Toolbar-item.jp-Spreadsheet-toolbarCellType  {
+.jp-Toolbar-item.jp-Spreadsheet-toolbar  {
 }
 
 
 /* select wrapper */
-.jp-Toolbar-item.jp-Spreadsheet-toolbarCellType .jp-select-wrapper {
+.jp-Toolbar-item.jp-Spreadsheet-toolbar .jp-select-wrapper {
   height: 100%;
 }
 
 
-.jp-Toolbar-item.jp-Spreadsheet-toolbarCellType .jp-select-wrapper.jp-mod-focused {
+.jp-Toolbar-item.jp-Spreadsheet-toolbar .jp-select-wrapper.jp-mod-focused {
   border: none;
   box-shadow: none;
 }
 
 
 /* Actual select element */
-.jp-Spreadsheet-toolbarCellType select.jp-Spreadsheet-toolbarCellTypeDropdown {
+.jp-Spreadsheet-toolbar select.jp-Spreadsheet-toolbarDropdown {
   font-size: var(--jp-ui-font-size1);
   background-size: 16px;
   padding-right: 16px;
