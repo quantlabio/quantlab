@@ -2,9 +2,9 @@
   "private": true,
   "name": "typescript-browser-with-output",
   "dependencies": {
-    "@quantlab/outputarea": "^0.1.4",
-    "@quantlab/rendermime": "^0.1.4",
-    "@quantlab/services": "^0.1.4",
+    "@quantlab/outputarea": "^0.2.0",
+    "@quantlab/rendermime": "^0.2.0",
+    "@quantlab/services": "^0.2.0",
     "es6-promise": "^4.1.0"
   },
   "scripts": {
@@ -19,5 +19,5 @@
     "typescript": "~2.4.1",
     "webpack": "^2.2.1"
   },
-  "version": "0.1.1"
+  "version": "0.2.0"
 }

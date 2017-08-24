@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/faq-extension",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "QuantLab - FAQ Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -15,8 +15,8 @@
   "dependencies": {
     "@phosphor/messaging": "^1.2.1",
     "@phosphor/virtualdom": "^1.1.1",
-    "@quantlab/application": "^0.1.4",
-    "@quantlab/apputils": "^0.1.4"
+    "@quantlab/application": "^0.2.0",
+    "@quantlab/apputils": "^0.2.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

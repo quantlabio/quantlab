@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/terminal-extension",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "QuantLab - Terminal Emulator Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/application": "^0.1.4",
-    "@quantlab/apputils": "^0.1.4",
-    "@quantlab/launcher": "^0.1.4",
-    "@quantlab/services": "^0.1.4",
-    "@quantlab/terminal": "^0.1.4"
+    "@quantlab/application": "^0.2.0",
+    "@quantlab/apputils": "^0.2.0",
+    "@quantlab/launcher": "^0.2.0",
+    "@quantlab/services": "^0.2.0",
+    "@quantlab/terminal": "^0.2.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
