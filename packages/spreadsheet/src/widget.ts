@@ -234,6 +234,10 @@ class Spreadsheet extends Widget {
       this._sheet.updateSettings({width:msg.width, height:msg.height});
   }
 
+  createFormula(name:string, func:Function) {
+    this._sheet.formula.parser.setFunction(name, func);
+  }
+
   createSheet(pwid:any): void {
     let contextModel = this._model;
     let content:any = {};
@@ -295,10 +299,6 @@ class Spreadsheet extends Widget {
       parent._c2 = c2;
     });
 
-    this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITION', (params:any) => params[0] + params[1]);
-
-    this._sheet.formula.parser.setFunction('SYMMETRICSCHURDECOMPOSITIONEIGENVALUES', (params:any) => params[0] + params[1]);
-
     this._sheet.render();
   }
 
@@ -325,10 +325,10 @@ class Spreadsheet extends Widget {
   private _modelContentChanged = new Signal<this, void>(this);
   private _selectionChanged = new Signal<this, void>(this);
   private _activeCellChanged = new Signal<this, void>(this);
-  private _r1: number;
-  private _c1: number;
-  private _r2: number;
-  private _c2: number
+  private _r1: number = null;
+  private _c1: number = null;
+  private _r2: number = null;
+  private _c2: number = null;
 }
 
 /**

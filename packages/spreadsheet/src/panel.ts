@@ -41,6 +41,7 @@ import {
   ISpreadsheetModel
 } from './model';
 
+import QuantLibXL from './formulas';
 
 /**
  * The class name added to spreadsheet panels.
@@ -292,6 +293,26 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
         }
 
         this.spreadsheet.createSheet(this.id);
+        let parent = this;
+
+        QuantLibXL.forEach( func => {
+
+          this.spreadsheet.createFormula(func.toUpperCase(), (args:any[]) => {
+              let code: string[] = parent.handleArgs(args);
+
+              code.push('var result = ql.' + func + '.apply(undefined,args);');
+              code.push("if(result[0].indexOf('object with that ID already exists')!== -1){");
+              code.push("  result = ['', args[0]]");
+              code.push('}');
+              code.push('result');
+              //console.log(code.join('\n'));
+
+              return parent.execute(code.join('\n'));
+          });
+
+        })
+
+
 
         //let model = newValue.model;
         // Clear the undo state of the cells.
@@ -311,6 +332,53 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
     context.pathChanged.connect(this.onPathChanged, this);
   }
 
+  handleArgs(args:any[]):string[] {
+    let code: string[] = [];
+    code.push('var args = [];')
+
+    args.forEach( s => {
+      if(Array.isArray(s)){
+        var tmpArray = '[';
+        s.forEach( a => {
+          if(Array.isArray(a)){
+            var tmpMatrix = '[';
+            a.forEach( m => {
+              // tensor = matrix
+              tmpMatrix += '"' + m + '",';
+            })
+            tmpMatrix = tmpMatrix.slice(0,-1);
+            tmpMatrix += ']';
+            tmpArray += tmpMatrix + ',';
+          }else{
+            tmpArray += '"' +a + '",';
+          }
+        })
+        // tensor = array
+        tmpArray = tmpArray.slice(0,-1);
+        tmpArray += ']';
+        code.push('args.push(' + tmpArray + ');')
+      }else{ // tensor = single
+        code.push('args.push("' + s + '");')
+      }
+    });
+
+    return code;
+  }
+
+  execute(code:string): Kernel.IFuture {
+      let content: KernelMessage.IExecuteRequest = {
+        code,
+        stop_on_error: true
+      };
+
+      if (!this.session.kernel) {
+        //return '#NOKERNEL!';
+      }
+
+      let future = this.session.kernel.requestExecute(content, false);
+      return future;
+  }
+
   /**
    * Handle a change in the kernel by updating the document metadata.
    */
@@ -321,6 +389,9 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
     kernel.ready.then(() => {
       if (this.model) {
         this._updateLanguage(kernel.info.language_info);
+      }
+      if(kernel.info.language_info.name == 'javascript'){
+        this.execute('const ql = require("quantlibxl");');
       }
     });
     this._updateSpec(kernel);
