@@ -372,7 +372,7 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
       };
 
       if (!this.session.kernel) {
-        //return '#NOKERNEL!';
+        throw Error('NO_KERNEL');
       }
 
       let future = this.session.kernel.requestExecute(content, false);

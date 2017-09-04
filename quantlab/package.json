@@ -46,7 +46,7 @@
     "@quantlab/fileeditor-extension": "^0.2.0",
     "@quantlab/fullcalendar": "^3.4.1",
     "@quantlab/fullcalendar-scheduler": "^1.6.3",
-    "@quantlab/handsontable": "^0.33.4",
+    "@quantlab/handsontable": "^0.33.5",
     "@quantlab/help-extension": "^0.2.0",
     "@quantlab/highcharts": "^0.2.0",
     "@quantlab/highcharts-extension": "^0.2.0",
