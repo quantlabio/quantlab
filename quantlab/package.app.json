@@ -95,7 +95,7 @@
     "highcharts": "^5.0.14",
     "@quantlab/fullcalendar": "^3.4.1",
     "@quantlab/fullcalendar-scheduler": "^1.6.3",
-    "@quantlab/handsontable": "^0.33.5",
+    "@quantlab/handsontable": "^0.33.6",
     "marked": "^0.3.6",
     "minimist": "^1.2.0",
     "moment": "^2.17.1",

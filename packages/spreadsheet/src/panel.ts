@@ -312,6 +312,7 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
 
         })
 
+        this.spreadsheet.recalculate();
 
 
         //let model = newValue.model;
@@ -386,12 +387,15 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
     if (!this.model || !kernel) {
       return;
     }
+    let parent = this;
     kernel.ready.then(() => {
       if (this.model) {
         this._updateLanguage(kernel.info.language_info);
       }
       if(kernel.info.language_info.name == 'javascript'){
-        this.execute('const ql = require("quantlibxl");');
+        this.execute('const ql = require("quantlibxl");').done.then( msg => {
+          parent.spreadsheet.recalculate();
+        });
       }
     });
     this._updateSpec(kernel);

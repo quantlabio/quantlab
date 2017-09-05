@@ -238,6 +238,18 @@ class Spreadsheet extends Widget {
     this._sheet.formula.parser.setFunction(name, func);
   }
 
+  render():void{
+    this._sheet.render();
+  }
+
+  recalculate():void{
+    this._sheet.formula.matrix.data.forEach( (fx:any) =>{
+      if(fx.error)
+        fx.needUpdate = true;
+    });
+    this._sheet.render();
+  }
+
   createSheet(pwid:any): void {
     let contextModel = this._model;
     let content:any = {};
@@ -299,7 +311,7 @@ class Spreadsheet extends Widget {
       parent._c2 = c2;
     });
 
-    this._sheet.render();
+    //this._sheet.render();
   }
 
   /**
