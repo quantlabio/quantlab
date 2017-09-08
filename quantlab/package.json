@@ -172,6 +172,6 @@
       "@phosphor/widgets"
     ],
     "name": "QuantLab",
-    "version": "0.1.5"
+    "version": "0.2.1"
   }
 }
