@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/imageviewer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "QuantLab - Image Widget",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -17,9 +17,9 @@
     "@phosphor/coreutils": "^1.2.0",
     "@phosphor/messaging": "^1.2.1",
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/apputils": "^0.2.0",
+    "@quantlab/apputils": "^0.2.1",
     "@quantlab/coreutils": "^0.2.0",
-    "@quantlab/docregistry": "^0.2.0"
+    "@quantlab/docregistry": "^0.2.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

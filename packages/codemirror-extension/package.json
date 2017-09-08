@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/codemirror-extension",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "QuantLab - CodeMirror Provider Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -14,12 +14,12 @@
   },
   "dependencies": {
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/application": "^0.2.0",
-    "@quantlab/apputils": "^0.2.0",
-    "@quantlab/codeeditor": "^0.2.0",
-    "@quantlab/codemirror": "^0.2.0",
+    "@quantlab/application": "^0.2.1",
+    "@quantlab/apputils": "^0.2.1",
+    "@quantlab/codeeditor": "^0.2.1",
+    "@quantlab/codemirror": "^0.2.1",
     "@quantlab/coreutils": "^0.2.0",
-    "@quantlab/fileeditor": "^0.2.0"
+    "@quantlab/fileeditor": "^0.2.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

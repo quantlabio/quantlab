@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/inspector",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "QuantLab - Code Inspector",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -18,11 +18,11 @@
     "@phosphor/messaging": "^1.2.1",
     "@phosphor/signaling": "^1.2.1",
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/apputils": "^0.2.0",
-    "@quantlab/codeeditor": "^0.2.0",
+    "@quantlab/apputils": "^0.2.1",
+    "@quantlab/codeeditor": "^0.2.1",
     "@quantlab/coreutils": "^0.2.0",
-    "@quantlab/rendermime": "^0.2.0",
-    "@quantlab/services": "^0.2.0"
+    "@quantlab/rendermime": "^0.2.1",
+    "@quantlab/services": "^0.2.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

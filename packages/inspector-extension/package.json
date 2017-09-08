@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/inspector-extension",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "QuantLab - Code Inspector Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "@phosphor/disposable": "^1.1.1",
-    "@quantlab/application": "^0.2.0",
-    "@quantlab/apputils": "^0.2.0",
-    "@quantlab/console": "^0.2.0",
-    "@quantlab/inspector": "^0.2.0",
-    "@quantlab/notebook": "^0.2.0"
+    "@quantlab/application": "^0.2.1",
+    "@quantlab/apputils": "^0.2.1",
+    "@quantlab/console": "^0.2.1",
+    "@quantlab/inspector": "^0.2.1",
+    "@quantlab/notebook": "^0.2.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

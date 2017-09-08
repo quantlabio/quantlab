@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/theme-dark-extension",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "QuantLab - Default Dark Theme",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,7 +13,7 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.2.0",
+    "@quantlab/application": "^0.2.1",
     "@quantlab/theming": "^0.2.0"
   },
   "devDependencies": {
