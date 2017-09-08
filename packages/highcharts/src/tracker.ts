@@ -14,15 +14,15 @@ import {
 } from '@phosphor/signaling';
 
 import {
-  HighCharts
-} from './';
+  HighChartsPanel
+} from './panel';
 
 
 /**
- * An object that tracks chart widgets.
+ * An object that tracks HighCharts widgets.
  */
 export
-interface IChartTracker extends IInstanceTracker<HighCharts> {
+interface IHighChartsTracker extends IInstanceTracker<HighChartsPanel> {
 
   /**
    * A signal emitted when the selection state changes.
@@ -36,12 +36,12 @@ interface IChartTracker extends IInstanceTracker<HighCharts> {
  * The chart tracker token.
  */
 export
-const IChartTracker = new Token<IChartTracker>('jupyter.services.highcharts');
+const IHighChartsTracker = new Token<IHighChartsTracker>('jupyter.services.highcharts');
 /* tslint:enable */
 
 
 export
-class ChartTracker extends InstanceTracker<HighCharts> implements IChartTracker {
+class HighChartsTracker extends InstanceTracker<HighChartsPanel> implements IHighChartsTracker {
 
   /**
    * A signal emitted when the selection state changes.
@@ -55,8 +55,8 @@ class ChartTracker extends InstanceTracker<HighCharts> implements IChartTracker 
    *
    * @param panel - The chart panel being added.
    */
-  add(chart: HighCharts): Promise<void> {
-    const promise = super.add(chart);
+  add(panel: HighChartsPanel): Promise<void> {
+    const promise = super.add(panel);
 
     return promise;
   }

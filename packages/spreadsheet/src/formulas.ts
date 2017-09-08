@@ -1,5 +1,5 @@
-  // Copyright (c) QuantLab Development Team.
-  // Distributed under the terms of the Modified BSD License.
+// Copyright (c) QuantLab Development Team.
+// Distributed under the terms of the Modified BSD License.
 
 const QuantLibXL: string[] = [
   'AbcdFunction',

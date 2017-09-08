@@ -34,7 +34,7 @@ import {
 } from '@quantlab/coreutils';
 
 import {
-  IChartTracker
+  IHighChartsTracker
 } from './tracker';
 
 export
@@ -125,7 +125,7 @@ class ChartTools extends Widget {
   }
 
   private _items: Private.IRankItem[] = [];
-  private _tracker: IChartTracker;
+  private _tracker: IHighChartsTracker;
   //private _prevActive: ICellModel | null;
 }
 
@@ -142,7 +142,7 @@ namespace ChartTools {
     /**
      * The chart tracker used by the sheet tools.
      */
-    tracker: IChartTracker;
+    tracker: IHighChartsTracker;
   }
 
   /**

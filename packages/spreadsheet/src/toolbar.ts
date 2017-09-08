@@ -124,6 +124,19 @@ namespace ToolbarItems {
     });
   }
 
+  /**
+   * Create align left button toolbar item.
+   */
+  export
+  function createReCalculateButton(panel: SpreadsheetPanel): ToolbarButton {
+    return new ToolbarButton({
+      className: 'fa fa-refresh',
+      onClick: () => {
+        panel.spreadsheet.recalculate();
+      },
+      tooltip: 'Re-Calculate'
+    });
+  }
 
   export
   function createFillColorItem(panel: SpreadsheetPanel): Widget {
@@ -152,6 +165,8 @@ namespace ToolbarItems {
 
     toolbar.addItem('fill', createFillColorItem(panel));
     toolbar.addItem('font', createFontColorItem(panel));
+
+    toolbar.addItem('recalculate', createReCalculateButton(panel));
 
     toolbar.addItem('spacer', Toolbar.createSpacerItem());
     toolbar.addItem('kernelName', Toolbar.createKernelNameItem(panel.session));

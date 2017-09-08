@@ -292,27 +292,33 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
           return;
         }
 
-        this.spreadsheet.createSheet(this.id);
+        this.spreadsheet.createSheet();
         let parent = this;
 
         QuantLibXL.forEach( func => {
 
-          this.spreadsheet.createFormula(func.toUpperCase(), (args:any[]) => {
-              let code: string[] = parent.handleArgs(args);
+          this.spreadsheet.createFormula('QL'+func.toUpperCase(), (args:any) => {
+              // the argument could be future from previous kernel execution
+              if(args[0] && (typeof args[0].done == 'object')){
+                //TODO
+              }else{
+                let code: string[] = parent.handleArgs(args);
 
-              code.push('var result = ql.' + func + '.apply(undefined,args);');
-              code.push("if(result[0].indexOf('object with that ID already exists')!== -1){");
-              code.push("  result = ['', args[0]]");
-              code.push('}');
-              code.push('result');
-              //console.log(code.join('\n'));
+                code.push('var result = ql.' + func + '.apply(undefined,args);');
+                code.push("if(result[0].indexOf('object with that ID already exists')!== -1){");
+                code.push("  result = ['', args[0]]");
+                code.push('}');
+                code.push('result');
+                //console.log(code.join('\n'));
 
-              return parent.execute(code.join('\n'));
+                return parent.execute(code.join('\n'));
+              }
+
           });
 
         })
 
-        this.spreadsheet.recalculate();
+        //this.spreadsheet.recalculate();
 
 
         //let model = newValue.model;
@@ -345,13 +351,19 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
             var tmpMatrix = '[';
             a.forEach( m => {
               // tensor = matrix
-              tmpMatrix += '"' + m + '",';
+              if(Object.prototype.toString.call(m) === '[object Number]' || Object.prototype.toString.call(m) === '[object Boolean]')
+                tmpMatrix += m + ',';
+              else
+                tmpMatrix += '"' + m + '",';
             })
             tmpMatrix = tmpMatrix.slice(0,-1);
             tmpMatrix += ']';
             tmpArray += tmpMatrix + ',';
           }else{
-            tmpArray += '"' +a + '",';
+            if(Object.prototype.toString.call(a) === '[object Number]' || Object.prototype.toString.call(a) === '[object Boolean]')
+              tmpArray += a + ',';
+            else
+              tmpArray += '"' +a + '",';
           }
         })
         // tensor = array
@@ -359,7 +371,10 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
         tmpArray += ']';
         code.push('args.push(' + tmpArray + ');')
       }else{ // tensor = single
-        code.push('args.push("' + s + '");')
+        if(Object.prototype.toString.call(s) === '[object Number]' || Object.prototype.toString.call(s) === '[object Boolean]')
+        code.push('args.push(' + s + ');')
+        else
+          code.push('args.push("' + s + '");')
       }
     });
 
@@ -387,14 +402,14 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
     if (!this.model || !kernel) {
       return;
     }
-    let parent = this;
+    //let parent = this;
     kernel.ready.then(() => {
       if (this.model) {
         this._updateLanguage(kernel.info.language_info);
       }
       if(kernel.info.language_info.name == 'javascript'){
         this.execute('const ql = require("quantlibxl");').done.then( msg => {
-          parent.spreadsheet.recalculate();
+          //parent.spreadsheet.recalculate();
         });
       }
     });

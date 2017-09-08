@@ -238,9 +238,9 @@ class Spreadsheet extends Widget {
     this._sheet.formula.parser.setFunction(name, func);
   }
 
-  render():void{
-    this._sheet.render();
-  }
+  //render():void{
+  //  this._sheet.render();
+  //}
 
   recalculate():void{
     this._sheet.formula.matrix.data.forEach( (fx:any) =>{
@@ -250,7 +250,7 @@ class Spreadsheet extends Widget {
     this._sheet.render();
   }
 
-  createSheet(pwid:any): void {
+  createSheet(): void {
     let contextModel = this._model;
     let content:any = {};
 
@@ -264,7 +264,7 @@ class Spreadsheet extends Widget {
 
     content.cells = [];
 
-    const container = document.getElementById(pwid).children[1];
+    const container = document.getElementById(this.parent.id).children[1];
 
     if(this._sheet != null){
       this._sheet.destroy();
@@ -278,6 +278,7 @@ class Spreadsheet extends Widget {
       colHeaders: true,
       manualColumnResize: true,
       manualRowResize: true,
+      wordWrap: false,
       minRows: 128,
       minCols: 32,
       colWidths: content.colWidths,
