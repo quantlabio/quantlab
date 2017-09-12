@@ -26,7 +26,7 @@ import {
  */
 const TOOLBAR_SAVE_CLASS = 'jp-SaveIcon';
 
-const TOOLBAR_LABEL_CLASS = 'jp-CSVToolbar-label';
+const TOOLBAR_LABEL_CLASS = 'jp-Toolbar-label';
 
 const TOOLBAR_DROPDOWN_CLASS = 'jp-Spreadsheet-toolbarDropdown';
 

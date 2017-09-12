@@ -2,10 +2,6 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  PromiseDelegate
-} from '@phosphor/coreutils';
-
-import {
   Message
 } from '@phosphor/messaging';
 
@@ -14,12 +10,12 @@ import {
 } from '@phosphor/widgets';
 
 import {
-  ActivityMonitor
-} from '@quantlab/coreutils';
+  ISignal, Signal
+} from '@phosphor/signaling';
 
 import {
-  ABCWidgetFactory, DocumentRegistry
-} from '@quantlab/docregistry';
+  ICalendarModel
+} from './model';
 
 import * as $
   from 'jquery';
@@ -30,21 +26,18 @@ import '@quantlab/fullcalendar/dist/gcal.js';
 
 import '@quantlab/fullcalendar-scheduler/dist/scheduler.js';
 
+
 /**
  * The class name added to a calendar widget.
  */
-const CALENDAR_CLASS = 'jp-Calendar';
+//const CALENDAR_CLASS = 'jp-Calendar';
 
-/**
- * The timeout to wait for change activity to have ceased before rendering.
- */
-const RENDER_TIMEOUT = 1000;
 
 /**
  * A widget which manages a calendar session.
  */
 export
-class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
+class Calendar extends Widget {
   /**
    * Construct a new calendar widget.
    *
@@ -53,53 +46,114 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
   constructor(options: Calendar.IOptions) {
     super();
 
-    this.addClass(CALENDAR_CLASS);
+  }
 
-    let context = this._context = options.context;
+  /**
+   * A signal emitted when the model of the notebook changes.
+   */
+  get modelChanged(): ISignal<this, void> {
+    return this._modelChanged;
+  }
 
-    if(context){
-      this.title.label = context.path.split('/').pop();
-      context.pathChanged.connect(this._onPathChanged, this);
+  /**
+   * A signal emitted when the model content changes.
+   *
+   * #### Notes
+   * This is a convenience signal that follows the current model.
+   */
+  get modelContentChanged(): ISignal<this, void> {
+    return this._modelContentChanged;
+  }
 
-      this._context.ready.then(() => {
-        this._updateCalendar();
-        this._ready.resolve(undefined);
-        // Throttle the rendering rate of the widget.
-        this._monitor = new ActivityMonitor({
-          signal: context.model.contentChanged,
-          timeout: RENDER_TIMEOUT
-        });
-        this._monitor.activityStopped.connect(this._updateCalendar, this);
+  /**
+   * The cell factory used by the widget.
+   */
+  readonly contentFactory: Calendar.IContentFactory;
+
+  /**
+   * The model for the widget.
+   */
+  get model(): ICalendarModel {
+    return this._model;
+  }
+  set model(newValue: ICalendarModel) {
+    newValue = newValue || null;
+    if (this._model === newValue) {
+      return;
+    }
+    let oldValue = this._model;
+    this._model = newValue;
+
+    if (oldValue && oldValue.modelDB.isCollaborative) {
+      oldValue.modelDB.connected.then(() => {
+        oldValue.modelDB.collaborators.changed.disconnect(
+          this._onCollaboratorsChanged, this);
       });
-    }else{
-      this.title.label = 'Calendar';
+    }
+    if (newValue && newValue.modelDB.isCollaborative) {
+      newValue.modelDB.connected.then(() => {
+        newValue.modelDB.collaborators.changed.connect(
+          this._onCollaboratorsChanged, this);
+      });
     }
 
+    // Trigger private, protected, and public changes.
+    this._onModelChanged(oldValue, newValue);
+    this.onModelChanged(oldValue, newValue);
+    this._modelChanged.emit(void 0);
   }
 
   /**
-   * The Calendar widget's context.
+   * Handle a new model.
+   *
+   * #### Notes
+   * This method is called after the model change has been handled
+   * internally and before the `modelChanged` signal is emitted.
+   * The default implementation is a no-op.
    */
-  get context(): DocumentRegistry.Context {
-    return this._context;
+  protected onModelChanged(oldValue: ICalendarModel, newValue: ICalendarModel): void {
+    // No-op.
   }
 
   /**
-   * A promise that resolves when the calendar is ready.
+   * Handle changes to the notebook model content.
+   *
+   * #### Notes
+   * The default implementation emits the `modelContentChanged` signal.
    */
-  get ready() {
-    return this._ready.promise;
+  protected onModelContentChanged(model: ICalendarModel, args: void): void {
+    this._modelContentChanged.emit(void 0);
+  }
+
+  /**
+   * Handle a new model on the widget.
+   */
+  private _onModelChanged(oldValue: ICalendarModel, newValue: ICalendarModel): void {
+    if (oldValue) {
+      oldValue.contentChanged.disconnect(this.onModelContentChanged, this);
+    }
+
+    newValue.contentChanged.connect(this.onModelContentChanged, this);
+  }
+
+  /**
+   * get calendar model
+   */
+  modelJSON(): any{
+
+    return null;
   }
 
   /**
    * Dispose of the resources held by the calendar widget.
    */
   dispose(): void {
-    let monitor = this._monitor;
-    this._monitor = null;
-    if (monitor) {
-      monitor.dispose();
+    // Do nothing if already disposed.
+    if (this.isDisposed) {
+      return;
     }
+    this._model = null;
+    //this._calendar.destroy();
     super.dispose();
   }
 
@@ -111,13 +165,6 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
     this.node.focus();
   }
 
-  /**
-   * Handle a change in path.
-   */
-  private _onPathChanged(): void {
-    this.title.label = this._context.path.split('/').pop();
-  }
-
   protected onResize(msg: Widget.ResizeMessage): void {
     if(this._calendar != null)
       this._calendar.fullCalendar('option', 'aspectRatio', msg.width/(msg.height - 66));
@@ -126,9 +173,8 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
   /**
    * Create the json model for the calendar.
    */
-  private _updateCalendar(): void {
-
-    let contextModel = this._context.model;
+  createCalendar(): void {
+    let contextModel = this._model;
     let content:any = {};
 
     if(contextModel.toString() == ''){
@@ -139,7 +185,7 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
       content = JSON.parse(contextModel.toString());
     }
 
-    this._calendar = $('#' + this.id);
+    this._calendar = $('#' + this.parent.id).children().eq(1);
     this._calendar.fullCalendar({
       schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
       editable: true,
@@ -160,10 +206,17 @@ class Calendar extends Widget implements DocumentRegistry.IReadyWidget {
     });
   }
 
-  private _context: DocumentRegistry.Context = null;
-  private _ready = new PromiseDelegate<void>();
-  private _monitor: ActivityMonitor<any, any> = null;
+  /**
+   * Handle an update to the collaborators.
+   */
+  private _onCollaboratorsChanged(): void {
+
+  }
+
+  private _model: ICalendarModel = null;
   private _calendar: JQuery = null;
+  private _modelChanged = new Signal<this, void>(this);
+  private _modelContentChanged = new Signal<this, void>(this);
 }
 
 /**
@@ -176,22 +229,16 @@ namespace Calendar {
    */
   export
   interface IOptions {
-    /**
-     * The document context for the Calendar being rendered by the widget.
-     */
-    context: DocumentRegistry.Context;
-  }
-}
 
-/**
- * A widget factory for Calendar widgets.
- */
-export
-class CalendarFactory extends ABCWidgetFactory<Calendar, DocumentRegistry.IModel> {
-  /**
-   * Create a new widget given a context.
-   */
-  protected createNewWidget(context: DocumentRegistry.Context): Calendar {
-    return new Calendar({ context });
   }
+
+  /**
+   * A factory for creating calendar content.
+   *
+   */
+  export
+  interface IContentFactory {
+
+  }
+
 }

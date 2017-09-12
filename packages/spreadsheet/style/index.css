@@ -27,17 +27,6 @@
   height: 100%;
   width: 100%;
 }
-/*
-.jp-Spreadsheet {
-  flex: 1 1 auto;
-  padding: var(--jp-notebook-padding);
-  min-width: 50px;
-  min-height: 50px;
-  outline: none;
-  overflow: auto;
-  background: var(--jp-layout-color1);
-}
-*/
 
 .jp-Spreadsheet::after {
   display: block;

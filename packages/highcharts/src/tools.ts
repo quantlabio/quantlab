@@ -37,9 +37,6 @@ import {
   IHighChartsTracker
 } from './tracker';
 
-export
-interface IChartTools extends ChartTools {};
-
 
 /**
  * The class name added to a CellTools instance.

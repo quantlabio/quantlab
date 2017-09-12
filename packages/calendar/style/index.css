@@ -3,16 +3,40 @@
 | Distributed under the terms of the Modified BSD License.
 |----------------------------------------------------------------------------*/
 
+/*-----------------------------------------------------------------------------
+| Imports
+|----------------------------------------------------------------------------*/
+
 @import url('~@quantlab/fullcalendar/dist/fullcalendar.css');
 @import url('~@quantlab/fullcalendar-scheduler/dist/scheduler.css');
 
+@import './toolbar.css';
+
+/*-----------------------------------------------------------------------------
+| Calendar
+|----------------------------------------------------------------------------*/
+.jp-CalendarPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.jp-Calendar {
+  height: 100%;
+  width: 100%;
+  min-width: 200px;
+  min-height: 200px;
+  padding: 8px;
+  margin: 0;
+}
+/*
 .jp-Calendar {
   min-width: 200px;
   min-height: 200px;
   padding: 8px;
   margin: 0;
 }
-
+*/
 .fc-view-container {
   width:100%;
   height: 100%;
