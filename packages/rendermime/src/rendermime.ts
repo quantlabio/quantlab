@@ -22,6 +22,14 @@ import {
   ReadonlyJSONObject
 } from '@phosphor/coreutils';
 
+import {
+  MimeModel
+} from './mimemodel';
+
+import {
+  MathJaxTypesetter
+} from './latex';
+
 
 /**
  * An object which manages mime renderer factories.
@@ -44,6 +52,7 @@ class RenderMime {
     // Parse the options.
     this.resolver = options.resolver || null;
     this.linkHandler = options.linkHandler || null;
+    this._latexTypesetter = options.latexTypesetter || new MathJaxTypesetter();
     this.sanitizer = options.sanitizer || defaultSanitizer;
 
     // Add the initial factories.
@@ -68,6 +77,20 @@ class RenderMime {
    * The object used to handle path opening links.
    */
   readonly linkHandler: IRenderMime.ILinkHandler | null;
+
+  /**
+   * The LaTeX typesetter for the rendermime.
+   *
+   * #### Notes
+   * This is settable so that extension authors may provide
+   * alternative implementations of the `IRenderMime.ILatexTypesetter`.
+   */
+  get latexTypesetter(): IRenderMime.ILatexTypesetter {
+    return this._latexTypesetter;
+  }
+  set latexTypesetter(typesetter: IRenderMime.ILatexTypesetter) {
+    this._latexTypesetter = typesetter;
+  }
 
   /**
    * The ordered list of mimeTypes.
@@ -127,8 +150,20 @@ class RenderMime {
       mimeType,
       resolver: this.resolver,
       sanitizer: this.sanitizer,
-      linkHandler: this.linkHandler
+      linkHandler: this.linkHandler,
+      latexTypesetter: this.latexTypesetter
     });
+  }
+
+  /**
+   * Create a new mime model.  This is a convenience method.
+   *
+   * @options - The options used to create the model.
+   *
+   * @returns A new mime model.
+   */
+  createModel(options: MimeModel.IOptions = {}): MimeModel {
+    return new MimeModel(options);
   }
 
   /**
@@ -143,7 +178,8 @@ class RenderMime {
     let clone = new RenderMime({
       resolver: options.resolver || this.resolver || undefined,
       sanitizer: options.sanitizer || this.sanitizer || undefined,
-      linkHandler: options.linkHandler || this.linkHandler || undefined
+      linkHandler: options.linkHandler || this.linkHandler || undefined,
+      latexTypesetter: options.latexTypesetter || this.latexTypesetter
     });
 
     // Clone the internal state.
@@ -201,6 +237,7 @@ class RenderMime {
   private _ranks: Private.RankMap = {};
   private _types: string[] | null = null;
   private _factories: Private.FactoryMap = {};
+  private _latexTypesetter: IRenderMime.ILatexTypesetter;
 }
 
 
@@ -237,6 +274,11 @@ namespace RenderMime {
      * An optional path handler.
      */
     linkHandler?: IRenderMime.ILinkHandler;
+
+    /**
+     * An optional LaTeX typesetter.
+     */
+    latexTypesetter?: IRenderMime.ILatexTypesetter;
   }
 
   /**
@@ -258,6 +300,11 @@ namespace RenderMime {
      * The new path handler.
      */
     linkHandler?: IRenderMime.ILinkHandler;
+
+    /**
+     * The new LaTeX typesetter.
+     */
+    latexTypesetter?: IRenderMime.ILatexTypesetter;
   }
 
   /**

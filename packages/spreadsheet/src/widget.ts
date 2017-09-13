@@ -278,7 +278,7 @@ class Spreadsheet extends Widget {
       colHeaders: true,
       manualColumnResize: true,
       manualRowResize: true,
-      wordWrap: false,
+      //wordWrap: false,
       minRows: 128,
       minCols: 32,
       colWidths: content.colWidths,

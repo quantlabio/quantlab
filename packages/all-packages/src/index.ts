@@ -56,3 +56,4 @@ import "@quantlab/theme-light-extension";
 import "@quantlab/tooltip";
 import "@quantlab/tooltip-extension";
 import "@quantlab/vega2-extension";
+import "@quantlab/pdf-extension";

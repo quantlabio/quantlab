@@ -51,6 +51,7 @@
     "@quantlab/notebook": "^0.2.1",
     "@quantlab/notebook-extension": "^0.2.1",
     "@quantlab/outputarea": "^0.2.1",
+    "@quantlab/pdf-extension": "^0.2.1",
     "@quantlab/rendermime": "^0.2.1",
     "@quantlab/running": "^0.2.1",
     "@quantlab/running-extension": "^0.2.1",

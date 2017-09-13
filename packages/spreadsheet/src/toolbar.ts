@@ -256,12 +256,12 @@ class ColorSwitcher extends Widget {
     }
     if (!this._changeGuard) {
       let value = select.value;
-      if(select.options[0].value == 'fill color'){
+      if(select.options[0].textContent == 'Fill Color'){
         widget.style('background', value);
-        select.value = 'fill color';
-      }else if(select.options[0].value == 'font color'){
+        select.value = '';
+      }else if(select.options[0].textContent == 'Font Color'){
         widget.style('color', value);
-        select.value = 'font color';
+        select.value = '';
       }
       widget.activate();
     }
@@ -324,9 +324,14 @@ function createColorSwitcherNode(prompt: string): HTMLElement {
   for (let t of [prompt, 'red', 'yellow', 'blue']) {
     let option = document.createElement('option');
     option.value = t.toLowerCase();
-    option.textContent = t;
-    if(option.value != prompt)
-      option.style.backgroundColor = t;
+
+    if(option.value == prompt.toLowerCase()){
+      option.textContent = prompt;
+      option.value = '';
+    }else{
+      option.style.background = t;
+    }
+
     select.appendChild(option);
   }
   select.className = TOOLBAR_DROPDOWN_CLASS;

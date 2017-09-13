@@ -83,6 +83,11 @@ namespace IRenderMime {
     readonly name: string;
 
     /**
+     * The name of the document model type.
+     */
+    readonly modelName?: string;
+
+    /**
      * The primary file type of the widget.
      */
     readonly primaryFileType: string;
@@ -133,6 +138,11 @@ namespace IRenderMime {
      * The icon label for the file type.
      */
     readonly iconLabel?: string;
+
+    /**
+     * The file format for the file type ('text', 'base64', or 'json').
+     */
+    readonly fileFormat?: string;
   }
 
   /**
@@ -261,6 +271,11 @@ namespace IRenderMime {
      * An optional link handler.
      */
     linkHandler: ILinkHandler | null;
+
+    /**
+     * The LaTeX typesetter.
+     */
+    latexTypesetter: ILatexTypesetter;
   }
 
   /**
@@ -299,5 +314,25 @@ namespace IRenderMime {
      * Get the download url of a given absolute server path.
      */
     getDownloadUrl(path: string): Promise<string>;
+  }
+
+  /**
+   * The interface for a LaTeX typesetter.
+   */
+  export
+  interface ILatexTypesetter {
+    /**
+     * Typeset a DOM element.
+     *
+     * @param element - the DOM element to typeset. The typesetting may
+     *   happen synchronously or asynchronously.
+     *
+     * #### Notes
+     * The application-wide rendermime object has a settable
+     * `latexTypesetter` property which is used wherever LaTeX
+     * typesetting is required. Extensions wishing to provide their
+     * own typesetter may replace that on the global `lab.rendermime`.
+     */
+    typeset(element: HTMLElement): void;
   }
 }

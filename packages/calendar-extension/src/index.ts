@@ -128,7 +128,9 @@ const calendarToolsPlugin: QuantLabPlugin<ICalendarTools> = {
 const plugins: QuantLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin, calendarToolsPlugin];
 export default plugins;
 
-
+/**
+ * Activate the calendar tools extension.
+ */
 function activateCalendarTools(app: QuantLab, tracker: ICalendarTracker, editorServices: IEditorServices, state: IStateDB): Promise<ICalendarTools> {
   const id = 'calendar-tools';
   const calendartools = new CalendarTools({tracker});
@@ -212,8 +214,8 @@ function activateCalendar(app: QuantLab, services: IServiceManager, mainMenu: IM
   // Handle state restoration.
   restorer.restore(tracker, {
     command: 'docmanager:open',
-    args: widget => ({ path: widget.context.path, factory: FACTORY }),
-    name: widget => widget.context.path,
+    args: panel => ({ path: panel.context.path, factory: FACTORY }),
+    name: panel => panel.context.path,
     when: services.ready
   });
 

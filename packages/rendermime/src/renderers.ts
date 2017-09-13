@@ -26,7 +26,7 @@ import {
 } from '@quantlab/rendermime-interfaces';
 
 import {
-  typeset, removeMath, replaceMath
+  removeMath, replaceMath
 } from './latex';
 
 
@@ -41,7 +41,8 @@ export
 function renderHTML(options: renderHTML.IOptions): Promise<void> {
   // Unpack the options.
   let {
-    host, source, trusted, sanitizer, resolver, linkHandler, shouldTypeset
+    host, source, trusted, sanitizer, resolver, linkHandler,
+    shouldTypeset, latexTypesetter
   } = options;
 
   // Bail early if the source is empty.
@@ -75,6 +76,9 @@ function renderHTML(options: renderHTML.IOptions): Promise<void> {
   //   Private.evalInnerHTMLScriptTags(host);
   // }
 
+  // Handle default behavior of nodes.
+  Private.handleDefaults(host);
+
   // Patch the urls if a resolver is available.
   let promise: Promise<void>;
   if (resolver) {
@@ -84,7 +88,9 @@ function renderHTML(options: renderHTML.IOptions): Promise<void> {
   }
 
   // Return the final rendered promise.
-  return promise.then(() => { if (shouldTypeset) { typeset(host); } });
+  return promise.then(() => {
+    if (shouldTypeset) { latexTypesetter.typeset(host); }
+  });
 }
 
 
@@ -132,6 +138,11 @@ namespace renderHTML {
      * Whether the node should be typeset.
      */
     shouldTypeset: boolean;
+
+    /**
+     * The LaTeX typesetter for the application.
+     */
+    latexTypesetter: IRenderMime.ILatexTypesetter;
   }
 }
 
@@ -230,14 +241,14 @@ namespace renderImage {
 export
 function renderLatex(options: renderLatex.IRenderOptions): Promise<void> {
   // Unpack the options.
-  let { host, source, shouldTypeset } = options;
+  let { host, source, shouldTypeset, latexTypesetter } = options;
 
   // Set the source on the node.
   host.textContent = source;
 
   // Typeset the node if needed.
   if (shouldTypeset) {
-    typeset(host);
+    latexTypesetter.typeset(host);
   }
 
   // Return the rendered promise.
@@ -269,6 +280,11 @@ namespace renderLatex {
      * Whether the node should be typeset.
      */
     shouldTypeset: boolean;
+
+    /**
+     * The LaTeX typesetter for the application.
+     */
+    latexTypesetter: IRenderMime.ILatexTypesetter;
   }
 }
 
@@ -284,7 +300,8 @@ export
 function renderMarkdown(options: renderMarkdown.IRenderOptions): Promise<void> {
   // Unpack the options.
   let {
-    host, source, trusted, sanitizer, resolver, linkHandler, shouldTypeset
+    host, source, trusted, sanitizer, resolver, linkHandler,
+    latexTypesetter, shouldTypeset
   } = options;
 
   // Clear the content if there is no source.
@@ -324,6 +341,9 @@ function renderMarkdown(options: renderMarkdown.IRenderOptions): Promise<void> {
     //   Private.evalInnerHTMLScriptTags(host);
     // }
 
+    // Handle default behavior of nodes.
+    Private.handleDefaults(host);
+
     // Apply ids to the header nodes.
     Private.headerAnchors(host);
 
@@ -337,7 +357,7 @@ function renderMarkdown(options: renderMarkdown.IRenderOptions): Promise<void> {
 
     // Return the rendered promise.
     return promise;
-  }).then(() => { if (shouldTypeset) { typeset(host); } });
+  }).then(() => { if (shouldTypeset) { latexTypesetter.typeset(host); } });
 }
 
 
@@ -385,70 +405,13 @@ namespace renderMarkdown {
      * Whether the node should be typeset.
      */
     shouldTypeset: boolean;
-  }
-}
-
-
-/**
- * Render a PDF into a host node.
- *
- * @params options - The options for rendering.
- *
- * @returns A promise which resolves when rendering is complete.
- */
-export
-function renderPDF(options: renderPDF.IRenderOptions): Promise<void> {
-  // Unpack the options.
-  let { host, source, trusted } = options;
-
-  // Clear the content if there is no source.
-  if (!source) {
-    host.textContent = '';
-    return Promise.resolve(undefined);
-  }
-
-  // Display a message if the source is not trusted.
-  if (!trusted) {
-    host.textContent = 'Cannot display an untrusted PDF. Maybe you need to run the cell?';
-    return Promise.resolve(undefined);
-  }
-
-  // Update the host with the display content.
-  let href = `data:application/pdf;base64,${source}`;
-  host.innerHTML = `<a target="_blank" href="${href}">View PDF</a>`;
-
-  // Return the final rendered promise.
-  return Promise.resolve(undefined);
-}
-
-
-/**
- * The namespace for the `renderPDF` function statics.
- */
-export
-namespace renderPDF {
-  /**
-   * The options for the `renderPDF` function.
-   */
-  export
-  interface IRenderOptions {
-    /**
-     * The host node for the rendered PDF.
-     */
-    host: HTMLElement;
 
     /**
-     * The base64 encoded source for the PDF.
+     * The LaTeX typesetter for the application.
      */
-    source: string;
-
-    /**
-     * Whether the source is trusted.
-     */
-    trusted: boolean;
+    latexTypesetter: IRenderMime.ILatexTypesetter;
   }
 }
-
 
 /**
  * Render SVG into a host node.
@@ -461,7 +424,8 @@ export
 function renderSVG(options: renderSVG.IRenderOptions): Promise<void> {
   // Unpack the options.
   let {
-    host, source, trusted, resolver, linkHandler, shouldTypeset, unconfined
+    host, source, trusted, resolver, linkHandler,
+    shouldTypeset, latexTypesetter, unconfined
   } = options;
 
   // Clear the content if there is no source.
@@ -495,7 +459,9 @@ function renderSVG(options: renderSVG.IRenderOptions): Promise<void> {
   }
 
   // Return the final rendered promise.
-  return promise.then(() => { if (shouldTypeset) { typeset(host); } });
+  return promise.then(() => {
+    if (shouldTypeset) { latexTypesetter.typeset(host); }
+  });
 }
 
 
@@ -543,6 +509,11 @@ namespace renderSVG {
      * Whether the svg should be unconfined.
      */
     unconfined?: boolean;
+
+    /**
+     * The LaTeX typesetter for the application.
+     */
+    latexTypesetter: IRenderMime.ILatexTypesetter;
   }
 }
 
@@ -662,6 +633,23 @@ namespace Private {
   }
 
   /**
+   * Handle the default behavior of nodes.
+   */
+  export
+  function handleDefaults(node: HTMLElement): void {
+    // Handle anchor elements.
+    let anchors = node.getElementsByTagName('a');
+    for (let i = 0; i < anchors.length; i++) {
+      let path = anchors[i].href;
+      if (URLExt.isLocal(path)) {
+        anchors[i].target = '_self';
+      } else {
+        anchors[i].target = '_blank';
+      }
+    }
+  }
+
+  /**
    * Resolve the relative urls in element `src` and `href` attributes.
    *
    * @param node - The head html element.
@@ -683,7 +671,7 @@ namespace Private {
       promises.push(handleAttr(nodes[i] as HTMLElement, 'src', resolver));
     }
 
-    // Handle achor elements.
+    // Handle anchor elements.
     let anchors = node.getElementsByTagName('a');
     for (let i = 0; i < anchors.length; i++) {
       promises.push(handleAnchor(anchors[i], resolver, linkHandler));
@@ -733,6 +721,10 @@ namespace Private {
       return resolver.getDownloadUrl(path);
     }).then(url => {
       node.setAttribute(name, url);
+    }).catch(err => {
+      // If there was an error getting the url,
+      // just make it an empty link.
+      node.setAttribute(name, '');
     });
   }
 
@@ -740,7 +732,6 @@ namespace Private {
    * Handle an anchor node.
    */
   function handleAnchor(anchor: HTMLAnchorElement, resolver: IRenderMime.IResolver, linkHandler: IRenderMime.ILinkHandler | null): Promise<void> {
-    anchor.target = '_blank';
     // Get the link path without the location prepended.
     // (e.g. "./foo.md#Header 1" vs "http://localhost:8888/foo.md#Header 1")
     let href = anchor.getAttribute('href');
@@ -770,6 +761,10 @@ namespace Private {
     }).then(url => {
       // Set the visible anchor.
       anchor.href = url + hash;
+    }).catch(err => {
+      // If there was an error getting the url,
+      // just make it an empty link.
+      anchor.href = '';
     });
   }
 
