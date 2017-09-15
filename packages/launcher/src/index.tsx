@@ -243,6 +243,16 @@ class Launcher extends VDomRenderer<LauncherModel> {
   readonly cwd: string;
 
   /**
+   * Whether there is a pending item being launched.
+   */
+  get pending(): boolean {
+    return this._pending;
+  }
+  set pending(value: boolean) {
+    this._pending = value;
+  }
+
+  /**
    * Handle `'activate-request'` messages.
    */
   protected onActivateRequest(msg: Message): void {
@@ -316,13 +326,17 @@ class Launcher extends VDomRenderer<LauncherModel> {
     return (
       <div className='jp-Launcher-body'>
         <div className='jp-Launcher-content'>
-        {sections}
+          <div className='jp-Launcher-cwd'>
+            <h3>{this.cwd}</h3>
+          </div>
+          {sections}
         </div>
       </div>
     );
   }
 
   private _callback: (widget: Widget) => void;
+  private _pending = false;
 }
 
 
@@ -350,15 +364,36 @@ namespace Launcher {
 }
 
 
-export
+/**
+ * A pure tsx component for a launcher card.
+ *
+ * @param kernel - whether the item takes uses a kernel.
+ *
+ * @param item - the launcher item to render.
+ *
+ * @param launcher - the Launcher instance to which this is added.
+ *
+ * @param launcherCallback - a callback to call after an item has been launched.
+ *
+ * @returns a vdom `VirtualElement` for the launcher card.
+ */
 function Card(kernel: boolean, item: ILauncherItem, launcher: Launcher, launcherCallback: (widget: Widget) => void): vdom.VirtualElement {
   // Build the onclick handler.
   let onclick = () => {
+    // If an item has already been launched,
+    // don't try to launch another.
+    if (launcher.pending === true) {
+      return;
+    }
+    launcher.pending = true;
     let callback = item.callback as any;
     let value = callback(launcher.cwd, item.name);
     Promise.resolve(value).then(widget => {
       launcherCallback(widget);
       launcher.dispose();
+    }).catch(err => {
+      launcher.pending = false;
+      throw err;
     });
   };
   // Add a data attribute for the category

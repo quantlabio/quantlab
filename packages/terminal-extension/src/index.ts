@@ -14,7 +14,7 @@ import {
 } from '@quantlab/launcher';
 
 import {
-  IServiceManager
+  ServiceManager
 } from '@quantlab/services';
 
 import {
@@ -65,7 +65,7 @@ const plugin: QuantLabPlugin<ITerminalTracker> = {
   id: 'jupyter.extensions.terminal',
   provides: ITerminalTracker,
   requires: [
-    IServiceManager, IMainMenu, ICommandPalette, ILayoutRestorer
+    IMainMenu, ICommandPalette, ILayoutRestorer
   ],
   optional: [ILauncher],
   autoStart: true
@@ -81,14 +81,14 @@ export default plugin;
 /**
  * Activate the terminal plugin.
  */
-function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer, launcher: ILauncher | null): ITerminalTracker {
-  const { commands } = app;
+function activate(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer, launcher: ILauncher | null): ITerminalTracker {
+  const { commands, serviceManager } = app;
   const category = 'Terminal';
   const namespace = 'terminal';
   const tracker = new InstanceTracker<Terminal>({ namespace });
 
   // Bail if there are no terminals available.
-  if (!services.terminals.isAvailable()) {
+  if (!serviceManager.terminals.isAvailable()) {
     console.log('Disabling terminals plugin because they are not available on the server');
     return tracker;
   }
@@ -107,7 +107,7 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
     }
   });
 
-  addCommands(app, services, tracker);
+  addCommands(app, serviceManager, tracker);
 
   // Add command palette and menu items.
   let menu = new Menu({ commands });
@@ -149,7 +149,7 @@ function activate(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu,
  * Add the commands for the terminal.
  */
 export
-function addCommands(app: QuantLab, services: IServiceManager, tracker: InstanceTracker<Terminal>) {
+function addCommands(app: QuantLab, services: ServiceManager, tracker: InstanceTracker<Terminal>) {
   let { commands, shell } = app;
 
   /**
@@ -164,8 +164,9 @@ function addCommands(app: QuantLab, services: IServiceManager, tracker: Instance
     label: 'New Terminal',
     caption: 'Start a new terminal session',
     execute: args => {
-      let name = args ? args['name'] as string : '';
-      let term = new Terminal();
+      let name = args['name'] as string;
+      let initialCommand = args['initialCommand'] as string;
+      let term = new Terminal({ initialCommand });
       term.title.closable = true;
       term.title.icon = TERMINAL_ICON_CLASS;
       term.title.label = '...';

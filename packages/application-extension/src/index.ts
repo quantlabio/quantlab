@@ -6,16 +6,16 @@ import {
 } from '@quantlab/application';
 
 import {
-  Dialog, ICommandPalette, showDialog
+  ICommandPalette //Dialog, , showDialog
 } from '@quantlab/apputils';
 
 import {
-  IStateDB, PageConfig
+  IStateDB
 } from '@quantlab/coreutils';
 
-import {
-  h
-} from '@phosphor/virtualdom';
+//import {
+//  h
+//} from '@phosphor/virtualdom';
 
 /**
  * The command IDs used by the application plugin.
@@ -47,26 +47,9 @@ const mainPlugin: QuantLabPlugin<void> = {
   activate: (app: QuantLab, palette: ICommandPalette) => {
     addCommands(app, palette);
 
-    // Temporary build message for manual rebuild.
-    let buildMessage = PageConfig.getOption('buildRequired');
-    if (buildMessage) {
-      let body = h.div(
-        h.p(
-          'QuantLab build is out of date',
-          h.br(),
-          'Please run',
-          h.code(' jupyter quantlab build '),
-          'from',
-          h.br(),
-          'the command line and relaunch'
-        )
-      );
-      showDialog({
-        title: 'Build Recommended',
-        body,
-        buttons: [Dialog.okButton()]
-      });
-    }
+
+
+
 
     const message = 'Are you sure you want to exit QuantLab?\n' +
                     'Any unsaved changes will be lost.';
@@ -77,7 +60,9 @@ const mainPlugin: QuantLabPlugin<void> = {
     // For more information, see:
     // https://developer.mozilla.org/en/docs/Web/Events/beforeunload
     window.addEventListener('beforeunload', event => {
-      return (event as any).returnValue = message;
+      if (app.isDirty) {
+        return (event as any).returnValue = message;
+      }
     });
   },
   autoStart: true

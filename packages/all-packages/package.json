@@ -56,7 +56,6 @@
     "@quantlab/running": "^0.2.1",
     "@quantlab/running-extension": "^0.2.1",
     "@quantlab/services": "^0.2.1",
-    "@quantlab/services-extension": "^0.2.1",
     "@quantlab/settingeditor-extension": "^0.2.1",
     "@quantlab/shortcuts-extension": "^0.2.1",
     "@quantlab/spreadsheet": "^0.2.1",

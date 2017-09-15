@@ -27,10 +27,6 @@ import {
 } from '@quantlab/highcharts';
 
 import {
-  IServiceManager
-} from '@quantlab/services';
-
-import {
   ReadonlyJSONObject
 } from '@phosphor/coreutils';
 
@@ -83,7 +79,6 @@ const trackerPlugin: QuantLabPlugin<IHighChartsTracker> = {
   id: 'jupyter.extensions.highcharts',
   provides: IHighChartsTracker,
   requires: [
-    IServiceManager,
     IMainMenu,
     ICommandPalette,
     HighChartsPanel.IContentFactory,
@@ -190,7 +185,8 @@ function activateChartTools(app: QuantLab, tracker: IHighChartsTracker, editorSe
   return Promise.resolve(charttools);
 }
 
-function activateHighCharts(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: HighChartsPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): IHighChartsTracker {
+function activateHighCharts(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: HighChartsPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): IHighChartsTracker {
+  let manager = app.serviceManager;
   const factory = new HighChartsFactory({
     name: FACTORY,
     fileTypes: ['hc'],
@@ -209,7 +205,7 @@ function activateHighCharts(app: QuantLab, services: IServiceManager, mainMenu: 
     command: 'docmanager:open',
     args: widget => ({ path: widget.context.path, factory: FACTORY }),
     name: widget => widget.context.path,
-    when: services.ready
+    when: manager.ready
   });
 
   // Update the command registry when the highcharts state changes.
@@ -228,7 +224,7 @@ function activateHighCharts(app: QuantLab, services: IServiceManager, mainMenu: 
     widgetName: 'HighCharts'
   });
 
-  addCommands(app, services, tracker);
+  addCommands(app, tracker);
   populatePalette(palette);
 
   let id = 0; // The ID counter for HighCharts panels.
@@ -261,7 +257,7 @@ function activateHighCharts(app: QuantLab, services: IServiceManager, mainMenu: 
 
   // Add a launcher item if the launcher is available.
   if (launcher) {
-    services.ready.then(() => {
+    manager.ready.then(() => {
       launcher.add({
         displayName: 'HighCharts',
         category: 'Other',
@@ -284,7 +280,7 @@ function activateHighCharts(app: QuantLab, services: IServiceManager, mainMenu: 
 /**
  * Add the HighCharts commands to the application's command registry.
  */
-function addCommands(app: QuantLab, services: IServiceManager, tracker: HighChartsTracker): void {
+function addCommands(app: QuantLab, tracker: HighChartsTracker): void {
   const { commands, shell } = app;
 
   // Get the current widget and activate unless the args specify otherwise.

@@ -1,6 +1,9 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
+// Local CSS must be loaded prior to loading other libs.
+import '../style/index.css';
+
 import {
   CommandLinker
 } from '@quantlab/apputils';
@@ -14,8 +17,16 @@ import {
 } from '@quantlab/rendermime';
 
 import {
+  ServiceManager
+} from '@quantlab/services';
+
+import {
   Application, IPlugin
 } from '@phosphor/application';
+
+import {
+  DisposableDelegate, IDisposable
+} from '@phosphor/disposable';
 
 import {
   createRendermimePlugins
@@ -28,7 +39,6 @@ import {
 export { ApplicationShell } from './shell';
 export { ILayoutRestorer, LayoutRestorer } from './layoutrestorer';
 
-import '../style/index.css';
 
 /**
  * The type for all QuantLab plugins.
@@ -58,6 +68,9 @@ class QuantLab extends Application<ApplicationShell> {
     if (options.devMode) {
       this.shell.addClass('jp-mod-devMode');
     }
+
+    this.serviceManager = new ServiceManager();
+
     let linker = new CommandLinker({ commands: this.commands });
     this.commandLinker = linker;
 
@@ -94,6 +107,18 @@ class QuantLab extends Application<ApplicationShell> {
   readonly commandLinker: CommandLinker;
 
   /**
+   * The service manager used by the application.
+   */
+  readonly serviceManager: ServiceManager;
+
+  /**
+   * Whether the application is dirty.
+   */
+  get isDirty(): boolean {
+    return this._dirtyCount > 0;
+  }
+
+  /**
    * The information about the application.
    */
   get info(): QuantLab.IInfo {
@@ -108,6 +133,18 @@ class QuantLab extends Application<ApplicationShell> {
    */
   get restored(): Promise<ApplicationShell.ILayout> {
     return this.shell.restored;
+  }
+
+  /**
+   * Set the application state to dirty.
+   *
+   * @returns A disposable used to clear the dirty state for the caller.
+   */
+  setDirty(): IDisposable {
+    this._dirtyCount++;
+    return new DisposableDelegate(() => {
+      this._dirtyCount = Math.max(0, this._dirtyCount - 1);
+    });
   }
 
   /**
@@ -137,6 +174,7 @@ class QuantLab extends Application<ApplicationShell> {
   }
 
   private _info: QuantLab.IInfo;
+  private _dirtyCount = 0;
 }
 
 
