@@ -4,6 +4,7 @@ dist
 lib
 quantlab/build
 quantlab/schemas
+quantlab/themes
 
 node_modules
 .cache
@@ -26,3 +27,6 @@ test/coverage
 docs/_build
 docs/api
 packages/services/examples/node/config.json
+examples/app/build
+examples/app/themes
+examples/app/schemas

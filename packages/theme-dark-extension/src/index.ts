@@ -1,18 +1,34 @@
+// Copyright (c) Jupyter Development Team.
+// Distributed under the terms of the Modified BSD License.
+
 import {
-  QuantLabPlugin
+  QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
-import '@quantlab/theming/style/variables-dark.css';
+import {
+  IThemeManager
+} from '@quantlab/apputils';
+
 
 /**
- * Initialization data for the dark theme extension.
+ * A plugin for the Jupyter Dark Theme.
  */
-const extension: QuantLabPlugin<void> = {
+const plugin: QuantLabPlugin<void> = {
   id: 'jupyter.themes.dark',
-  autoStart: true,
-  activate: (app) => {
-    // No-op
-  }
+  requires: [IThemeManager],
+  activate: function(app: QuantLab, manager: IThemeManager) {
+    manager.register({
+      name: 'QuantLab Dark',
+      load: function() {
+        return manager.loadCSS('Quantlab-theme-dark-extension/index.css');
+      },
+      unload: function() {
+        return Promise.resolve(void 0);
+      }
+    });
+  },
+  autoStart: true
 };
 
-export default extension;
+
+export default plugin;

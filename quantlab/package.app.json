@@ -2,7 +2,8 @@
   "name": "@quantlab/application-top",
   "version": "0.2.1",
   "scripts": {
-    "build": "node copy-schemas.js && webpack",
+    "build": "webpack",
+    "build:prod": "webpack --devtool source-map",
     "publish": "node make-release.js"
   },
   "dependencies": {
@@ -93,7 +94,7 @@
     "d3": "3.5.17",
     "d3-dsv": "^1.0.5",
     "es6-promise": "^4.1.0",
-    "font-awesome": "^4.6.3",
+    "font-awesome": "^4.7.0",
     "highcharts": "^5.0.14",
     "marked": "^0.3.6",
     "minimist": "^1.2.0",

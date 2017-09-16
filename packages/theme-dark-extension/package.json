@@ -7,14 +7,18 @@
   "files": [
     "lib/*.d.ts",
     "lib/*.js",
-    "style/*.css"
+    "style/*.css",
+    "style/images/*.*",
+    "style/icons/*.*",
+    "style/icons/**/*.*"
   ],
   "directories": {
     "lib": "lib/"
   },
   "dependencies": {
     "@quantlab/application": "^0.2.1",
-    "@quantlab/theming": "^0.2.0"
+    "@quantlab/apputils": "^0.2.1",
+    "font-awesome": "^4.7.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
@@ -25,7 +29,8 @@
     "url": "https://github.com/quantlabio/quantlab.git"
   },
   "quantlab": {
-    "extension": true
+    "extension": true,
+    "themeDir": "style"
   },
   "author": "Project Jupyter",
   "license": "BSD-3-Clause",
