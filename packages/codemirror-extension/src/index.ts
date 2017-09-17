@@ -46,6 +46,12 @@ namespace CommandIDs {
 
   export
   const changeMode = 'codemirror:change-mode';
+
+  export
+  const find = 'codemirror:find';
+
+  export
+  const findAndReplace = 'codemirror:find-and-replace';
 };
 
 
@@ -195,13 +201,39 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
       isToggled: args => args['keyMap'] === keyMap
     });
 
+    commands.addCommand(CommandIDs.find, {
+      label: 'Find',
+      execute: () => {
+        let widget = tracker.currentWidget;
+        if (!widget) {
+          return;
+        }
+        let editor = widget.editor as CodeMirrorEditor;
+        editor.execCommand('find');
+      },
+      isEnabled: hasWidget
+    });
+
+    commands.addCommand(CommandIDs.findAndReplace, {
+      label: 'Find & Replace',
+      execute: () => {
+        let widget = tracker.currentWidget;
+        if (!widget) {
+          return;
+        }
+        let editor = widget.editor as CodeMirrorEditor;
+        editor.execCommand('replace');
+      },
+      isEnabled: hasWidget
+    });
+
     commands.addCommand(CommandIDs.changeMode, {
       label: args => args['name'] as string,
       execute: args => {
-        let mode = args['mode'] as string;
+        let name = args['name'] as string;
         let widget = tracker.currentWidget;
-        if (mode && widget) {
-          let spec = Mode.findByName(mode);
+        if (name && widget) {
+          let spec = Mode.findByName(name);
           if (spec) {
             widget.model.mimeType = spec.mime;
           }
@@ -215,8 +247,8 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
         }
         let mime = widget.model.mimeType;
         let spec = Mode.findByMIME(mime);
-        let mode = spec && spec.mode;
-        return args['mode'] === mode;
+        let name = spec && spec.name;
+        return args['name'] === name;
       }
     });
 
@@ -225,6 +257,10 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
       let bName = b.name || '';
       return aName.localeCompare(bName);
     }).forEach(spec => {
+      // Avoid mode name with a curse word.
+      if (spec.mode.indexOf('brainf') === 0) {
+        return;
+      }
       modeMenu.addItem({
         command: CommandIDs.changeMode,
         args: {...spec}
@@ -264,6 +300,8 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
 
     menu.addItem({ type: 'submenu', submenu: modeMenu });
     menu.addItem({ type: 'submenu', submenu: tabMenu });
+    menu.addItem({ command: CommandIDs.find });
+    menu.addItem({ command: CommandIDs.findAndReplace });
     menu.addItem({ type: 'separator' });
     menu.addItem({ command: 'fileeditor:toggle-line-numbers' });
     menu.addItem({ command: 'fileeditor:toggle-line-wrap' });

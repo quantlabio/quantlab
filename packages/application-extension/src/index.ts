@@ -6,16 +6,16 @@ import {
 } from '@quantlab/application';
 
 import {
-  ICommandPalette //Dialog, , showDialog
+  Dialog, ICommandPalette, showDialog
 } from '@quantlab/apputils';
 
 import {
   IStateDB
 } from '@quantlab/coreutils';
 
-//import {
-//  h
-//} from '@phosphor/virtualdom';
+import {
+  h
+} from '@phosphor/virtualdom';
 
 /**
  * The command IDs used by the application plugin.
@@ -47,9 +47,54 @@ const mainPlugin: QuantLabPlugin<void> = {
   activate: (app: QuantLab, palette: ICommandPalette) => {
     addCommands(app, palette);
 
+    let builder = app.serviceManager.builder;
 
+    let doBuild = () => {
+      return builder.build().then(() => {
+        return showDialog({
+          title: 'Build Complete',
+          body: 'Build successfully completed, reload page?',
+          buttons: [Dialog.cancelButton(),
+                    Dialog.warnButton({ label: 'RELOAD' })]
+        });
+      }).then(result => {
+        if (result.button.accept) {
+          location.reload();
+        }
+      }).catch(err => {
+        showDialog({
+          title: 'Build Failed',
+          body: h.pre(err.message)
+        });
+      });
+    };
 
-
+    if (builder.isAvailable) {
+      builder.getStatus().then(response => {
+        if (response.status === 'building') {
+          return doBuild();
+        }
+        if (response.status !== 'needed') {
+          return;
+        }
+        let body = h.div(
+          h.p(
+            'JupyterLab build is suggested:',
+            h.br(),
+            h.pre(response.message)
+          )
+        );
+        showDialog({
+          title: 'Build Recommended',
+          body,
+          buttons: [Dialog.cancelButton(), Dialog.okButton({ label: 'BUILD' })]
+        }).then(result => {
+          if (result.button.accept) {
+            return doBuild();
+          }
+        });
+      });
+    }
 
     const message = 'Are you sure you want to exit QuantLab?\n' +
                     'Any unsaved changes will be lost.';
