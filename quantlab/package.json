@@ -86,7 +86,9 @@
     "glob": "^7.1.2",
     "handlebars": "^4.0.6",
     "json-loader": "^0.5.4",
+    "raw-loader": "^0.5.1",
     "sort-package-json": "^1.7.0",
+    "source-map-loader": "0.2.1",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.1"
@@ -101,8 +103,10 @@
       "@quantlab/console-extension": "",
       "@quantlab/csvviewer-extension": "",
       "@quantlab/docmanager-extension": "",
+      "@quantlab/faq-extension": "",
       "@quantlab/filebrowser-extension": "",
       "@quantlab/fileeditor-extension": "",
+      "@quantlab/help-extension": "",
       "@quantlab/highcharts-extension": "",
       "@quantlab/imageviewer-extension": "",
       "@quantlab/inspector-extension": "",
@@ -123,24 +127,23 @@
       "@quantlab/pdf-extension": "",
       "@quantlab/vega2-extension": ""
     },
-    "singletonPackages": {
-      "@quantlab/application": "",
-      "@quantlab/apputils": "",
-      "@quantlab/console": "",
-      "@quantlab/coreutils": "",
-      "@quantlab/docmanager": "",
-      "@quantlab/filebrowser": "",
-      "@quantlab/fileeditor": "",
-      "@quantlab/imageviewer": "",
-      "@quantlab/launcher": "",
-      "@quantlab/notebook": "",
-      "@quantlab/rendermime": "",
-      "@quantlab/services": "",
-      "@quantlab/terminal": "",
-      "@quantlab/tooltip": "",
-      "@phosphor/widgets": ""
-    },
     "name": "QuantLab",
-    "version": "0.2.1"
+    "singletonPackages": [
+      "@quantlab/application",
+      "@quantlab/apputils",
+      "@quantlab/console",
+      "@quantlab/coreutils",
+      "@quantlab/docmanager",
+      "@quantlab/filebrowser",
+      "@quantlab/fileeditor",
+      "@quantlab/imageviewer",
+      "@quantlab/launcher",
+      "@quantlab/notebook",
+      "@quantlab/rendermime",
+      "@quantlab/services",
+      "@quantlab/terminal",
+      "@quantlab/tooltip",
+      "@phosphor/widgets"
+    ]
   }
 }

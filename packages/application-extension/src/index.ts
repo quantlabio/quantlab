@@ -79,7 +79,7 @@ const mainPlugin: QuantLabPlugin<void> = {
         }
         let body = h.div(
           h.p(
-            'JupyterLab build is suggested:',
+            'QuantLab build is suggested:',
             h.br(),
             h.pre(response.message)
           )

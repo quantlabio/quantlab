@@ -20,7 +20,7 @@ const plugin: QuantLabPlugin<void> = {
     manager.register({
       name: 'QuantLab Dark',
       load: function() {
-        return manager.loadCSS('Quantlab-theme-dark-extension/index.css');
+        return manager.loadCSS('quantlab-theme-dark-extension/index.css');
       },
       unload: function() {
         return Promise.resolve(void 0);

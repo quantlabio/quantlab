@@ -14,8 +14,7 @@
   "dependencies": {
     "@quantlab/application": "^0.2.1",
     "@quantlab/apputils": "^0.2.1",
-    "@quantlab/csvviewer": "^0.2.1",
-    "@quantlab/docregistry": "^0.2.1"
+    "@quantlab/csvviewer": "^0.2.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

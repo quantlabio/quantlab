@@ -85,6 +85,7 @@
     "@types/jquery": "^3.2.10",
     "@types/marked": "0.0.28",
     "@types/mathjax": "0.0.31",
+    "@types/node": "^7.0.11",
     "@types/sanitize-html": "^1.13.31",
     "@types/semver": "^5.3.31",
     "@types/text-encoding": "0.0.30",
@@ -115,7 +116,9 @@
     "glob": "^7.1.2",
     "handlebars": "^4.0.6",
     "json-loader": "^0.5.4",
+    "raw-loader": "^0.5.1",
     "sort-package-json": "^1.7.0",
+    "source-map-loader": "0.2.1",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.1"

@@ -14,9 +14,11 @@
   "dependencies": {
     "@quantlab/application": "^0.2.1",
     "@quantlab/apputils": "^0.2.1",
+    "@quantlab/coreutils": "^0.2.0",
     "@quantlab/docmanager": "^0.2.1",
     "@quantlab/docregistry": "^0.2.1",
-    "@quantlab/services": "^0.2.1"
+    "@quantlab/services": "^0.2.1",
+    "@phosphor/disposable": "^1.1.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
