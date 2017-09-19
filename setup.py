@@ -28,27 +28,30 @@ from distutils import log
 import json
 import os
 from glob import glob
+
+# BEFORE importing distutils, remove MANIFEST. distutils doesn't properly
+# update it when the contents of directories change.
+if os.path.exists('MANIFEST'): os.remove('MANIFEST')
+
 from distutils.command.build_ext import build_ext
+from distutils.command.build_py import build_py
 from setuptools.command.sdist import sdist
 from setuptools import setup
 from setuptools.command.bdist_egg import bdist_egg
 
 
 # Our own imports
-
 from setupbase import (
     bdist_egg_disabled,
+    ensure_core_data,
     find_packages,
     find_package_data,
     js_prerelease,
     CheckAssets,
+    CoreDeps,
     version_ns,
     name
 )
-
-# BEFORE importing distutils, remove MANIFEST. distutils doesn't properly
-# update it when the contents of directories change.
-if os.path.exists('MANIFEST'): os.remove('MANIFEST')
 
 
 here = os.path.dirname(os.path.abspath(__file__))
@@ -71,7 +74,7 @@ setup_args = dict(
     url              = 'http://jupyter.org',
     license          = 'BSD',
     platforms        = "Linux, Mac OS X, Windows",
-    keywords         = ['ipython', 'jupyter', 'Web'],
+    keywords         = ['ipython', 'jupyter', 'Web', 'quant'],
     classifiers      = [
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -89,10 +92,12 @@ setup_args = dict(
 
 
 cmdclass = dict(
-    build_ext = build_ext,
+    build_py = ensure_core_data(build_py),
+    build_ext = ensure_core_data(build_ext),
     sdist  = js_prerelease(sdist, strict=True),
     bdist_egg = bdist_egg if 'bdist_egg' in sys.argv else bdist_egg_disabled,
-    jsdeps = CheckAssets
+    jsdeps = CheckAssets,
+    coredeps = CoreDeps,
 )
 try:
     from wheel.bdist_wheel import bdist_wheel
@@ -107,12 +112,12 @@ setup_args['cmdclass'] = cmdclass
 setuptools_args = {}
 install_requires = setuptools_args['install_requires'] = [
     'notebook>=4.3.1',
-    'quantlab_launcher>=0.1.2'
+    'quantlab_launcher>=0.2.1'
 ]
 
 extras_require = setuptools_args['extras_require'] = {
     'test:python_version == "2.7"': ['mock'],
-    'test': ['pytest'],
+    'test': ['pytest', 'requests'],
     'docs': [
         'sphinx',
         'recommonmark',

@@ -43,7 +43,6 @@ import "@quantlab/rendermime";
 import "@quantlab/running";
 import "@quantlab/running-extension";
 import "@quantlab/services";
-import "@quantlab/services-extension";
 import "@quantlab/settingeditor-extension";
 import "@quantlab/spreadsheet";
 import "@quantlab/spreadsheet-extension";

@@ -32,9 +32,7 @@
   },
   "quantlab": {
     "extension": true,
-    "schemas": [
-      "schema/jupyter.services.editor-tracker.json"
-    ]
+    "schemaDir": "schema"
   },
   "repository": {
     "type": "git",

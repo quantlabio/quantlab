@@ -2,10 +2,6 @@
 // Distributed under the terms of the Modified BSD License.
 
 import {
-  IServiceManager
-} from '@quantlab/services';
- 
-import {
   QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
@@ -45,7 +41,6 @@ const plugin: QuantLabPlugin<ILauncher> = {
   activate,
   id: 'jupyter.services.launcher',
   requires: [
-    IServiceManager,
     ICommandPalette
   ],
   provides: ILauncher,
@@ -62,7 +57,7 @@ export default plugin;
 /**
  * Activate the launcher.
  */
-function activate(app: QuantLab, services: IServiceManager, palette: ICommandPalette): ILauncher {
+function activate(app: QuantLab, palette: ICommandPalette): ILauncher {
   const { commands, shell } = app;
 
   let model = new LauncherModel();
@@ -80,11 +75,13 @@ function activate(app: QuantLab, services: IServiceManager, palette: ICommandPal
       widget.model = model;
       widget.id = id;
       widget.title.label = 'Launcher';
+      widget.title.iconClass = 'jp-LauncherIcon';
       widget.title.closable = true;
       shell.addToMainArea(widget);
       if (args['activate'] !== false) {
         shell.activateById(widget.id);
       }
+      return widget;
     }
   });
 

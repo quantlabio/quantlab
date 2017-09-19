@@ -4,10 +4,6 @@
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
- 
-import {
-  IServiceManager
-} from '@quantlab/services';
 
 import {
   RunningSessions
@@ -20,7 +16,7 @@ import {
 const plugin: QuantLabPlugin<void> = {
   activate,
   id: 'jupyter.extensions.running-sessions',
-  requires: [IServiceManager, ILayoutRestorer],
+  requires: [ILayoutRestorer],
   autoStart: true
 };
 
@@ -34,8 +30,8 @@ export default plugin;
 /**
  * Activate the running plugin.
  */
-function activate(app: QuantLab, services: IServiceManager, restorer: ILayoutRestorer): void {
-  let running = new RunningSessions({ manager: services });
+function activate(app: QuantLab, restorer: ILayoutRestorer): void {
+  let running = new RunningSessions({ manager: app.serviceManager });
   running.id = 'jp-running-sessions';
   running.title.label = 'Running';
 

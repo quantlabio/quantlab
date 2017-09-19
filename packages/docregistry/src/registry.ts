@@ -1109,6 +1109,7 @@ namespace DocumentRegistry {
   const defaultNotebookFileType: IFileType = {
     ...fileTypeDefaults,
     name: 'notebook',
+    mimeTypes: ['application/x-ipynb+json'],
     extensions: ['.ipynb'],
     contentType: 'notebook',
     fileFormat: 'json',
@@ -1265,25 +1266,6 @@ namespace DocumentRegistry {
  */
 namespace Private {
   /**
-   * Normalize a file extension to be of the type `'.foo'`.
-   *
-   * Adds a leading dot if not present and converts to lower case.
-   */
-  export
-  function normalizeExtension(extension: string): string {
-    if (extension === '*') {
-      return extension;
-    }
-    if (extension === '.*') {
-      return '*';
-    }
-    if (extension.indexOf('.') !== 0) {
-      extension = `.${extension}`;
-    }
-    return extension.toLowerCase();
-  }
-
-  /**
    * Get the extension name of a path.
    *
    * @param file - string.
@@ -1295,7 +1277,8 @@ namespace Private {
   function extname(path: string): string {
     let parts = PathExt.basename(path).split('.');
     parts.shift();
-    return '.' + parts.join('.');
+    let ext = '.' + parts.join('.');
+    return ext.toLowerCase();
   }
   /**
    * A no-op function.

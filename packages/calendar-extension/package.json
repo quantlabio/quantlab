@@ -32,9 +32,7 @@
   },
   "quantlab": {
     "extension": true,
-    "schemas": [
-      "schema/jupyter.services.calendar.json"
-    ]
+    "schemaDir": "schema"
   },
   "repository": {
     "type": "git",

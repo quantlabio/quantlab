@@ -320,6 +320,7 @@ class DirListing extends Widget {
   cut(): void {
     this._isCut = true;
     this._copy();
+    this.update();
   }
 
   /**
@@ -615,8 +616,12 @@ class DirListing extends Widget {
     case 'dblclick':
       this._evtDblClick(event as MouseEvent);
       break;
-    case 'contextmenu':
-      this._evtContextMenu(event as MouseEvent);
+    case 'dragenter':
+    case 'dragover':
+      event.preventDefault();
+      break;
+    case 'drop':
+      this._evtNativeDrop(event as DragEvent);
       break;
     case 'scroll':
       this._evtScroll(event as MouseEvent);
@@ -649,7 +654,9 @@ class DirListing extends Widget {
     node.addEventListener('keydown', this);
     node.addEventListener('click', this);
     node.addEventListener('dblclick', this);
-    node.addEventListener('contextmenu', this);
+    content.addEventListener('dragenter', this);
+    content.addEventListener('dragover', this);
+    content.addEventListener('drop', this);
     content.addEventListener('scroll', this);
     content.addEventListener('p-dragenter', this);
     content.addEventListener('p-dragleave', this);
@@ -668,8 +675,10 @@ class DirListing extends Widget {
     node.removeEventListener('keydown', this);
     node.removeEventListener('click', this);
     node.removeEventListener('dblclick', this);
-    node.removeEventListener('contextmenu', this);
     content.removeEventListener('scroll', this);
+    content.removeEventListener('dragover', this);
+    content.removeEventListener('dragover', this);
+    content.removeEventListener('drop', this);
     content.removeEventListener('p-dragenter', this);
     content.removeEventListener('p-dragleave', this);
     content.removeEventListener('p-dragover', this);
@@ -679,9 +688,22 @@ class DirListing extends Widget {
   }
 
   /**
+   * A message handler invoked on an `'after-show'` message.
+   */
+  protected onAfterShow(msg: Message): void {
+    if (this._isDirty) {
+      // Update the sorted items.
+      this.sort(this.sortState);
+      this.update();
+    }
+  }
+
+  /**
    * A handler invoked on an `'update-request'` message.
    */
   protected onUpdateRequest(msg: Message): void {
+    this._isDirty = false;
+
     // Fetch common variables.
     let items = this._sortedItems;
     let nodes = this._items;
@@ -776,13 +798,6 @@ class DirListing extends Widget {
   }
 
   /**
-   * Handle the `'contextmenu'` event for the widget.
-   */
-  private _evtContextMenu(event: MouseEvent): void {
-    this._inContext = true;
-  }
-
-  /**
    * Handle the `'mousedown'` event for the widget.
    */
   private _evtMousedown(event: MouseEvent): void {
@@ -804,11 +819,9 @@ class DirListing extends Widget {
 
     // Check for clearing a context menu.
     let newContext = (IS_MAC && event.ctrlKey) || (event.button === 2);
-    if (this._inContext && !newContext) {
-      this._inContext = false;
+    if (newContext) {
       return;
     }
-    this._inContext = false;
 
     let index = Private.hitTestNodes(this._items, event.clientX, event.clientY);
     if (index === -1) {
@@ -985,6 +998,19 @@ class DirListing extends Widget {
     }
   }
 
+  /**
+   * Handle the `drop` event for the widget.
+   */
+  private _evtNativeDrop(event: DragEvent): void {
+    let files = event.dataTransfer.files;
+    if (files.length === 0) {
+      return;
+    }
+    event.preventDefault();
+    for (let i = 0; i < files.length; i++) {
+      this._model.upload(files[i]);
+    }
+  }
 
   /**
    * Handle the `'p-dragenter'` event for the widget.
@@ -1249,7 +1275,6 @@ class DirListing extends Widget {
         this._clipboard.push(item.path);
       }
     });
-    this.update();
   }
 
   /**
@@ -1298,7 +1323,9 @@ class DirListing extends Widget {
       const newPath = PathExt.join(this._model.path, newName);
       const promise = renameFile(manager, oldPath, newPath);
       return promise.catch(error => {
-        utils.showErrorMessage('Rename Error', error);
+        if (error !== 'File not renamed') {
+          utils.showErrorMessage('Rename Error', error);
+        }
         this._inRename = false;
         return original;
       }).then(() => {
@@ -1306,7 +1333,9 @@ class DirListing extends Widget {
           this._inRename = false;
           return Promise.reject('Disposed') as Promise<string>;
         }
-        this.selectItemByName(newName);
+        if (this._inRename) {
+          this.selectItemByName(newName);
+        }
         this._inRename = false;
         return newName;
       });
@@ -1340,8 +1369,12 @@ class DirListing extends Widget {
         this._selection[name] = true;
       }
     });
-    // Update the sorted items.
-    this.sort(this.sortState);
+    if (this.isVisible) {
+      // Update the sorted items.
+      this.sort(this.sortState);
+    } else {
+      this._isDirty = true;
+    }
   }
 
   /**
@@ -1398,12 +1431,12 @@ class DirListing extends Widget {
   private _clipboard: string[] = [];
   private _manager: IDocumentManager;
   private _softSelection = '';
-  private _inContext = false;
   private _selection: { [key: string]: boolean; } = Object.create(null);
   private _renderer: DirListing.IRenderer;
   private _searchPrefix: string = '';
   private _searchPrefixTimer = -1;
   private _inRename = false;
+  private _isDirty = false;
 }
 
 
@@ -1646,8 +1679,8 @@ namespace DirListing {
       let modText = '';
       let modTitle = '';
       if (model.last_modified) {
-        modText = Time.formatHuman(model.last_modified);
-        modTitle = Time.format(model.last_modified);
+        modText = Time.formatHuman(new Date(model.last_modified));
+        modTitle = Time.format(new Date(model.last_modified));
       }
 
       // If an item is being edited currently, its text node is unavailable.

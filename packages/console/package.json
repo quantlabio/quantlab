@@ -23,7 +23,6 @@
     "@quantlab/cells": "^0.2.1",
     "@quantlab/codeeditor": "^0.2.1",
     "@quantlab/coreutils": "^0.2.0",
-    "@quantlab/outputarea": "^0.2.1",
     "@quantlab/rendermime": "^0.2.1",
     "@quantlab/services": "^0.2.1"
   },

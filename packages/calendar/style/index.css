@@ -29,6 +29,22 @@
   padding: 8px;
   margin: 0;
 }
+
+.fc-toolbar {
+  height:28px;
+}
+
+.fc-toolbar .fc-left button{
+  height:25px;
+}
+
+.fc-toolbar .fc-right button {
+  height:25px;
+}
+
+.fc-toolbar .fc-center h2 {
+  height:25px;
+}
 /*
 .jp-Calendar {
   min-width: 200px;

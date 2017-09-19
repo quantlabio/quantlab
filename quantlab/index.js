@@ -5,10 +5,8 @@ __webpack_public_path__ = PageConfig.getOption('publicUrl');
 
 // This needs to come after __webpack_public_path__ is set.
 require('font-awesome/css/font-awesome.min.css');
-// Load the core theming before any other package.
-require('@quantlab/theming/style/index.css');
-
 var app = require('@quantlab/application').QuantLab;
+
 
 function main() {
     var version = PageConfig.getOption('appVersion') || 'unknown';
@@ -35,8 +33,8 @@ function main() {
     var mimeExtensions = [];
     {{#each quantlab_mime_extensions}}
     try {
-        if (disabled.indexOf('{{this}}') === -1) {
-            mimeExtensions.push(require('{{this}}'));
+        if (disabled.indexOf('{{@key}}') === -1) {
+            mimeExtensions.push(require('{{@key}}/{{this}}'));
         }
     } catch (e) {
         console.error(e);
@@ -56,8 +54,8 @@ function main() {
     // Handled the registered standard extensions.
     {{#each quantlab_extensions}}
     try {
-        if (disabled.indexOf('{{this}}') === -1) {
-            quantlab.registerPluginModule(require('{{this}}'));
+        if (disabled.indexOf('{{@key}}') === -1) {
+            quantlab.registerPluginModule(require('{{@key}}/{{this}}'));
         }
     } catch (e) {
         console.error(e);
@@ -73,6 +71,22 @@ function main() {
         // No-op
     }
     quantlab.start({ "ignorePlugins": ignorePlugins });
+
+    // Handle a selenium test.
+    var seleniumTest = PageConfig.getOption('seleniumTest');
+    if (seleniumTest.toLowerCase() === 'true') {
+        var caught_errors = []
+        window.onerror = function(msg, url, line, col, error) {
+           caught_errors.push(String(error));
+        };
+        quantlab.restored.then(function() {
+            var el = document.createElement('div');
+            el.id = 'seleniumResult';
+            el.textContent = JSON.stringify(caught_errors);
+            document.body.appendChild(el);
+        });
+    }
+
 }
 
 window.onload = main;

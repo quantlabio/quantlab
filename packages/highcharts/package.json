@@ -23,7 +23,8 @@
     "@quantlab/coreutils": "^0.2.0",
     "@quantlab/docregistry": "^0.2.1",
     "@quantlab/services": "^0.2.1",
-    "highcharts": "^5.0.14"
+    "highcharts": "^5.0.14",
+    "@types/highcharts": "^5.0.2"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

@@ -52,13 +52,3 @@ var indexEntries = indexEntries.filter(function(e) {
   return e.indexOf(package.name) === -1;
 });
 fs.writeFileSync(indexPath, indexEntries.join('\n'));
-
-// Remove the extension from quantlab/package.json
-var quantlabPackagePath = path.join(basePath, 'quantlab', 'package.json');
-var quantlabPackage = require(quantlabPackagePath);
-quantlabPackage.dependencies[package.name] = undefined;
-let extensions = quantlabPackage.quantlab.extensions.filter(function(e) {
-  return e.indexOf(package.name) === -1;
-});
-quantlabPackage.quantlab.extensions = extensions;
-fs.writeFileSync(quantlabPackagePath, JSON.stringify(quantlabPackage, null, 2) + '\n');

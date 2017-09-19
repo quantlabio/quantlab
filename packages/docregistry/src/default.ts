@@ -22,7 +22,7 @@ import {
 } from '@phosphor/signaling';
 
 import {
-  PanelLayout, Widget
+  BoxLayout, Widget
 } from '@phosphor/widgets';
 
 import {
@@ -141,7 +141,7 @@ class DocumentModel extends CodeEditor.Model implements DocumentRegistry.ICodeMo
    * Serialize the model to JSON.
    */
   toJSON(): JSONValue {
-    return JSON.parse(this.value.text);
+    return JSON.parse(this.value.text || 'null');
   }
 
   /**
@@ -413,10 +413,11 @@ class MimeDocument extends Widget implements DocumentRegistry.IReadyWidget {
   constructor(options: MimeDocument.IOptions) {
     super();
     this.addClass('jp-MimeDocument');
-    let layout = this.layout = new PanelLayout();
+    let layout = this.layout = new BoxLayout();
     let toolbar = new Widget();
     toolbar.addClass('jp-Toolbar');
     layout.addWidget(toolbar);
+    BoxLayout.setStretch(toolbar, 0);
     let context = options.context;
     this.title.label = PathExt.basename(context.path);
     this.rendermime = options.rendermime.clone({ resolver: context });
@@ -486,7 +487,9 @@ class MimeDocument extends Widget implements DocumentRegistry.IReadyWidget {
    * Handle an `update-request` message to the widget.
    */
   protected onUpdateRequest(msg: Message): void {
-    this._render();
+    if (this._context.isReady) {
+      this._render();
+    }
   }
 
   /**
@@ -504,7 +507,8 @@ class MimeDocument extends Widget implements DocumentRegistry.IReadyWidget {
     let mimeModel = new MimeModel({ data });
     if (!this._renderer) {
       this._renderer = this.rendermime.createRenderer(this._mimeType);
-      (this.layout as PanelLayout).addWidget(this._renderer);
+      (this.layout as BoxLayout).addWidget(this._renderer);
+      BoxLayout.setStretch(this._renderer, 1);
     }
     return this._renderer.renderModel(mimeModel);
   }

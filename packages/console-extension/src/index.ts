@@ -27,10 +27,6 @@ import {
 } from '@quantlab/launcher';
 
 import {
-  IServiceManager
-} from '@quantlab/services';
-
-import {
   find
 } from '@phosphor/algorithm';
 
@@ -90,7 +86,6 @@ const trackerPlugin: QuantLabPlugin<IConsoleTracker> = {
   id: 'jupyter.services.console-tracker',
   provides: IConsoleTracker,
   requires: [
-    IServiceManager,
     IMainMenu,
     ICommandPalette,
     ConsolePanel.IContentFactory,
@@ -130,7 +125,8 @@ export default plugins;
 /**
  * Activate the console extension.
  */
-function activateConsole(app: QuantLab, manager: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: ConsolePanel.IContentFactory,  editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): IConsoleTracker {
+function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: ConsolePanel.IContentFactory,  editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): IConsoleTracker {
+  let manager = app.serviceManager;
   let { commands, shell } = app;
   let category = 'Console';
   let command: string;

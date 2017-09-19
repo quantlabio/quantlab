@@ -20,11 +20,7 @@
     "@quantlab/codeeditor": "^0.2.1",
     "@quantlab/console": "^0.2.1",
     "@quantlab/coreutils": "^0.2.0",
-    "@quantlab/docregistry": "^0.2.1",
-    "@quantlab/filebrowser": "^0.2.1",
-    "@quantlab/launcher": "^0.2.1",
-    "@quantlab/rendermime": "^0.2.1",
-    "@quantlab/services": "^0.2.1"
+    "@quantlab/launcher": "^0.2.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

@@ -254,6 +254,29 @@ namespace ISettingRegistry {
     readonly user: JSONObject;
 
     /**
+     * Return the defaults in a commented JSON format.
+     */
+    annotatedDefaults(): string;
+
+    /**
+     * Calculate the default value of a setting by iterating through the schema.
+     *
+     * @param key - The name of the setting whose default value is calculated.
+     *
+     * @returns A calculated default JSON value for a specific setting.
+     */
+    default(key: string): JSONValue | undefined;
+
+    /**
+     * Get an individual setting.
+     *
+     * @param key - The name of the setting being retrieved.
+     *
+     * @returns The setting value.
+     */
+    get(key: string): { composite: JSONValue, user: JSONValue };
+
+    /**
      * Remove a single setting.
      *
      * @param key - The name of the setting being removed.
@@ -264,15 +287,6 @@ namespace ISettingRegistry {
      * This function is asynchronous because it writes to the setting registry.
      */
     remove(key: string): Promise<void>;
-
-    /**
-     * Get an individual setting.
-     *
-     * @param key - The name of the setting being retrieved.
-     *
-     * @returns The setting value.
-     */
-    get(key: string): { composite: JSONValue, user: JSONValue };
 
     /**
      * Save all of the plugin's user settings at once.
@@ -706,6 +720,24 @@ class Settings implements ISettingRegistry.ISettings {
   readonly registry: SettingRegistry;
 
   /**
+   * Return the defaults in a commented JSON format.
+   */
+  annotatedDefaults(): string {
+    return Private.annotatedDefaults(this._schema, this.plugin);
+  }
+
+  /**
+   * Calculate the default value of a setting by iterating through the schema.
+   *
+   * @param key - The name of the setting whose default value is calculated.
+   *
+   * @returns A calculated default JSON value for a specific setting.
+   */
+  default(key: string): JSONValue | undefined {
+    return Private.reifyDefault(this.schema, key);
+  }
+
+  /**
    * Dispose of the plugin settings resources.
    */
   dispose(): void {
@@ -875,4 +907,93 @@ namespace Private {
     }
   };
   /* tslint:enable */
+
+  /**
+   * Replacement text for schema properties missing a `description` field.
+   */
+  const nondescript = '[missing schema description]';
+
+  /**
+   * Replacement text for schema properties missing a `default` field.
+   */
+  const undefaulted = '[missing schema default]';
+
+  /**
+   * Replacement text for schema properties missing a `title` field.
+   */
+  const untitled = '[missing schema title]';
+
+  /**
+   * Returns an annotated (JSON with comments) version of a schema's defaults.
+   */
+  export
+  function annotatedDefaults(schema: ISettingRegistry.ISchema, plugin: string): string {
+    const { description, properties, title } = schema;
+    const keys = Object.keys(properties).sort((a, b) => a.localeCompare(b));
+
+    return [
+      '{',
+      prefix(`${title || untitled}`),
+      prefix(plugin),
+      prefix(description || nondescript),
+      prefix(line((description || nondescript).length)),
+      '',
+      keys.map(key => docstring(schema, key)).join('\n\n'),
+      '}'
+    ].join('\n');
+  }
+
+  /**
+   * Returns a documentation string for a specific schema property.
+   */
+  function docstring(schema: ISettingRegistry.ISchema, key: string): string {
+    const { description, title } = schema.properties[key];
+    const reified = reifyDefault(schema, key);
+    const defaults = reified === undefined ? prefix(`"${key}": ${undefaulted}`)
+      : prefix(`"${key}": ${JSON.stringify(reified, null, 2)}`, '  ');
+
+    return [
+      prefix(`${title || untitled}`),
+      prefix(description || nondescript),
+      defaults
+    ].join('\n');
+  }
+
+  /**
+   * Returns a line of a specified length.
+   */
+  function line(length: number, ch = '*'): string {
+    return (new Array(length + 1)).join(ch);
+  }
+
+  /**
+   * Returns a documentation string with a comment prefix added on every line.
+   */
+  function prefix(source: string, pre = '  \/\/ '): string {
+    return pre + source.split('\n').join(`\n${pre}`);
+  }
+
+  /**
+   * Create a fully extrapolated default value for a root key in a schema.
+   */
+  export
+  function reifyDefault(schema: ISettingRegistry.ISchema, root?: string): JSONValue | undefined {
+    // If the property is at the root level, traverse its schema.
+    schema = (root ? schema.properties[root] : schema) || { };
+
+    // If the property has no default or is a primitive, return.
+    if (!('default' in schema) || schema.type !== 'object') {
+      return schema.default;
+    }
+
+    // Make a copy of the default value to populate.
+    const result = JSONExt.deepCopy(schema.default);
+
+    // Iterate through and populate each child property.
+    for (let property in schema.properties || { }) {
+      result[property] = reifyDefault(schema.properties[property]);
+    }
+
+    return result;
+  }
 }

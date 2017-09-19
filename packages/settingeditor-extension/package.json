@@ -13,6 +13,7 @@
     "lib": "lib/"
   },
   "dependencies": {
+    "@phosphor/coreutils": "^1.2.0",
     "@phosphor/messaging": "^1.2.1",
     "@phosphor/signaling": "^1.2.1",
     "@phosphor/virtualdom": "^1.1.1",

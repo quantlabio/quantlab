@@ -2,6 +2,7 @@
 var fs = require('fs-extra');
 var path = require('path');
 var childProcess = require('child_process');
+var sortPackageJson = require('sort-package-json');
 
 /**
  * Add an extension to the source tree of QuantLab.
@@ -52,8 +53,9 @@ var package = require(path.join(packagePath, 'package.json'));
 // Add the extension to packages/all-packages/package.json
 var allPackagesPath = path.join(basePath, 'packages', 'all-packages', 'package.json');
 var allPackages = require(allPackagesPath);
-allPackages.dependencies[package.name] = '~'+String(package.version);
-fs.writeFileSync(allPackagesPath, JSON.stringify(allPackages, null, 2) + '\n');
+allPackages.dependencies[package.name] = '^'+String(package.version);
+var text = JSON.stringify(sortPackageJson(allPackages), null, 2) + '\n';
+fs.writeFileSync(allPackagesPath, text);
 
 // Add the extension path to packages/all-packages/tsconfig.json
 var tsconfigPath = path.join(basePath, 'packages', 'all-packages', 'tsconfig.json');
@@ -67,9 +69,5 @@ var index = fs.readFileSync(indexPath, 'utf8');
 index = index + 'import "' + package.name + '";\n';
 fs.writeFileSync(indexPath, index);
 
-// Add the extension to quantlab/package.json
-var quantlabPackagePath = path.join(basePath, 'quantlab', 'package.json');
-var quantlabPackage = require(quantlabPackagePath);
-quantlabPackage.dependencies[package.name] = '~'+String(package.version);
-quantlabPackage.quantlab.extensions.push(package.name);
-fs.writeFileSync(quantlabPackagePath, JSON.stringify(quantlabPackage, null, 2) + '\n');
+// Update the core Quantlab build dependencies.
+childProcess.execSync('npm run update:core');

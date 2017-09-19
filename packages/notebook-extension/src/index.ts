@@ -27,7 +27,7 @@ import {
 } from '@quantlab/notebook';
 
 import {
-  IServiceManager
+  ServiceManager
 } from '@quantlab/services';
 
 import {
@@ -242,7 +242,6 @@ const trackerPlugin: QuantLabPlugin<INotebookTracker> = {
   id: 'jupyter.services.notebook-tracker',
   provides: INotebookTracker,
   requires: [
-    IServiceManager,
     IMainMenu,
     ICommandPalette,
     NotebookPanel.IContentFactory,
@@ -361,8 +360,8 @@ function activateCellTools(app: QuantLab, tracker: INotebookTracker, editorServi
 /**
  * Activate the notebook handler extension.
  */
-function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: NotebookPanel.IContentFactory, editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): INotebookTracker {
-
+function activateNotebookHandler(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: NotebookPanel.IContentFactory, editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): INotebookTracker {
+  const services = app.serviceManager;
   const factory = new NotebookWidgetFactory({
     name: FACTORY,
     fileTypes: ['notebook'],
@@ -464,7 +463,7 @@ function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainM
   app.contextMenu.addItem({command: CommandIDs.redo, selector: '.jp-Notebook', rank: 2});
   app.contextMenu.addItem({ type: 'separator', selector: '.jp-Notebook', rank: 0 });
   app.contextMenu.addItem({command: CommandIDs.createConsole, selector: '.jp-Notebook', rank: 3});
-
+    app.contextMenu.addItem({command: CommandIDs.clearAllOutputs, selector: '.jp-Notebook', rank: 3});
   return tracker;
 }
 
@@ -473,7 +472,7 @@ function activateNotebookHandler(app: QuantLab, services: IServiceManager, mainM
 /**
  * Add the notebook commands to the application's command registry.
  */
-function addCommands(app: QuantLab, services: IServiceManager, tracker: NotebookTracker): void {
+function addCommands(app: QuantLab, services: ServiceManager, tracker: NotebookTracker): void {
   const { commands, shell } = app;
 
   // Get the current widget and activate unless the args specify otherwise.

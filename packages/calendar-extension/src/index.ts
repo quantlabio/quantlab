@@ -27,10 +27,6 @@ import {
 } from '@quantlab/calendar';
 
 import {
-  IServiceManager
-} from '@quantlab/services';
-
-import {
   ReadonlyJSONObject
 } from '@phosphor/coreutils';
 
@@ -84,7 +80,6 @@ const trackerPlugin: QuantLabPlugin<ICalendarTracker> = {
   id: 'jupyter.extensions.calendar',
   provides: ICalendarTracker,
   requires: [
-    IServiceManager,
     IMainMenu,
     ICommandPalette,
     CalendarPanel.IContentFactory,
@@ -197,7 +192,8 @@ function activateCalendarTools(app: QuantLab, tracker: ICalendarTracker, editorS
 /**
  * Activate the calendar plugin.
  */
-function activateCalendar(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: CalendarPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): ICalendarTracker {
+function activateCalendar(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: CalendarPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): ICalendarTracker {
+  let manager = app.serviceManager;
   const factory = new CalendarFactory({
     name: FACTORY,
     fileTypes: ['ics'],
@@ -216,7 +212,7 @@ function activateCalendar(app: QuantLab, services: IServiceManager, mainMenu: IM
     command: 'docmanager:open',
     args: panel => ({ path: panel.context.path, factory: FACTORY }),
     name: panel => panel.context.path,
-    when: services.ready
+    when: manager.ready
   });
 
   // Update the command registry when the Calendar state changes.
@@ -235,7 +231,7 @@ function activateCalendar(app: QuantLab, services: IServiceManager, mainMenu: IM
     widgetName: 'Calendar'
   });
 
-  addCommands(app, services, tracker);
+  addCommands(app, tracker);
   populatePalette(palette);
 
   let id = 0; // The ID counter for Calendar panels.
@@ -268,7 +264,7 @@ function activateCalendar(app: QuantLab, services: IServiceManager, mainMenu: IM
 
   // Add a launcher item if the launcher is available.
   if (launcher) {
-    services.ready.then(() => {
+    manager.ready.then(() => {
       launcher.add({
         displayName: 'Calendar',
         category: 'Other',
@@ -290,7 +286,7 @@ function activateCalendar(app: QuantLab, services: IServiceManager, mainMenu: IM
 /**
  * Add the Calendar commands to the application's command registry.
  */
-function addCommands(app: QuantLab, services: IServiceManager, tracker: CalendarTracker): void {
+function addCommands(app: QuantLab, tracker: CalendarTracker): void {
   const { commands, shell } = app;
 
   // Get the current widget and activate unless the args specify otherwise.

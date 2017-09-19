@@ -8,10 +8,14 @@ import os
 from quantlab_launcher import add_handlers, QuantLabConfig
 from notebook.utils import url_path_join as ujoin
 
+from notebook.base.handlers import FileFindHandler
+
+
 from .commands import (
     get_app_dir, list_extensions, should_build, get_user_settings_dir
 )
-from .settings_handler import settings_path, SettingsHandler
+
+from .build_handler import build_path, Builder, BuildHandler
 from ._version import __version__
 
 #-----------------------------------------------------------------------------
@@ -20,9 +24,7 @@ from ._version import __version__
 
 DEV_NOTE_NPM = """You're running QuantLab from source.
 If you're working on the TypeScript sources of QuantLab, try running
-
     npm run watch
-
 from the QuantLab repo directory in another terminal window to have the
 system incrementally watch and build QuantLab's TypeScript for you, as you
 make changes.
@@ -70,16 +72,12 @@ def load_jupyter_server_extension(nbapp):
     fallback = not installed and not os.path.exists(config.assets_dir)
 
     web_app.settings.setdefault('page_config_data', dict())
+    web_app.settings['page_config_data']['buildAvailable'] = True
     web_app.settings['page_config_data']['token'] = nbapp.token
-
-    if not core_mode:
-        build_needed, msg = should_build(app_dir)
-        if build_needed:
-            nbapp.log.warn('Build required: %s' % msg)
-            web_app.settings['page_config_data']['buildRequired'] = msg
 
     if core_mode or fallback:
         config.assets_dir = os.path.join(here, 'build')
+        config.version = __version__
         if not os.path.exists(config.assets_dir):
             msg = 'Static assets not built, please see CONTRIBUTING.md'
             nbapp.log.error(msg)
@@ -92,20 +90,20 @@ def load_jupyter_server_extension(nbapp):
     elif core_mode or fallback:
         nbapp.log.info(CORE_NOTE.strip())
 
-    add_handlers(web_app, config)
-
-    user_settings_dir = get_user_settings_dir()
-
     if core_mode or fallback:
         schemas_dir = os.path.join(here, 'schemas')
     else:
         schemas_dir = os.path.join(app_dir, 'schemas')
 
+    config.schemas_dir = schemas_dir
+    config.user_settings_dir = get_user_settings_dir()
+    config.themes_dir = os.path.join(here, 'themes')
+
+    add_handlers(web_app, config)
+
     base_url = web_app.settings['base_url']
-    settings_url = ujoin(base_url, settings_path)
-    settings_handler = (settings_url, SettingsHandler, {
-        'schemas_dir': schemas_dir,
-        'settings_dir': user_settings_dir
-    })
-    nbapp.log.error('shemas_dir: %s' % schemas_dir)
-    web_app.add_handlers(".*$", [settings_handler])
+    build_url = ujoin(base_url, build_path)
+    builder = Builder(nbapp.log, core_mode, app_dir)
+    build_handler = (build_url, BuildHandler, {'builder': builder})
+
+    web_app.add_handlers(".*$", [build_handler])

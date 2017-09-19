@@ -6,7 +6,7 @@ import {
 } from '@quantlab/coreutils';
 
 import {
-  IDocumentManager
+  IDocumentManager, shouldOverwrite
 } from '@quantlab/docmanager';
 
 import {
@@ -14,8 +14,12 @@ import {
 } from '@quantlab/services';
 
 import {
-  ArrayIterator, each, IIterator, IterableOrArrayLike
+  ArrayIterator, each, find, IIterator, IterableOrArrayLike
 } from '@phosphor/algorithm';
+
+import {
+  PromiseDelegate
+} from '@phosphor/coreutils';
 
 import {
   IDisposable
@@ -84,6 +88,13 @@ class FileBrowserModel implements IDisposable {
    */
   get connectionFailure(): ISignal<this, Error> {
     return this._connectionFailure;
+  }
+
+  /**
+   * A promise that resolves when the model is first restored.
+   */
+  get restored(): Promise<void> {
+    return this._restored.promise;
   }
 
   /**
@@ -223,7 +234,7 @@ class FileBrowserModel implements IDisposable {
   /**
    * Download a file.
    *
-   * @param - path - The path of the file to be downloaded.
+   * @param path - The path of the file to be downloaded.
    *
    * @returns A promise which resolves when the file has begun
    *   downloading.
@@ -263,6 +274,7 @@ class FileBrowserModel implements IDisposable {
     const ready = manager.services.ready;
     return Promise.all([state.fetch(key), ready]).then(([cwd]) => {
       if (!cwd) {
+        this._restored.resolve(void 0);
         return;
       }
 
@@ -272,7 +284,10 @@ class FileBrowserModel implements IDisposable {
         .then(() => this.cd(localPath))
         .catch(() => state.remove(key));
     }).catch(() => state.remove(key))
-      .then(() => { this._key = key; }); // Set key after restoration is done.
+      .then(() => {
+        this._key = key;
+        this._restored.resolve(void 0);
+      }); // Set key after restoration is done.
   }
 
   /**
@@ -280,15 +295,13 @@ class FileBrowserModel implements IDisposable {
    *
    * @param file - The `File` object to upload.
    *
-   * @param overwrite - Whether to overwrite an existing file.
-   *
    * @returns A promise containing the new file contents model.
    *
    * #### Notes
    * This will fail to upload files that are too big to be sent in one
    * request to the server.
    */
-  upload(file: File, overwrite?: boolean): Promise<Contents.IModel> {
+  upload(file: File): Promise<Contents.IModel> {
     // Skip large files with a warning.
     if (file.size > this._maxUploadSizeMb * 1024 * 1024) {
       let msg = `Cannot upload file (>${this._maxUploadSizeMb} MB) `;
@@ -297,20 +310,20 @@ class FileBrowserModel implements IDisposable {
       return Promise.reject<Contents.IModel>(new Error(msg));
     }
 
-    if (overwrite) {
-      return this._upload(file);
-    }
-
-    let path = this._model.path;
-    path = path ? path + '/' + file.name : file.name;
-    return this.manager.services.contents.get(path, {}).then(() => {
-      let msg = `"${file.name}" already exists`;
-      throw new Error(msg);
-    }, () => {
+    return this.refresh().then(() => {
       if (this.isDisposed) {
-        return Promise.reject('Disposed') as Promise<Contents.IModel>;
+        return Promise.resolve(false);
       }
-      return this._upload(file);
+      let item = find(this._items, i => i.name === file.name);
+      if (item) {
+        return shouldOverwrite(file.name);
+      }
+      return Promise.resolve(true);
+    }).then(value => {
+      if (value) {
+        return this._upload(file);
+      }
+      return Promise.reject('File not uploaded');
     });
   }
 
@@ -456,6 +469,7 @@ class FileBrowserModel implements IDisposable {
   private _timeoutId = -1;
   private _driveName: string;
   private _isDisposed = false;
+  private _restored = new PromiseDelegate<void>();
 }
 
 
@@ -525,7 +539,7 @@ namespace Private {
     if (parts.length === 1) {
       return PathExt.resolve(root, path);
     } else {
-      let resolved = PathExt.resolve(parts[1], path)
+      let resolved = PathExt.resolve(parts[1], path);
       return parts[0] + ':' + resolved;
     }
   }

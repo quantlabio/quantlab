@@ -50,7 +50,7 @@ if [[ $GROUP == coverage_and_docs ]]; then
 
     # Build the api docs
     npm run docs
-    cp jupyter_plugins.png docs
+    #cp jupyter_plugins.png docs
 
     # Verify tutorial docs build
     pushd docs

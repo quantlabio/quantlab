@@ -6,16 +6,22 @@
   "types": "lib/index.d.ts",
   "files": [
     "lib/*.d.ts",
-    "lib/*.js"
+    "lib/*.js",
+    "style/*.css",
+    "style/images/*.svg"
   ],
   "directories": {
     "lib": "lib/"
   },
   "dependencies": {
+    "es6-promise": "^4.1.0",
     "@quantlab/application": "^0.2.1",
     "@quantlab/apputils": "^0.2.1",
     "@quantlab/coreutils": "^0.2.0",
-    "@quantlab/services": "^0.2.1"
+    "@quantlab/services": "^0.2.1",
+    "@phosphor/coreutils": "^1.2.0",
+    "@phosphor/disposable": "^1.1.1",
+    "@phosphor/widgets": "^1.3.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
@@ -27,7 +33,8 @@
     "watch": "tsc -w"
   },
   "quantlab": {
-    "extension": true
+    "extension": true,
+    "schemaDir": "schema"
   },
   "repository": {
     "type": "git",

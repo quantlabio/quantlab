@@ -1,9 +1,0 @@
-name: quantlab_tutorial
-channels:
-  - conda-forge
-dependencies:
-- python==3.5
-- pip:
-  - sphinx<=1.6
-  - recommonmark==0.4.0
-  - jupyter_alabaster_theme

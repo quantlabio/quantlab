@@ -27,10 +27,6 @@ import {
 } from '@quantlab/spreadsheet';
 
 import {
-  IServiceManager
-} from '@quantlab/services';
-
-import {
   ReadonlyJSONObject
 } from '@phosphor/coreutils';
 
@@ -96,7 +92,6 @@ const trackerPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
   id: 'jupyter.extensions.spreadsheet',
   provides: ISpreadsheetTracker,
   requires: [
-    IServiceManager,
     IMainMenu,
     ICommandPalette,
     SpreadsheetPanel.IContentFactory,
@@ -213,7 +208,8 @@ function activateSheetTools(app: QuantLab, tracker: ISpreadsheetTracker, editorS
 /**
  * Activate the spreadsheet plugin.
  */
-function activateSpreadsheet(app: QuantLab, services: IServiceManager, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: SpreadsheetPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): ISpreadsheetTracker {
+function activateSpreadsheet(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: SpreadsheetPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): ISpreadsheetTracker {
+  let manager = app.serviceManager;
   const factory = new SpreadsheetFactory({
     name: FACTORY,
     fileTypes: ['spreadsheet'],
@@ -232,7 +228,7 @@ function activateSpreadsheet(app: QuantLab, services: IServiceManager, mainMenu:
     command: 'docmanager:open',
     args: panel => ({ path: panel.context.path, factory: FACTORY }),
     name: panel => panel.context.path,
-    when: services.ready
+    when: manager.ready
   });
 
   // Update the command registry when the spreadsheet state changes.
@@ -251,7 +247,7 @@ function activateSpreadsheet(app: QuantLab, services: IServiceManager, mainMenu:
     widgetName: 'Spreadsheet'
   });
 
-  addCommands(app, services, tracker);
+  addCommands(app, tracker);
   populatePalette(palette);
 
   let id = 0; // The ID counter for spreadsheet panels.
@@ -284,7 +280,7 @@ function activateSpreadsheet(app: QuantLab, services: IServiceManager, mainMenu:
 
   // Add a launcher item if the launcher is available.
   if (launcher) {
-    services.ready.then(() => {
+    manager.ready.then(() => {
       launcher.add({
         displayName: 'Spreadsheet',
         category: 'Other',
@@ -307,7 +303,7 @@ function activateSpreadsheet(app: QuantLab, services: IServiceManager, mainMenu:
 /**
  * Add the spreadsheet commands to the application's command registry.
  */
-function addCommands(app: QuantLab, services: IServiceManager, tracker: SpreadsheetTracker): void {
+function addCommands(app: QuantLab, tracker: SpreadsheetTracker): void {
   const { commands, shell } = app;
 
   // Get the current widget and activate unless the args specify otherwise.

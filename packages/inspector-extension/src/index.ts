@@ -4,7 +4,7 @@
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
- 
+
 import {
   ICommandPalette, InstanceTracker
 } from '@quantlab/apputils';
@@ -149,6 +149,8 @@ const consolePlugin: QuantLabPlugin<void> = {
         manager.source = source;
       }
     });
+
+    app.contextMenu.addItem({command: CommandIDs.open, selector: '.jp-CodeConsole'});
   }
 };
 
@@ -199,6 +201,8 @@ const notebookPlugin: QuantLabPlugin<void> = {
         manager.source = source;
       }
     });
+
+    app.contextMenu.addItem({command: CommandIDs.open, selector: '.jp-NotebookPanel'});
   }
 };
 

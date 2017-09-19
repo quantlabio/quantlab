@@ -5,11 +5,7 @@
 **[Getting help](#getting-help)**
 
 
-# [QuantLab](https://doc.quantlab.io)
-
-[![Build Status](https://travis-ci.org/quantlabio/quantlab.svg?branch=master)](https://travis-ci.org/quantlabio/quantlab)
-[![Documentation Status](https://readthedocs.org/projects/quantlab-tutorial/badge/?version=latest)](https://quantlab-tutorial.readthedocs.io/en/latest/?badge=latest)
-[![Google Group](https://img.shields.io/badge/-Google%20Group-lightgrey.svg)](https://groups.google.com/forum/#!forum/jupyter)
+# QuantLab
 
 forked from JupterLab, lab for quant
 

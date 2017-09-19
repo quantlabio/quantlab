@@ -35,6 +35,8 @@ import {
 import 'codemirror/addon/edit/matchbrackets.js';
 import 'codemirror/addon/edit/closebrackets.js';
 import 'codemirror/addon/comment/comment.js';
+import 'codemirror/addon/search/searchcursor';
+import 'codemirror/addon/search/search';
 import 'codemirror/keymap/emacs.js';
 import 'codemirror/keymap/sublime.js';
 import 'codemirror/keymap/vim.js';
@@ -87,6 +89,7 @@ class CodeMirrorEditor implements CodeEditor.IEditor {
   constructor(options: CodeMirrorEditor.IOptions) {
     let host = this.host = options.host;
     host.classList.add(EDITOR_CLASS);
+    host.classList.add('jp-Editor');
     host.addEventListener('focus', this, true);
     host.addEventListener('scroll', this, true);
 
@@ -235,7 +238,7 @@ class CodeMirrorEditor implements CodeEditor.IEditor {
    * Dispose of the resources held by the widget.
    */
   dispose(): void {
-    if (this.isDisposed) {
+    if (this.isDisposed) {
       return;
     }
     this._isDisposed = true;
@@ -470,6 +473,15 @@ class CodeMirrorEditor implements CodeEditor.IEditor {
   setSelections(selections: CodeEditor.IRange[]): void {
     const cmSelections = this._toCodeMirrorSelections(selections);
     this.doc.setSelections(cmSelections, 0);
+  }
+
+  /**
+   * Execute a codemirror command on the editor.
+   *
+   * @param command - The name of the command to execute.
+   */
+  execCommand(command: string): void {
+    this._editor.execCommand(command);
   }
 
   /**
@@ -783,6 +795,7 @@ class CodeMirrorEditor implements CodeEditor.IEditor {
     if (this._caretHover) {
       window.clearTimeout(this._hoverTimeout);
       document.body.removeChild(this._caretHover);
+      this._caretHover = null;
     }
   }
 
@@ -831,7 +844,7 @@ class CodeMirrorEditor implements CodeEditor.IEditor {
   private _model: CodeEditor.IModel;
   private _editor: CodeMirror.Editor;
   protected selectionMarkers: { [key: string]: CodeMirror.TextMarker[] | undefined } = {};
-  private _caretHover: HTMLElement;
+  private _caretHover: HTMLElement | null;
   private _hoverTimeout: number;
   private _hoverId: string;
   private _keydownHandlers = new Array<CodeEditor.KeydownHandler>();
@@ -1022,6 +1035,29 @@ namespace Private {
   }
 
   /**
+   * Indent or insert a tab as appropriate.
+   */
+  export
+  function indentMoreOrinsertTab(cm: CodeMirror.Editor): void {
+    let doc = cm.getDoc();
+    let from = doc.getCursor('from');
+    let to = doc.getCursor('to');
+    let sel = !posEq(from, to);
+    if (sel) {
+      CodeMirror.commands['indentMore'](cm);
+      return;
+    }
+    // Check for start of line.
+    let line = doc.getLine(from.line);
+    let before = line.slice(0, from.ch);
+    if (/^\s*$/.test(before)) {
+      CodeMirror.commands['indentMore'](cm);
+    } else {
+      CodeMirror.commands['insertSoftTab'](cm);
+    }
+  }
+
+  /**
    * Delete spaces to the previous tab stob in a codemirror editor.
    */
   export
@@ -1049,7 +1085,7 @@ namespace Private {
     } else {
       CodeMirror.commands['delCharBefore'](cm);
     }
-  };
+  }
 
   /**
    * Test whether two CodeMirror positions are equal.
@@ -1120,4 +1156,12 @@ namespace Private {
  */
 CodeMirrorEditor.addCommand(
   'delSpaceToPrevTabStop', Private.delSpaceToPrevTabStop
+);
+
+
+/**
+ * Add a CodeMirror command to indent or insert a tab as appropriate.
+ */
+CodeMirrorEditor.addCommand(
+  'indentMoreOrinsertTab', Private.indentMoreOrinsertTab
 );
