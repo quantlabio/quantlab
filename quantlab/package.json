@@ -36,7 +36,6 @@
     "@quantlab/docmanager": "^0.2.1",
     "@quantlab/docmanager-extension": "^0.2.1",
     "@quantlab/docregistry": "^0.2.1",
-    "@quantlab/faq-extension": "^0.2.1",
     "@quantlab/filebrowser": "^0.2.1",
     "@quantlab/filebrowser-extension": "^0.2.1",
     "@quantlab/fileeditor": "^0.2.1",
@@ -71,13 +70,8 @@
     "@quantlab/theme-light-extension": "^0.2.1",
     "@quantlab/tooltip": "^0.2.1",
     "@quantlab/tooltip-extension": "^0.2.1",
-    "@quantlab/vega2-extension": "^0.2.0",
-    "d3": "3.5.17",
     "es6-promise": "^4.1.0",
-    "font-awesome": "^4.7.0",
-    "vega": "^2.6.1",
-    "vega-embed": "^2.2.0",
-    "vega-lite": "^1.0.16"
+    "font-awesome": "^4.7.0"
   },
   "devDependencies": {
     "css-loader": "^0.27.3",
@@ -103,7 +97,6 @@
       "@quantlab/console-extension": "",
       "@quantlab/csvviewer-extension": "",
       "@quantlab/docmanager-extension": "",
-      "@quantlab/faq-extension": "",
       "@quantlab/filebrowser-extension": "",
       "@quantlab/fileeditor-extension": "",
       "@quantlab/help-extension": "",
@@ -124,8 +117,7 @@
       "@quantlab/tooltip-extension": ""
     },
     "mimeExtensions": {
-      "@quantlab/pdf-extension": "",
-      "@quantlab/vega2-extension": ""
+      "@quantlab/pdf-extension": ""
     },
     "name": "QuantLab",
     "singletonPackages": [

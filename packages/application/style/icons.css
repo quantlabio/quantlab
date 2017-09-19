@@ -19,6 +19,21 @@
 }
 
 
+.jp-CalendarIcon {
+  background-image: var(--jp-icon-calendar);
+}
+
+
+.jp-ChartIcon {
+  background-image: var(--jp-icon-highcharts);
+}
+
+
+.jp-JavaScriptIcon {
+  background-image: var(--jp-icon-javascript);
+}
+
+
 .jp-ChatIcon {
   background-image: var(--jp-icon-chat);
 }

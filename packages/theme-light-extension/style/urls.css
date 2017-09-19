@@ -35,6 +35,9 @@
   --jp-icon-book-selected: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/jupyter/book_selected.svg');
   --jp-icon-book-running: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/jupyter/book_running.svg');
   --jp-icon-book-running-selected: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/jupyter/book_running_selected.svg');
+  --jp-icon-calendar: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/jupyter/calendar.svg');
+  --jp-icon-javascript: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/jupyter/javascript.svg');
+  --jp-icon-highcharts: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/jupyter/highcharts.svg');
   --jp-icon-directory: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/jupyter/directory.svg');
   --jp-icon-directory-selected: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/jupyter/directory_selected.svg');
   --jp-icon-new-directory: url('./quantlab/api/themes/quantlab-theme-light-extension/icons/md/new-folder.svg');

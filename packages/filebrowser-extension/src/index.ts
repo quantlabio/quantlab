@@ -26,6 +26,10 @@ import {
 } from '@quantlab/filebrowser';
 
 import {
+  Launcher
+} from '@quantlab/launcher';
+
+import {
   each
 } from '@phosphor/algorithm';
 
@@ -92,7 +96,6 @@ const fileBrowserPlugin: QuantLabPlugin<void> = {
   requires: [
     IFileBrowserFactory,
     IDocumentManager,
-    IMainMenu,
     ICommandPalette,
     ILayoutRestorer
   ],
@@ -111,6 +114,18 @@ const factoryPlugin: QuantLabPlugin<IFileBrowserFactory> = {
 };
 
 /**
+ * The default file browser menu extension.
+ */
+const fileBrowserMenuPlugin: QuantLabPlugin<void> = {
+  activate: activateFileBrowserMenu,
+  id: 'jupyter.extensions.filebrowsermenu',
+  requires: [
+    IMainMenu,
+  ],
+  autoStart: true
+};
+
+/**
  * The file browser namespace token.
  */
 const namespace = 'filebrowser';
@@ -119,7 +134,7 @@ const namespace = 'filebrowser';
 /**
  * Export the plugins as default.
  */
-const plugins: QuantLabPlugin<any>[] = [factoryPlugin, fileBrowserPlugin];
+const plugins: QuantLabPlugin<any>[] = [factoryPlugin, fileBrowserPlugin, fileBrowserMenuPlugin];
 export default plugins;
 
 
@@ -130,56 +145,50 @@ function activateFactory(app: QuantLab, docManager: IDocumentManager, state: ISt
   const { commands } = app;
   const tracker = new InstanceTracker<FileBrowser>({ namespace });
 
-  return {
-    createFileBrowser(id: string, options: IFileBrowserFactory.IOptions = {}): FileBrowser {
-      const model = new FileBrowserModel({
-        manager: docManager,
-        driveName: options.driveName || '',
-        state: options.state === null ? null : options.state || state
-      });
-      const widget = new FileBrowser({
-        id, model, commands: options.commands || commands
-      });
-      const { registry } = docManager;
+  const createFileBrowser = (id: string, options: IFileBrowserFactory.IOptions = {}) => {
+    const model = new FileBrowserModel({
+      manager: docManager,
+      driveName: options.driveName || '',
+      state: options.state === null ? null : options.state || state
+    });
+    const widget = new FileBrowser({
+      id, model, commands: options.commands || commands
+    });
+    const { registry } = docManager;
 
-      // Add a launcher toolbar item.
-      let launcher = new ToolbarButton({
-        className: 'jp-AddIcon',
-        onClick: () => {
-          return commands.execute('launcher:create', {
-            cwd: widget.model.path
-          });
-        }
-      });
-      launcher.addClass('jp-MaterialIcon');
-      widget.toolbar.insertItem(0, 'launch', launcher);
+    // Add a launcher toolbar item.
+    let launcher = new ToolbarButton({
+      className: 'jp-AddIcon',
+      onClick: () => {
+        return createLauncher(commands, widget);
+      }
+    });
+    launcher.addClass('jp-MaterialIcon');
+    widget.toolbar.insertItem(0, 'launch', launcher);
 
-      // Add a context menu handler to the file browser's directory listing.
-      let node = widget.node.getElementsByClassName('jp-DirListing-content')[0];
-      node.addEventListener('contextmenu', (event: MouseEvent) => {
-        event.preventDefault();
-        const path = widget.pathForClick(event) || '';
-        const menu = createContextMenu(path, commands, registry);
-        menu.open(event.clientX, event.clientY);
-      });
+    // Add a context menu handler to the file browser's directory listing.
+    let node = widget.node.getElementsByClassName('jp-DirListing-content')[0];
+    node.addEventListener('contextmenu', (event: MouseEvent) => {
+      event.preventDefault();
+      const path = widget.pathForClick(event) || '';
+      const menu = createContextMenu(path, commands, registry);
+      menu.open(event.clientX, event.clientY);
+    });
 
-      // Track the newly created file browser.
-      tracker.add(widget);
+    // Track the newly created file browser.
+    tracker.add(widget);
 
-      return widget;
-    },
-    tracker
+    return widget;
   };
+  let defaultBrowser = createFileBrowser('filebrowser');
+  return { createFileBrowser, defaultBrowser, tracker };
 }
 
 /**
- * Activate the file browser in the sidebar.
+ * Activate the default file browser in the sidebar.
  */
-function activateFileBrowser(app: QuantLab, factory: IFileBrowserFactory, docManager: IDocumentManager, mainMenu: IMainMenu, palette: ICommandPalette, restorer: ILayoutRestorer): void {
-  const { commands } = app;
-  const fbWidget = factory.createFileBrowser('filebrowser', {
-    commands
-  });
+function activateFileBrowser(app: QuantLab, factory: IFileBrowserFactory, docManager: IDocumentManager, palette: ICommandPalette, restorer: ILayoutRestorer): void {
+  const fbWidget = factory.defaultBrowser;
 
   // Let the application restorer track the primary file browser (that is
   // automatically created) for restoration of application state (e.g. setting
@@ -201,6 +210,22 @@ function activateFileBrowser(app: QuantLab, factory: IFileBrowserFactory, docMan
     }
   });
 
+  // Create a launcher if there are no open items.
+  app.shell.layoutModified.connect(() => {
+    if (app.shell.isEmpty('main')) {
+      // Make sure the model is restored.
+      fbWidget.model.restored.then(() => {
+        createLauncher(app.commands, fbWidget);
+      });
+    }
+  });
+}
+
+
+/**
+ * Activate the default file browser menu in the main menu.
+ */
+function activateFileBrowserMenu(app: QuantLab, mainMenu: IMainMenu): void {
   let menu = createMenu(app);
 
   mainMenu.addMenu(menu, { rank: 1 });
@@ -296,8 +321,11 @@ function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, mainB
       }
 
       each(widget.selectedItems(), item => {
-        let path = item.path;
-        commands.execute('docmanager:open', { path });
+        if (item.type === 'directory') {
+          widget.model.cd(item.path);
+        } else {
+          commands.execute('docmanager:open', { path: item.path });
+        }
       });
     },
     iconClass: 'jp-MaterialIcon jp-OpenFolderIcon',
@@ -362,18 +390,7 @@ function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, mainB
   commands.addCommand(CommandIDs.createLauncher, {
     label: 'New...',
     execute: () => {
-      return commands.execute('launcher:create', {
-        cwd: mainBrowser.model.path,
-      });
-    }
-  });
-
-  // Create a launcher with a banner if there are no open items.
-  app.restored.then(() => {
-    if (app.shell.isEmpty('main')) {
-      commands.execute('launcher:create', {
-        cwd: mainBrowser.model.path
-      });
+      return createLauncher(commands, mainBrowser);
     }
   });
 }
@@ -393,6 +410,7 @@ function createMenu(app: QuantLab): Menu {
     'docmanager:save-as',
     'docmanager:rename',
     'docmanager:restore-checkpoint',
+    'docmanager:clone',
     'docmanager:close',
     'docmanager:close-all-files'
   ].forEach(command => { menu.addItem({ command }); });
@@ -436,4 +454,18 @@ function createContextMenu(path: string, commands: CommandRegistry, registry: Do
   menu.addItem({ command: CommandIDs.shutdown });
 
   return menu;
+}
+
+
+/**
+ * Create a launcher for a given filebrowser widget.
+ */
+function createLauncher(commands: CommandRegistry, widget: FileBrowser): Promise<void> {
+  return commands.execute('launcher:create', {
+    cwd: widget.model.path
+  }).then((launcher: Launcher) => {
+    widget.model.pathChanged.connect(() => {
+      launcher.cwd = widget.model.path;
+    }, launcher);
+  });
 }

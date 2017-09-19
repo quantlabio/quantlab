@@ -33,7 +33,6 @@
     "@quantlab/docmanager": "^0.2.1",
     "@quantlab/docmanager-extension": "^0.2.1",
     "@quantlab/docregistry": "^0.2.1",
-    "@quantlab/faq-extension": "^0.2.1",
     "@quantlab/filebrowser": "^0.2.1",
     "@quantlab/filebrowser-extension": "^0.2.1",
     "@quantlab/fileeditor": "^0.2.1",
@@ -66,8 +65,7 @@
     "@quantlab/theme-dark-extension": "^0.2.1",
     "@quantlab/theme-light-extension": "^0.2.1",
     "@quantlab/tooltip": "^0.2.1",
-    "@quantlab/tooltip-extension": "^0.2.1",
-    "@quantlab/vega2-extension": "^0.2.0"
+    "@quantlab/tooltip-extension": "^0.2.1"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

@@ -14,8 +14,8 @@
   "dependencies": {
     "@quantlab/application": "^0.2.1",
     "@quantlab/apputils": "^0.2.1",
-    "@quantlab/docregistry": "^0.2.1",
-    "@quantlab/imageviewer": "^0.2.1"
+    "@quantlab/imageviewer": "^0.2.1",
+    "@phosphor/commands": "^1.3.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
