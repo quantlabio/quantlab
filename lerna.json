@@ -2,13 +2,7 @@
   "lerna": "2.0.0",
   "packages": [
     "quantlab",
-    "quantlab/tests/mock-mimeextension",
-    "examples/*",
-    "packages/*",
-    "packages/services/examples/node",
-    "packages/services/examples/browser",
-    "packages/services/examples/typescript-browser-with-output",
-    "test"
+    "packages/*"
   ],
   "version": "independent"
 }

@@ -24,6 +24,11 @@
 }
 
 
+.jp-PDFIcon {
+  background-image: var(--jp-icon-pdf);
+}
+
+
 .jp-ChartIcon {
   background-image: var(--jp-icon-highcharts);
 }
