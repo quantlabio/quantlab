@@ -321,7 +321,7 @@ function createColorSwitcherNode(prompt: string): HTMLElement {
   label.textContent = prompt;
   label.className = TOOLBAR_LABEL_CLASS;
   let select = document.createElement('select');
-  for (let t of [prompt, 'red', 'yellow', 'blue']) {
+  for (let t of [prompt, 'darkred', 'red', 'orange', 'yellow', 'lightgreen', 'green', 'lightblue', 'blue', 'darkblue', 'purple']) {
     let option = document.createElement('option');
     option.value = t.toLowerCase();
 
@@ -329,15 +329,12 @@ function createColorSwitcherNode(prompt: string): HTMLElement {
       option.textContent = prompt;
       option.value = '';
     }else{
-      option.style.background = t;
+      option.style.backgroundColor = t;
     }
 
     select.appendChild(option);
   }
   select.className = TOOLBAR_DROPDOWN_CLASS;
-  //div.appendChild(label);
-  //let node = Styling.wrapSelect(select);
-  //node.classList.add(TOOLBAR_DROPDOWN_CLASS);
   div.appendChild(select);
   return div;
 }

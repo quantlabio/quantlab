@@ -253,13 +253,13 @@ function activate(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, 
       );
 
       // Create the body of the about dialog
-      let jupyterURL = 'https://jupyter.org/about.html';
+      let jupyterURL = 'https://www.quantlab.io';
       let contributorsURL = 'https://github.com/quantlabio/quantlab/graphs/contributors';
       let externalLinks = h.span({className: 'jp-About-externalLinks'},
         h.a({href: contributorsURL, target: '_blank', className: 'jp-Button-flat'}, 'CONTRIBUTOR LIST'),
-        h.a({href: jupyterURL, target: '_blank', className: 'jp-Button-flat'}, 'ABOUT PROJECT JUPYTER')
+        h.a({href: jupyterURL, target: '_blank', className: 'jp-Button-flat'}, 'ABOUT PROJECT QUANTLAB')
       );
-      let copyright = h.span({className: 'jp-About-copyright'}, '© 2017 Project Jupyter');
+      let copyright = h.span({className: 'jp-About-copyright'},'© 2017 Project QuantLab');
       let body = h.div({ className: 'jp-About-body' },
         externalLinks,
         copyright

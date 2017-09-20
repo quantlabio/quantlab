@@ -22,7 +22,7 @@
     "@quantlab/codeeditor": "^0.2.1",
     "@quantlab/coreutils": "^0.2.0",
     "@quantlab/docregistry": "^0.2.1",
-    "@quantlab/handsontable": "^0.33.8",
+    "@quantlab/handsontable": "^0.33.9",
     "@quantlab/services": "^0.2.1"
   },
   "devDependencies": {
