@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/csvviewer-extension",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "QuantLab - CSV Widget Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,9 +12,9 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.2.1",
-    "@quantlab/apputils": "^0.2.1",
-    "@quantlab/csvviewer": "^0.2.1"
+    "@quantlab/application": "^0.3.0",
+    "@quantlab/apputils": "^0.3.0",
+    "@quantlab/csvviewer": "^0.3.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/running-extension",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "QuantLab - Running Sessions Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,9 +12,9 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.2.1",
-    "@quantlab/running": "^0.2.1",
-    "@quantlab/services": "^0.2.1"
+    "@quantlab/application": "^0.3.0",
+    "@quantlab/running": "^0.3.0",
+    "@quantlab/services": "^0.3.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

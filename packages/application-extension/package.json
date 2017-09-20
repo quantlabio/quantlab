@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/application-extension",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "QuantLab - Application Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,10 +12,10 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.2.1",
-    "@quantlab/apputils": "^0.2.1",
-    "@quantlab/coreutils": "^0.2.0",
-    "@phosphor/virtualdom": "^1.1.1"
+    "@phosphor/virtualdom": "^1.1.1",
+    "@quantlab/application": "^0.3.0",
+    "@quantlab/apputils": "^0.3.0",
+    "@quantlab/coreutils": "^0.3.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
