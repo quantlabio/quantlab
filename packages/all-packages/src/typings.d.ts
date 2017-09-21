@@ -12,3 +12,4 @@
 /// <reference path="../../highcharts/typings/highcharts/highcharts.d.ts"/>
 /// <reference path="../../highcharts/typings/highstock/highstock.d.ts"/>
 /// <reference path="../../highcharts/typings/highmaps/highmaps.d.ts"/>
+/// <reference path="../../fasta-viewer/typings/msa/msa.d.ts"/>

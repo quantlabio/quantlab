@@ -31,7 +31,8 @@
     "watch": "tsc -w"
   },
   "quantlab": {
-    "extension": true
+    "extension": true,
+    "schemaDir": "schema"
   },
   "repository": {
     "type": "git",

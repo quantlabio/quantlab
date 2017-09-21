@@ -4,18 +4,18 @@
 |----------------------------------------------------------------------------*/
 
 @import '~font-awesome/css/font-awesome.min.css';
-@import '~@jupyterlab/application/style/index.css';
+@import '~@quantlab/application/style/index.css';
 @import './variables.css';
 
 :root {
 
   /* Images
 
-  These images are included with JupyterLab for showing the Project Jupyter logo
+  These images are included with QuantLab for showing the Project Jupyter logo
   */
   --jp-image-jupyter: url('./images/jupyter.svg');
-  --jp-image-jupyterlab: url('./images/jupyterlab.svg');
-  --jp-image-jupyterlab-workmark: url('./images/jupyterlab-wordmark.svg');
+  --jp-image-quantlab: url('./images/quantlab.svg');
+  --jp-image-quantlab-workmark: url('./images/quantlab-wordmark.svg');
   --jp-image-jupyter-favicon: url('./images/jupyter-favicon.svg');
   --jp-image-caretleft: url('./images/caretleft.png');
   --jp-image-caretright: url('./images/caretright.png');
@@ -24,7 +24,7 @@
 
   /* Icons
 
-  These icons are used throughout JupyterLab.
+  These icons are used throughout QuantLab.
   */
 
   /* The caret used for select dropdown styling. */
@@ -97,5 +97,5 @@
   --jp-icon-undo: url('./icons/md/undo.svg');
   --jp-icon-settings: url('./icons/jupyter/settings.svg');
   --jp-about-header-logo: url('./icons/jupyter/jupyter.svg');
-  --jp-about-header-wordmark: url('./images/jupyterlab-wordmark.svg');
+  --jp-about-header-wordmark: url('./images/quantlab-wordmark.svg');
 }

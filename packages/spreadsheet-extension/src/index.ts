@@ -14,7 +14,7 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  IStateDB
+  ISettingRegistry, IStateDB
 } from '@quantlab/coreutils';
 
 import {
@@ -95,7 +95,9 @@ const trackerPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
     IMainMenu,
     ICommandPalette,
     SpreadsheetPanel.IContentFactory,
-    ILayoutRestorer
+    ILayoutRestorer,
+    IStateDB,
+    ISettingRegistry
   ],
   optional: [ILauncher],
   activate: activateSpreadsheet,
@@ -208,7 +210,7 @@ function activateSheetTools(app: QuantLab, tracker: ISpreadsheetTracker, editorS
 /**
  * Activate the spreadsheet plugin.
  */
-function activateSpreadsheet(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: SpreadsheetPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): ISpreadsheetTracker {
+function activateSpreadsheet(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: SpreadsheetPanel.IContentFactory, restorer: ILayoutRestorer, state: IStateDB, settingRegistry: ISettingRegistry, launcher: ILauncher | null): ISpreadsheetTracker {
   let manager = app.serviceManager;
   const factory = new SpreadsheetFactory({
     name: FACTORY,
@@ -220,8 +222,42 @@ function activateSpreadsheet(app: QuantLab, mainMenu: IMainMenu, palette: IComma
     contentFactory: contentFactory
   });
 
-  const { commands } = app;
+  const { commands, restored } = app;
   const tracker = new SpreadsheetTracker({ namespace: 'spreadsheet' });
+
+  /**
+   * Update the setting values.
+   */
+  function updateSettings(settings: ISettingRegistry.ISettings): void {
+    //keyMap = settings.get('keyMap').composite as string | null || keyMap;
+    //theme = settings.get('theme').composite as string | null || theme;
+  }
+
+  /**
+   * Update the settings of the current tracker instances.
+   */
+  function updateTracker(): void {
+    tracker.forEach(widget => {
+      if (widget instanceof SpreadsheetPanel) {
+        //let cm = widget.editor.editor;
+        //cm.setOption('keyMap', keyMap);
+        //cm.setOption('theme', theme);
+      }
+    });
+  }
+
+  // Fetch the initial state of the settings.
+  Promise.all([settingRegistry.load('jupyter.extensions.spreadsheet'), restored]).then(([settings]) => {
+    updateSettings(settings);
+    updateTracker();
+    settings.changed.connect(() => {
+      updateSettings(settings);
+      updateTracker();
+    });
+  }).catch((reason: Error) => {
+    console.error(reason.message);
+    updateTracker();
+  });
 
   // Handle state restoration.
   restorer.restore(tracker, {
@@ -441,7 +477,7 @@ function createMenu(app: QuantLab): Menu {
 
   let exportTo = new Menu({ commands } );
 
-  menu.title.label = 'Spreadsheet';
+  menu.title.label = 'Sheets';
 
   exportTo.title.label = "Export to ...";
   EXPORT_TO_FORMATS.forEach(exportToFormat => {

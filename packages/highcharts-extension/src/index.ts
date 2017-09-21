@@ -14,7 +14,7 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  IStateDB
+  ISettingRegistry, IStateDB
 } from '@quantlab/coreutils';
 
 import {
@@ -82,7 +82,9 @@ const trackerPlugin: QuantLabPlugin<IHighChartsTracker> = {
     IMainMenu,
     ICommandPalette,
     HighChartsPanel.IContentFactory,
-    ILayoutRestorer
+    ILayoutRestorer,
+    IStateDB,
+    ISettingRegistry
   ],
   optional: [ILauncher],
   activate: activateHighCharts,
@@ -185,7 +187,7 @@ function activateChartTools(app: QuantLab, tracker: IHighChartsTracker, editorSe
   return Promise.resolve(charttools);
 }
 
-function activateHighCharts(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: HighChartsPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): IHighChartsTracker {
+function activateHighCharts(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: HighChartsPanel.IContentFactory, restorer: ILayoutRestorer, state: IStateDB, settingRegistry: ISettingRegistry, launcher: ILauncher | null): IHighChartsTracker {
   let manager = app.serviceManager;
   const factory = new HighChartsFactory({
     name: FACTORY,
@@ -197,8 +199,42 @@ function activateHighCharts(app: QuantLab, mainMenu: IMainMenu, palette: IComman
     contentFactory: contentFactory
   });
 
-  const { commands } = app;
+  const { commands, restored } = app;
   const tracker = new HighChartsTracker({ namespace: 'highcharts' });
+
+  /**
+   * Update the setting values.
+   */
+  function updateSettings(settings: ISettingRegistry.ISettings): void {
+    //keyMap = settings.get('keyMap').composite as string | null || keyMap;
+    //theme = settings.get('theme').composite as string | null || theme;
+  }
+
+  /**
+   * Update the settings of the current tracker instances.
+   */
+  function updateTracker(): void {
+    tracker.forEach(widget => {
+      if (widget instanceof HighChartsPanel) {
+        //let cm = widget.editor.editor;
+        //cm.setOption('keyMap', keyMap);
+        //cm.setOption('theme', theme);
+      }
+    });
+  }
+
+  // Fetch the initial state of the settings.
+  Promise.all([settingRegistry.load('jupyter.extensions.highcharts'), restored]).then(([settings]) => {
+    updateSettings(settings);
+    updateTracker();
+    settings.changed.connect(() => {
+      updateSettings(settings);
+      updateTracker();
+    });
+  }).catch((reason: Error) => {
+    console.error(reason.message);
+    updateTracker();
+  });
 
   // Handle state restoration.
   restorer.restore(tracker, {

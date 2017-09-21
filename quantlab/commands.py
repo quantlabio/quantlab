@@ -103,7 +103,7 @@ def install_extension(extension, app_dir=None, logger=None):
 
 @gen.coroutine
 def install_extension_async(extension, app_dir=None, logger=None, abort_callback=None):
-    """Install an extension package into JupyterLab.
+    """Install an extension package into QuantLab.
 
     Follows the semantics of https://docs.npmjs.com/cli/install.
 
@@ -167,13 +167,13 @@ def install_extension_async(extension, app_dir=None, logger=None, abort_callback
             os.remove(path)
 
     # Handle any schemas.
-    schemaDir = data['jupyterlab'].get('schemaDir', None)
+    schemaDir = data['quantlab'].get('schemaDir', None)
     if schemaDir:
         dest = pjoin(app_dir, 'schemas')
         _copy_tar_files(pjoin(target, fname), schemaDir, dest)
 
     # Handle a theme.
-    themeDir = data['jupyterlab'].get('themeDir', None)
+    themeDir = data['quantlab'].get('themeDir', None)
     if themeDir:
         normedName = data['name'].replace('@', '').replace('/', '')
         dest = pjoin(app_dir, 'themes', normedName)
@@ -195,14 +195,14 @@ def install_extension_async(extension, app_dir=None, logger=None, abort_callback
 
 
 def link_package(path, app_dir=None, logger=None):
-    """Link a package against the JupyterLab build."""
+    """Link a package against the QuantLab build."""
     func = partial(link_package_async, path, app_dir=app_dir, logger=logger)
     return IOLoop.instance().run_sync(func)
 
 
 @gen.coroutine
 def link_package_async(path, app_dir=None, logger=None, abort_callback=None):
-    """Link a package against the JupyterLab build.
+    """Link a package against the QuantLab build.
     """
     logger = logger or logging
     app_dir = get_app_dir(app_dir)
@@ -540,7 +540,7 @@ def build(app_dir=None, name=None, version=None, logger=None):
 
 @gen.coroutine
 def build_async(app_dir=None, name=None, version=None, logger=None, abort_callback=None):
-    """Build the JupyterLab application.
+    """Build the QuantLab application.
     """
     # Set up the build directory.
     logger = logger or logging
@@ -741,10 +741,10 @@ def _format_compatibility_errors(name, version, errors):
         l0 = max(l0, len(pkg) + 1)
         l1 = max(l1, len(jlab) + 1)
 
-    msg = '\n"%s@%s" is not compatible with the current JupyterLab'
+    msg = '\n"%s@%s" is not compatible with the current QuantLab'
     msg = msg % (name, version)
     msg += '\nConflicting Dependencies:\n'
-    msg += 'JupyterLab'.ljust(l0)
+    msg += 'QuantLab'.ljust(l0)
     msg += 'Extension'.ljust(l1)
     msg += 'Package\n'
 

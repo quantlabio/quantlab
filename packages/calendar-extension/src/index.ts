@@ -14,7 +14,7 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  IStateDB
+  ISettingRegistry, IStateDB
 } from '@quantlab/coreutils';
 
 import {
@@ -83,7 +83,9 @@ const trackerPlugin: QuantLabPlugin<ICalendarTracker> = {
     IMainMenu,
     ICommandPalette,
     CalendarPanel.IContentFactory,
-    ILayoutRestorer
+    ILayoutRestorer,
+    IStateDB,
+    ISettingRegistry
   ],
   optional: [ILauncher],
   activate: activateCalendar,
@@ -192,7 +194,7 @@ function activateCalendarTools(app: QuantLab, tracker: ICalendarTracker, editorS
 /**
  * Activate the calendar plugin.
  */
-function activateCalendar(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: CalendarPanel.IContentFactory, restorer: ILayoutRestorer, launcher: ILauncher | null): ICalendarTracker {
+function activateCalendar(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: CalendarPanel.IContentFactory, restorer: ILayoutRestorer, state: IStateDB, settingRegistry: ISettingRegistry, launcher: ILauncher | null): ICalendarTracker {
   let manager = app.serviceManager;
   const factory = new CalendarFactory({
     name: FACTORY,
@@ -204,8 +206,42 @@ function activateCalendar(app: QuantLab, mainMenu: IMainMenu, palette: ICommandP
     contentFactory: contentFactory
   });
 
-  const { commands } = app;
+  const { commands, restored } = app;
   const tracker = new CalendarTracker({ namespace: 'calendar' });
+
+  /**
+   * Update the setting values.
+   */
+  function updateSettings(settings: ISettingRegistry.ISettings): void {
+    //keyMap = settings.get('keyMap').composite as string | null || keyMap;
+    //theme = settings.get('theme').composite as string | null || theme;
+  }
+
+  /**
+   * Update the settings of the current tracker instances.
+   */
+  function updateTracker(): void {
+    tracker.forEach(widget => {
+      if (widget instanceof CalendarPanel) {
+        //let cm = widget.editor.editor;
+        //cm.setOption('keyMap', keyMap);
+        //cm.setOption('theme', theme);
+      }
+    });
+  }
+
+  // Fetch the initial state of the settings.
+  Promise.all([settingRegistry.load('jupyter.extensions.calendar'), restored]).then(([settings]) => {
+    updateSettings(settings);
+    updateTracker();
+    settings.changed.connect(() => {
+      updateSettings(settings);
+      updateTracker();
+    });
+  }).catch((reason: Error) => {
+    console.error(reason.message);
+    updateTracker();
+  });
 
   // Handle state restoration.
   restorer.restore(tracker, {

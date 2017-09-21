@@ -40,13 +40,14 @@
     "@quantlab/docmanager": "^0.2.1",
     "@quantlab/docmanager-extension": "^0.2.1",
     "@quantlab/docregistry": "^0.2.1",
-    "@quantlab/faq-extension": "^0.2.1",
+    "@quantlab/fasta-viewer": "^0.3.0",
     "@quantlab/filebrowser": "^0.2.1",
     "@quantlab/filebrowser-extension": "^0.2.1",
     "@quantlab/fileeditor": "^0.2.1",
     "@quantlab/fileeditor-extension": "^0.2.1",
     "@quantlab/fullcalendar": "^3.4.1",
     "@quantlab/fullcalendar-scheduler": "^1.6.3",
+    "@quantlab/google-drive": "^0.3.0",
     "@quantlab/handsontable": "^0.33.9",
     "@quantlab/help-extension": "^0.2.1",
     "@quantlab/highcharts": "^0.2.1",
@@ -97,6 +98,7 @@
     "marked": "^0.3.6",
     "minimist": "^1.2.0",
     "moment": "^2.17.1",
+    "msa": "^1.0.3",
     "path-posix": "^1.0.0",
     "sanitize-html": "^1.14.1",
     "semver": "^5.3.0",
@@ -128,9 +130,10 @@
       "@quantlab/console-extension": "",
       "@quantlab/csvviewer-extension": "",
       "@quantlab/docmanager-extension": "",
+      "@quantlab/fasta-viewer": "",
       "@quantlab/fileeditor-extension": "",
-      "@quantlab/faq-extension": "",
       "@quantlab/filebrowser-extension": "",
+      "@quantlab/google-drive": "",
       "@quantlab/help-extension": "",
       "@quantlab/highcharts-extension": "",
       "@quantlab/imageviewer-extension": "",
@@ -148,7 +151,8 @@
       "@quantlab/tooltip-extension": ""
     },
     "mimeExtensions": {
-      "@quantlab/pdf-extension": ""
+      "@quantlab/pdf-extension": "",
+      "@quantlab/fasta-viewer": ""
     },
     "singletonPackages": {
       "@quantlab/application": "",
