@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/markdownviewer-extension",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "QuantLab - Markdown Renderer Extension",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,10 +13,10 @@
     "lib": "lib/"
   },
   "dependencies": {
-    "@quantlab/application": "^0.3.0",
-    "@quantlab/apputils": "^0.3.0",
-    "@quantlab/docregistry": "^0.3.0",
-    "@quantlab/rendermime": "^0.3.0"
+    "@quantlab/application": "^0.4.0",
+    "@quantlab/apputils": "^0.4.0",
+    "@quantlab/docregistry": "^0.4.0",
+    "@quantlab/rendermime": "^0.4.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",

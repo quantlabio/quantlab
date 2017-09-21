@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/tooltip",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "QuantLab - Tooltip Widget",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -16,10 +16,10 @@
     "@phosphor/coreutils": "^1.2.0",
     "@phosphor/messaging": "^1.2.1",
     "@phosphor/widgets": "^1.3.0",
-    "@quantlab/apputils": "^0.3.0",
+    "@quantlab/apputils": "^0.4.0",
     "@quantlab/codeeditor": "^0.3.0",
-    "@quantlab/rendermime": "^0.3.0",
-    "@quantlab/services": "^0.3.0"
+    "@quantlab/rendermime": "^0.4.0",
+    "@quantlab/services": "^0.4.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
