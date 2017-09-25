@@ -9,11 +9,9 @@
   },
   "dependencies": {
     "@phosphor/algorithm": "^1.1.1",
-    "@phosphor/application": "^1.3.0",
     "@phosphor/commands": "^1.3.0",
     "@phosphor/coreutils": "^1.2.0",
     "@phosphor/disposable": "^1.1.1",
-    "@phosphor/dragdrop": "^1.1.1",
     "@phosphor/messaging": "^1.2.1",
     "@phosphor/signaling": "^1.2.1",
     "@phosphor/virtualdom": "^1.1.1",
@@ -38,12 +36,10 @@
     "@quantlab/docmanager": "^0.4.0",
     "@quantlab/docmanager-extension": "^0.4.0",
     "@quantlab/docregistry": "^0.4.0",
-    "@quantlab/fasta-viewer": "^0.4.0",
     "@quantlab/filebrowser": "^0.4.0",
     "@quantlab/filebrowser-extension": "^0.4.0",
     "@quantlab/fileeditor": "^0.4.0",
     "@quantlab/fileeditor-extension": "^0.4.0",
-    "@quantlab/google-drive": "^0.4.0",
     "@quantlab/help-extension": "^0.4.0",
     "@quantlab/highcharts": "^0.4.0",
     "@quantlab/highcharts-extension": "^0.4.0",
@@ -75,8 +71,7 @@
     "@quantlab/tooltip": "^0.4.0",
     "@quantlab/tooltip-extension": "^0.4.0",
     "es6-promise": "^4.1.0",
-    "font-awesome": "^4.7.0",
-    "msa": "^1.0.3"
+    "font-awesome": "^4.7.0"
   },
   "devDependencies": {
     "css-loader": "^0.27.3",
@@ -104,7 +99,6 @@
       "@quantlab/docmanager-extension": "",
       "@quantlab/filebrowser-extension": "",
       "@quantlab/fileeditor-extension": "",
-      "@quantlab/google-drive": "",
       "@quantlab/help-extension": "",
       "@quantlab/highcharts-extension": "",
       "@quantlab/imageviewer-extension": "",
@@ -123,7 +117,6 @@
       "@quantlab/tooltip-extension": ""
     },
     "mimeExtensions": {
-      "@quantlab/fasta-viewer": "",
       "@quantlab/pdf-extension": ""
     },
     "name": "QuantLab",

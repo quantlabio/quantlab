@@ -30,6 +30,7 @@
   margin: 0;
 }
 
+/*
 .fc-toolbar {
   height:28px;
 }
@@ -45,16 +46,10 @@
 .fc-toolbar .fc-center h2 {
   height:25px;
 }
-/*
-.jp-Calendar {
-  min-width: 200px;
-  min-height: 200px;
-  padding: 8px;
-  margin: 0;
-}
-*/
+
 .fc-view-container {
   width:100%;
   height: 100%;
   overflow: auto;
 }
+*/

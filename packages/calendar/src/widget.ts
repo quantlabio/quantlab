@@ -28,12 +28,6 @@ import '@quantlab/fullcalendar-scheduler/dist/scheduler.js';
 
 
 /**
- * The class name added to a calendar widget.
- */
-//const CALENDAR_CLASS = 'jp-Calendar';
-
-
-/**
  * A widget which manages a calendar session.
  */
 export
@@ -46,6 +40,13 @@ class Calendar extends Widget {
   constructor(options: Calendar.IOptions) {
     super();
 
+  }
+
+  get ApiKey(): string {
+    return this._apiKey;
+  }
+  set ApiKey(newValue: string) {
+    this._apiKey = newValue;
   }
 
   /**
@@ -171,7 +172,7 @@ class Calendar extends Widget {
   }
 
   /**
-   * Create the json model for the calendar.
+   * Create calendar from file
    */
   createCalendar(): void {
     let contextModel = this._model;
@@ -207,6 +208,29 @@ class Calendar extends Widget {
   }
 
   /**
+   * load google calendar
+   */
+  loadCalendar(widget:string, calendarId: string) {
+    this._calendar = $('#' + widget).children().eq(1);
+    this._calendar.fullCalendar({
+      schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+      aspectRatio: this._calendar.width()/(this._calendar.height()-66),
+      eventLimit: true,
+      googleCalendarApiKey: this._apiKey,
+      events: {
+        googleCalendarId: calendarId,
+        className: 'gcal-event'
+      },
+      header:{
+            left: 'today prev,next',
+            center: 'title',
+            right: 'agendaDay,agendaWeek,month'
+      },
+      defaultView: 'agendaWeek'
+    });
+  }
+
+  /**
    * Handle an update to the collaborators.
    */
   private _onCollaboratorsChanged(): void {
@@ -217,6 +241,7 @@ class Calendar extends Widget {
   private _calendar: JQuery = null;
   private _modelChanged = new Signal<this, void>(this);
   private _modelContentChanged = new Signal<this, void>(this);
+  private _apiKey:string = null;
 }
 
 /**

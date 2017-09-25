@@ -60,6 +60,9 @@ namespace CommandIDs {
 
   export
   const createConsole = 'calendar:create-console';
+
+  export
+  const loadCalendar = 'spreadsheet:load-calendar';
 };
 
 /**
@@ -71,6 +74,19 @@ const CALENDAR_ICON_CLASS = 'jp-CalendarIcon';
  * The name of the factory that creates Calendar widgets.
  */
 const FACTORY = 'Calendar';
+
+/**
+ * public holiday calendar id
+ */
+const HOLIDAY_CALENDARS = [
+  { 'name': 'London', 'id': 'en.uk#holiday@group.v.calendar.google.com' },
+  { 'name': 'New York', 'id': 'en.usa#holiday@group.v.calendar.google.com'},
+  { 'name': 'Singapore', 'id': 'en.singapore#holiday@group.v.calendar.google.com' },
+  { 'name': 'Hong Kong', 'id': 'en.hong_kong#holiday@group.v.calendar.google.com' },
+  { 'name': 'Tokyo', 'id': 'en.japanese#holiday@group.v.calendar.google.com' },
+  { 'name': 'Sydney', 'id': 'en.australian#holiday@group.v.calendar.google.com'},
+  { 'name': 'Toronto', 'id': 'en.canadian#holiday@group.v.calendar.google.com'}
+];
 
 
 /**
@@ -213,8 +229,7 @@ function activateCalendar(app: QuantLab, mainMenu: IMainMenu, palette: ICommandP
    * Update the setting values.
    */
   function updateSettings(settings: ISettingRegistry.ISettings): void {
-    //keyMap = settings.get('keyMap').composite as string | null || keyMap;
-    //theme = settings.get('theme').composite as string | null || theme;
+    Private.ApiKey = settings.get('ApiKey').composite as string | null || Private.ApiKey;
   }
 
   /**
@@ -223,9 +238,7 @@ function activateCalendar(app: QuantLab, mainMenu: IMainMenu, palette: ICommandP
   function updateTracker(): void {
     tracker.forEach(widget => {
       if (widget instanceof CalendarPanel) {
-        //let cm = widget.editor.editor;
-        //cm.setOption('keyMap', keyMap);
-        //cm.setOption('theme', theme);
+        widget.calendar.ApiKey = Private.ApiKey;
       }
     });
   }
@@ -413,6 +426,29 @@ function addCommands(app: QuantLab, tracker: CalendarTracker): void {
     },
     isEnabled: hasWidget
   });
+  commands.addCommand(CommandIDs.loadCalendar, {
+    label: args => {
+        return args['name'] as string;
+    },
+    execute: args => {
+      let id = `jp-Calendar-${Private.id++}`;
+
+      let name = (args['name']) as string;
+      let calId = (args['id']) as string;
+
+      let panel = new CalendarPanel({contentFactory:null});
+      panel.id = id;
+      panel.title.label = name;
+      panel.title.icon = 'CALENDAR_ICON_CLASS';
+      panel.title.closable = true;
+      panel.calendar.ApiKey = Private.ApiKey;
+
+      shell.addToMainArea(panel);
+      shell.activateById(panel.id);
+
+      panel.calendar.loadCalendar(id, calId);
+    }
+  });
 }
 
 /**
@@ -425,8 +461,16 @@ function populatePalette(palette: ICommandPalette): void {
     CommandIDs.restart,
     CommandIDs.changeKernel,
     CommandIDs.reconnectToKernel,
-    CommandIDs.createConsole
+    CommandIDs.createConsole,
+    CommandIDs.loadCalendar
   ].forEach(command => { palette.addItem({ command, category }); });
+
+  /*
+  HOLIDAY_CALENDARS.forEach( h => {
+    let args = { 'id': h['id'], 'name': h['name'], 'isPalette': true };
+    palette.addItem({ command: CommandIDs.loadCalendar, category: category, args: args });
+  });
+  */
 
 }
 
@@ -437,8 +481,17 @@ function populatePalette(palette: ICommandPalette): void {
 function createMenu(app: QuantLab): Menu {
   let { commands } = app;
   let menu = new Menu({ commands });
+  let holiday = new Menu({ commands } );
 
   menu.title.label = 'Calendar';
+
+  holiday.title.label = 'Holiday';
+  HOLIDAY_CALENDARS.forEach( h => {
+    holiday.addItem({ command: CommandIDs.loadCalendar, args: h });
+  });
+
+  menu.addItem({ type: 'submenu', submenu: holiday });
+  menu.addItem({ type: 'separator' });
 
   menu.addItem({ command: CommandIDs.interrupt });
   menu.addItem({ command: CommandIDs.restart });
@@ -447,4 +500,20 @@ function createMenu(app: QuantLab): Menu {
   menu.addItem({ command: CommandIDs.createConsole });
 
   return menu;
+}
+
+
+/**
+ * A namespace for private data.
+ */
+namespace Private {
+
+  /**
+   * An incrementing counter for ids.
+   */
+  export
+  let id = 0;
+
+  export
+  let ApiKey:string = null;
 }
