@@ -111,7 +111,7 @@ namespace ToolbarItems {
   }
 
   /**
-   * Create align left button toolbar item.
+   * Create align right button toolbar item.
    */
   export
   function createAlignRightButton(panel: SpreadsheetPanel): ToolbarButton {
@@ -125,7 +125,7 @@ namespace ToolbarItems {
   }
 
   /**
-   * Create align left button toolbar item.
+   * Create Re-Calculate button toolbar item.
    */
   export
   function createReCalculateButton(panel: SpreadsheetPanel): ToolbarButton {
@@ -135,6 +135,20 @@ namespace ToolbarItems {
         panel.spreadsheet.recalculate();
       },
       tooltip: 'Re-Calculate'
+    });
+  }
+
+  /**
+   * Create chart button toolbar item.
+   */
+  export
+  function createChartButton(panel: SpreadsheetPanel): ToolbarButton {
+    return new ToolbarButton({
+      className: 'fa fa-line-chart',
+      onClick: () => {
+
+      },
+      tooltip: 'Create Charts'
     });
   }
 
@@ -167,6 +181,11 @@ namespace ToolbarItems {
     toolbar.addItem('font', createFontColorItem(panel));
 
     toolbar.addItem('recalculate', createReCalculateButton(panel));
+    toolbar.addItem('chart', createChartButton(panel));
+
+    //let fx = document.createElement('input') as HTMLElement;
+    //let fxw = new Widget({node:fx});
+    //toolbar.addItem('fx', fxw);
 
     toolbar.addItem('spacer', Toolbar.createSpacerItem());
     toolbar.addItem('kernelName', Toolbar.createKernelNameItem(panel.session));

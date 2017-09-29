@@ -17,8 +17,9 @@ import {
   ISpreadsheetModel
 } from './model';
 
-import * as Handsontable
-  from '@quantlab/handsontable';
+import * as $ from 'jquery';
+import * as Highcharts from 'highcharts';
+import * as Handsontable from '@quantlab/handsontable';
 
 /**
  * The class name added to a spreadsheet widget.
@@ -238,10 +239,6 @@ class Spreadsheet extends Widget {
     this._sheet.formula.parser.setFunction(name, func);
   }
 
-  //render():void{
-  //  this._sheet.render();
-  //}
-
   recalculate():void{
     this._sheet.formula.matrix.data.forEach( (fx:any) =>{
       if(fx.error)
@@ -264,7 +261,7 @@ class Spreadsheet extends Widget {
 
     content.cells = [];
 
-    const container = document.getElementById(this.parent.id).children[1];
+    const container = document.getElementById(this.parent.id).children[1] as HTMLElement;
 
     if(this._sheet != null){
       this._sheet.destroy();
@@ -304,6 +301,8 @@ class Spreadsheet extends Widget {
       }
     });
 
+    this._sheet.render();
+
     this._sheet.addHook('afterSelection',function(r1: number, c1: number, r2: number, c2: number, preventScrolling:boolean){
       parent._activeCell = parent._sheet.getDataAtCell(r1,c1);
       parent._r1 = r1;
@@ -312,7 +311,45 @@ class Spreadsheet extends Widget {
       parent._c2 = c2;
     });
 
-    //this._sheet.render();
+    // handle spreadsheet scroll for charts
+    $('.jp-Spreadsheet').scroll( () => {
+      $('.jp-Spreadsheet-chart').css({'top':500-$(document).scrollTop() + 'px', 'left':100-$(document).scrollLeft() + 'px'});
+    });
+
+    // render charts
+    let charts = content.chart || [];
+    let i = 0;
+    charts.forEach( (chart:any) => {
+      let chartContainer = $('<div>',{
+        'class': 'jp-Spreadsheet-chart',
+        'id': 'chart-container-' + i++
+      });
+      $('#' + this.parent.id).append(chartContainer);
+
+      chart.credits = {
+        enabled: false
+      };
+      chart.reflow = false;
+
+      let fromRow = this._sheet.formula.utils.cellCoords(chart.source.range.split(':')[0]).row;
+      let fromCol = this._sheet.formula.utils.cellCoords(chart.source.range.split(':')[0]).col;
+      let toRow = this._sheet.formula.utils.cellCoords(chart.source.range.split(':')[1]).row;
+      //let toCol = this._sheet.formula.utils.cellCoords(chart.source.range.split(':')[1]).col;
+
+      chart['series'] = [];
+      chart.series[0] = [];
+      chart.series[1] = [];
+      content.data.slice(fromRow, toRow+1).forEach( (a:any[]) => {
+        chart.series[0].push(a[fromCol+1]);
+        chart.series[1].push(a[fromCol+2]);
+      })
+
+      let temp = Highcharts.chart(chartContainer.attr('id'), chart);
+      temp.series[0].setData(chart.series[0]);
+      temp.series[1].setData(chart.series[1]);
+    });
+
+
   }
 
   /**

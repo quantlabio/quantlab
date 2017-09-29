@@ -26,13 +26,24 @@
 .jp-Spreadsheet {
   height: 100%;
   width: 100%;
+
 }
 
 .jp-Spreadsheet::after {
   display: block;
   content: '';
-  min-height: var(--jp-notebook-scroll-padding);
+
 }
+
+.jp-Spreadsheet-chart{
+  position: absolute;
+  top: 200px;
+  left: 500px;
+  height: 400px;
+  width: 600px;
+  z-index: 100;
+}
+
 
 /*
 td.formula {

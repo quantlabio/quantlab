@@ -20,6 +20,7 @@ import {
 import * as Highcharts from 'highcharts';
 import Highmore = require('highcharts/highcharts-more');
 import High3D = require('highcharts/highcharts-3d');
+import HighData = require('highcharts/modules/data');
 import HighDrag3D = require('highcharts/modules/draggable-3d');
 import HighGauge = require('highcharts/modules/solid-gauge');
 
@@ -42,8 +43,7 @@ class HighChartsFactory extends ABCWidgetFactory<HighChartsPanel, IHighChartsMod
     High3D(Highcharts);
     HighDrag3D(Highcharts);
     HighGauge(Highcharts);
-    //HighData(Highcharts);
-    //HighExport(Highcharts);
+    HighData(Highcharts);
   }
 
   /**

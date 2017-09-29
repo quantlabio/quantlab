@@ -17,7 +17,7 @@ import {
   IHighChartsModel
 } from './model';
 
-
+import * as $ from 'jquery';
 import * as Highcharts from 'highcharts';
 import * as Highstock from 'highcharts/highstock';
 import * as Highmaps from 'highcharts/highmaps';
@@ -175,15 +175,52 @@ class HighCharts extends Widget {
       this._chart.destroy();
     }
 
-    if(content.category == 'chart'){
-      this._chart = Highcharts.chart(container, content);
-    }
-    if(content.category == 'stock'){
-      this._chart = new Highstock.StockChart(container, content);
-    }
-    if(content.category == 'map'){
-      //content.mapData = worldGeo;
-      this._chart = Highmaps.mapChart(container, content);
+    // load data from file
+    if(content.source.type == 'file'){
+
+      $.get('/files' + content.source.name, ( file =>{
+        switch(content.source.format){
+          case('json'):
+            content.data = {
+              json: file
+            };
+            break;
+          case('csv'):
+            content.data = {
+              csv: file
+            };
+            break;
+          default:
+            break;
+        }
+
+        switch(content.category){
+          case('chart'):
+            this._chart = Highcharts.chart(container, content);
+            break;
+          case('stock'):
+            this._chart = new Highstock.StockChart(container, content);
+            break;
+          case('map'):
+            this._chart = Highmaps.mapChart(container, content);
+            break;
+          default:
+            break;
+        }
+      }));
+
+    }else{ // load data from chart file itself
+
+      if(content.category == 'chart'){
+        this._chart = Highcharts.chart(container, content);
+      }
+      if(content.category == 'stock'){
+        this._chart = new Highstock.StockChart(container, content);
+      }
+      if(content.category == 'map'){
+        //content.mapData = worldGeo;
+        this._chart = Highmaps.mapChart(container, content);
+      }
     }
 
   }
