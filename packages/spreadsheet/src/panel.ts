@@ -311,7 +311,7 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
             showPalette:true,
             allowEmpty:true,
             hideAfterPaletteSelect:true,
-            color: null,
+            color: '#fff',
             palette: colors,
             change: ( (color:any) => {
               this.spreadsheet.style('background', color.toHexString())
@@ -322,7 +322,7 @@ class SpreadsheetPanel extends Widget implements DocumentRegistry.IReadyWidget {
             showPalette:true,
             allowEmpty:true,
             hideAfterPaletteSelect:true,
-            color: null,
+            color: '#000',
             palette: colors,
             change: ( (color:any) => {
               this.spreadsheet.style('color', color.toHexString())

@@ -26,7 +26,6 @@
 .jp-Spreadsheet {
   height: 100%;
   width: 100%;
-
 }
 
 .jp-Spreadsheet::after {
@@ -56,7 +55,7 @@ td.formula-error {
 }
 
 .sp-preview {
-  height: 15px;
+  height: 12px;
 }
 
 /*-----------------------------------------------------------------------------

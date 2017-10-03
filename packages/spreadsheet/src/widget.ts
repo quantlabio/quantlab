@@ -280,7 +280,7 @@ class Spreadsheet extends Widget {
       minCols: 32,
       colWidths: content.colWidths,
       //rowHeights: content.rowHeights,
-      contextMenu: true,
+      contextMenu: false,
       formulas: true,
       comments: true,
       //columnSorting: true,
@@ -309,11 +309,6 @@ class Spreadsheet extends Widget {
       parent._r2 = r2;
       parent._c1 = c1;
       parent._c2 = c2;
-    });
-
-    // handle spreadsheet scroll for charts
-    $('.jp-Spreadsheet').scroll( () => {
-      $('.jp-Spreadsheet-chart').css({'top':500-$(document).scrollTop() + 'px', 'left':100-$(document).scrollLeft() + 'px'});
     });
 
     // render charts
@@ -347,6 +342,11 @@ class Spreadsheet extends Widget {
       let temp = Highcharts.chart(chartContainer.attr('id'), chart);
       temp.series[0].setData(chart.series[0]);
       temp.series[1].setData(chart.series[1]);
+    });
+
+    // handle spreadsheet scroll for charts
+    $('#'+this.id).find('.wtHolder').scroll( () => {
+      $('.jp-Spreadsheet-chart').css({'top':200-$('#'+this.id).find('.wtHolder').scrollTop() + 'px', 'left':500-$('#'+this.id).find('.wtHolder').scrollLeft() + 'px'});
     });
 
 
