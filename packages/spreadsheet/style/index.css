@@ -8,8 +8,8 @@
 |----------------------------------------------------------------------------*/
 
 @import './toolbar.css';
-
 @import url('~@quantlab/handsontable/dist/handsontable.full.css');
+@import url('~spectrum-colorpicker/spectrum.css');
 
 
 /*-----------------------------------------------------------------------------
@@ -55,8 +55,12 @@ td.formula-error {
   background-color: red;
 }
 
+.sp-preview {
+  height: 15px;
+}
+
 /*-----------------------------------------------------------------------------
-| Cell toolbar
+| toolbar
 |----------------------------------------------------------------------------*/
 
 

@@ -17,6 +17,8 @@ import {
   SpreadsheetPanel
 } from './panel';
 
+import 'spectrum-colorpicker';
+
 /**
  * A widget factory for Spreadsheet panels.
  */

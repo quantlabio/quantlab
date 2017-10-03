@@ -168,7 +168,7 @@ class Spreadsheet extends Widget {
   /**
    * spreadsheet format functions
    */
-  style(property:string, value:string): void {
+  style(property:string, value:any): void {
     let parent = this;
     let cell = this._sheet.getSettings().cell;
 
@@ -301,7 +301,7 @@ class Spreadsheet extends Widget {
       }
     });
 
-    this._sheet.render();
+    //this._sheet.render();
 
     this._sheet.addHook('afterSelection',function(r1: number, c1: number, r2: number, c2: number, preventScrolling:boolean){
       parent._activeCell = parent._sheet.getDataAtCell(r1,c1);

@@ -23,7 +23,8 @@
     "@quantlab/coreutils": "^0.3.0",
     "@quantlab/docregistry": "^0.4.0",
     "@quantlab/handsontable": "^0.33.9",
-    "@quantlab/services": "^0.4.0"
+    "@quantlab/services": "^0.4.0",
+    "spectrum-colorpicker": "^1.8.0"
   },
   "devDependencies": {
     "rimraf": "^2.5.2",
