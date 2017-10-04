@@ -219,6 +219,9 @@ class Spreadsheet extends Widget {
     }
     this._model = null;
     this._sheet.destroy();
+    this._charts.forEach( (chart:any) => {
+      chart.destroy();
+    });
     super.dispose();
   }
 
@@ -297,6 +300,9 @@ class Spreadsheet extends Widget {
       afterChange: function(changes: Array<[number, number|string, any, any]>, source?: string) {
         if (source != 'loadData'){
           parent._model.dirty = true;
+          parent._charts.forEach( (chart:any) => {
+            //chart.redraw(false);
+          })
         }
       }
     });
@@ -312,6 +318,7 @@ class Spreadsheet extends Widget {
     });
 
     // render charts
+    this._charts = [];
     let charts = content.chart || [];
     let i = 0;
     charts.forEach( (chart:any) => {
@@ -342,6 +349,8 @@ class Spreadsheet extends Widget {
       let temp = Highcharts.chart(chartContainer.attr('id'), chart);
       temp.series[0].setData(chart.series[0]);
       temp.series[1].setData(chart.series[1]);
+
+      this._charts.push(temp);
     });
 
     // handle spreadsheet scroll for charts
@@ -379,6 +388,7 @@ class Spreadsheet extends Widget {
   private _c1: number = null;
   private _r2: number = null;
   private _c2: number = null;
+  private _charts: any[] = null;
 }
 
 /**

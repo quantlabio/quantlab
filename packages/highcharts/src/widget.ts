@@ -22,6 +22,18 @@ import * as Highcharts from 'highcharts';
 import * as Highstock from 'highcharts/highstock';
 import * as Highmaps from 'highcharts/highmaps';
 
+
+const maps:{[index:string]:any}  = {
+  world: require('../json/world.json'),
+  africa: require('../json/africa.json'),
+  antarctica: require('../json/antarctica.json'),
+  asia: require('../json/asia.json'),
+  europe: require('../json/europe.json'),
+  northamerica: require('../json/north-america.json'),
+  oceania: require('../json/oceania.json'),
+  southamerica: require('../json/south-america.json')
+}
+
 //const HIGHCHARTS_CLASS = 'jp-HighCharts';
 
 
@@ -179,29 +191,25 @@ class HighCharts extends Widget {
     if(content.source.type == 'file'){
 
       $.get('/files' + content.source.name, ( file =>{
-        switch(content.source.format){
-          case('json'):
-            content.data = {
-              json: file
-            };
-            break;
-          case('csv'):
-            content.data = {
-              csv: file
-            };
-            break;
-          default:
-            break;
-        }
 
         switch(content.category){
           case('chart'):
+            content.data = {
+              csv: file
+            };
             this._chart = Highcharts.chart(container, content);
             break;
           case('stock'):
+            content.series.forEach( (serie:any) => {
+              serie.data = JSON.parse(file);
+            });
             this._chart = new Highstock.StockChart(container, content);
             break;
           case('map'):
+            content.series.forEach( (serie:any) => {
+              serie.mapData = maps[serie.region];
+              serie.data = JSON.parse(file);
+            });
             this._chart = Highmaps.mapChart(container, content);
             break;
           default:
@@ -218,7 +226,9 @@ class HighCharts extends Widget {
         this._chart = new Highstock.StockChart(container, content);
       }
       if(content.category == 'map'){
-        //content.mapData = worldGeo;
+        content.series.forEach( (serie:any) => {
+          serie.mapData = maps[serie.region];
+        });
         this._chart = Highmaps.mapChart(container, content);
       }
     }

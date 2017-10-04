@@ -144,13 +144,11 @@ namespace ToolbarItems {
   export
   function createFillColorItem(panel: SpreadsheetPanel): Widget {
     let fillColor = document.createElement('input');
-    //fillColor.id = 'fillcolor-' + panel.id.split('-')[1];
     return new Widget({node:fillColor});
   }
   export
   function createFontColorItem(panel: SpreadsheetPanel): Widget {
     let fontColor = document.createElement('input');
-    //fontColor.id = 'fontcolor-' + panel.id.split('-')[1];
     return new Widget({node:fontColor});
   }
 
