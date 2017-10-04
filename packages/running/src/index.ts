@@ -102,6 +102,16 @@ const SHUTDOWN_BUTTON_CLASS = 'jp-RunningSessions-itemShutdown';
 const NOTEBOOK_ICON_CLASS = 'jp-mod-notebook';
 
 /**
+ * The class name added to a notebook icon.
+ */
+const SPREADSHEET_ICON_CLASS = 'jp-mod-spreadsheet';
+
+/**
+ * The class name added to a notebook icon.
+ */
+const HIGHCHARTS_ICON_CLASS = 'jp-mod-highcharts';
+
+/**
  * The class name added to a console icon.
  */
 const CONSOLE_ICON_CLASS = 'jp-mod-console';
@@ -659,6 +669,10 @@ namespace RunningSessions {
 
       if (name.indexOf('.ipynb') !== -1) {
         icon.className = `${ITEM_ICON_CLASS} ${NOTEBOOK_ICON_CLASS}`;
+      } else if(name.indexOf('.xls') !== -1){
+        icon.className = `${ITEM_ICON_CLASS} ${SPREADSHEET_ICON_CLASS}`;
+      } else if(name.indexOf('.hc') !== -1){
+        icon.className = `${ITEM_ICON_CLASS} ${HIGHCHARTS_ICON_CLASS}`;
       } else if (model.type.toLowerCase() === 'console') {
         icon.className = `${ITEM_ICON_CLASS} ${CONSOLE_ICON_CLASS}`;
       } else {

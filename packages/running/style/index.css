@@ -126,6 +126,16 @@
 }
 
 
+.jp-RunningSessions-itemIcon.jp-mod-spreadsheet {
+  background-image: var(--jp-icon-spreadsheet);
+}
+
+
+.jp-RunningSessions-itemIcon.jp-mod-highcharts {
+  background-image: var(--jp-icon-highcharts);
+}
+
+
 .jp-RunningSessions-itemIcon.jp-mod-console {
   background-image: var(--jp-icon-console);
 }
