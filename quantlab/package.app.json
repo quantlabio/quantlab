@@ -70,6 +70,8 @@
     "@quantlab/shortcuts-extension": "^0.2.1",
     "@quantlab/spreadsheet": "^0.2.1",
     "@quantlab/spreadsheet-extension": "^0.2.1",
+    "@quantlab/sql": "^0.4.0",
+    "@quantlab/sql-extension": "^0.4.0",
     "@quantlab/tabmanager-extension": "^0.2.1",
     "@quantlab/terminal": "^0.2.1",
     "@quantlab/terminal-extension": "^0.2.1",

@@ -38,6 +38,7 @@
   --jp-icon-calendar: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/calendar.svg');
   --jp-icon-pdf: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/pdf.svg');
   --jp-icon-javascript: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/javascript.svg');
+  --jp-icon-sql: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/sql.svg');
   --jp-icon-highcharts: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/highcharts.svg');
   --jp-icon-directory: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/directory.svg');
   --jp-icon-directory-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/directory_selected.svg');

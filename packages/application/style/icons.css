@@ -233,6 +233,11 @@
 }
 
 
+.jp-SQLIcon {
+  background-image: var(--jp-icon-sql);
+}
+
+
 .jp-StopIcon {
   background-image: var(--jp-icon-stop);
 }

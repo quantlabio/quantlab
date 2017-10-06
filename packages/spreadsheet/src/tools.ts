@@ -356,7 +356,6 @@ namespace SheetTools {
       let model = this._model;
       let editorWidget = new CodeEditorWrapper({ model, factory });
       editorWidget.addClass('jp-InputArea-editor');
-      editorWidget.addClass('jp-InputArea-editor');
       editorWidget.editor.setOption('readOnly', true);
       layout.addWidget(prompt);
       layout.addWidget(editorWidget);

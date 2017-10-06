@@ -1176,6 +1176,11 @@ namespace DocumentRegistry {
       iconClass: 'jp-MaterialIcon jp-SpreadsheetIcon'
     },
     {
+      name: 'sql',
+      extensions: ['.sql'],
+      iconClass: 'jp-MaterialIcon jp-SQLIcon'
+    },
+    {
       name: 'js',
       extensions: ['.js'],
       iconClass: 'jp-MaterialIcon jp-JavaScriptIcon'
