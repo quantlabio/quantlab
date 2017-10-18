@@ -96,7 +96,7 @@ class SQL extends Widget implements DocumentRegistry.IReadyWidget {
 
     this._context.ready.then(() => {
       this._editor.editor.model.value.text = this._context.model.toString();
-      this._editor.editor.model.mimeType = 'text/x-sql';
+      this._editor.editor.model.mimeType = 'text/x-mysql';
       this._updateGrid();
       this._ready.resolve(undefined);
     });
