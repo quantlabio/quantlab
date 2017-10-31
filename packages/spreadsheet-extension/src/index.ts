@@ -305,7 +305,7 @@ function activateSpreadsheet(app: QuantLab, mainMenu: IMainMenu, palette: IComma
   // The launcher callback.
   let callback = (cwd: string, name: string) => {
     return commands.execute(
-      'docmanager:new-untitled', { path: cwd, type: 'file' }
+      'docmanager:new-untitled', { path: cwd, type: 'file', ext: '.xls' }
     ).then(model => {
       return commands.execute('docmanager:open', {
         path: model.path, factory: FACTORY,

@@ -174,10 +174,6 @@ namespace ToolbarItems {
     toolbar.addItem('recalculate', createReCalculateButton(panel));
     toolbar.addItem('chart', createChartButton(panel));
 
-    //let fx = document.createElement('input') as HTMLElement;
-    //let fxw = new Widget({node:fx});
-    //toolbar.addItem('fx', fxw);
-
     toolbar.addItem('spacer', Toolbar.createSpacerItem());
     toolbar.addItem('kernelName', Toolbar.createKernelNameItem(panel.session));
     toolbar.addItem('kernelStatus', Toolbar.createKernelStatusItem(panel.session));

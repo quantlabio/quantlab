@@ -271,6 +271,7 @@ class Spreadsheet extends Widget {
     }
 
     let parent = this;
+    let i = 0; //charts counter
 
     this._sheet = new Handsontable(container, {
       data: content.data,
@@ -304,10 +305,44 @@ class Spreadsheet extends Widget {
             //chart.redraw(false);
           })
         }
+      },
+      afterRender: function(isForced: boolean) {
+        // render charts
+        parent._charts = [];
+        let charts = content.chart || [];
+
+        charts.forEach( (chart:any) => {
+          let chartContainer = $('<div>',{
+            'class': 'jp-Spreadsheet-chart',
+            'id': 'chart-container-' + i++
+          });
+          $('#' + parent.parent.id).append(chartContainer);
+
+          chart.credits = {
+            enabled: false
+          };
+          chart.reflow = false;
+
+          let matrix = this.formula.parser.parse(chart.source.range).result;
+
+          const arrayColumn = (arr:any[], n:number) => arr.map(x => x[n]);
+
+          chart['series'] = [];
+          chart.series[0] = arrayColumn(matrix, 1);
+          chart.series[1] = arrayColumn(matrix, 2);
+
+          let temp = Highcharts.chart(chartContainer.attr('id'), chart);
+          temp.series[0].setData(chart.series[0]);
+          temp.series[1].setData(chart.series[1]);
+
+          parent._charts.push(temp);
+        });
+
       }
     });
 
-    //this._sheet.render();
+    // force render
+    this._sheet.render();
 
     this._sheet.addHook('afterSelection',function(r1: number, c1: number, r2: number, c2: number, preventScrolling:boolean){
       parent._activeCell = parent._sheet.getDataAtCell(r1,c1);
@@ -315,42 +350,6 @@ class Spreadsheet extends Widget {
       parent._r2 = r2;
       parent._c1 = c1;
       parent._c2 = c2;
-    });
-
-    // render charts
-    this._charts = [];
-    let charts = content.chart || [];
-    let i = 0;
-    charts.forEach( (chart:any) => {
-      let chartContainer = $('<div>',{
-        'class': 'jp-Spreadsheet-chart',
-        'id': 'chart-container-' + i++
-      });
-      $('#' + this.parent.id).append(chartContainer);
-
-      chart.credits = {
-        enabled: false
-      };
-      chart.reflow = false;
-
-      let fromRow = this._sheet.formula.utils.cellCoords(chart.source.range.split(':')[0]).row;
-      let fromCol = this._sheet.formula.utils.cellCoords(chart.source.range.split(':')[0]).col;
-      let toRow = this._sheet.formula.utils.cellCoords(chart.source.range.split(':')[1]).row;
-      //let toCol = this._sheet.formula.utils.cellCoords(chart.source.range.split(':')[1]).col;
-
-      chart['series'] = [];
-      chart.series[0] = [];
-      chart.series[1] = [];
-      content.data.slice(fromRow, toRow+1).forEach( (a:any[]) => {
-        chart.series[0].push(a[fromCol+1]);
-        chart.series[1].push(a[fromCol+2]);
-      })
-
-      let temp = Highcharts.chart(chartContainer.attr('id'), chart);
-      temp.series[0].setData(chart.series[0]);
-      temp.series[1].setData(chart.series[1]);
-
-      this._charts.push(temp);
     });
 
     // handle spreadsheet scroll for charts
