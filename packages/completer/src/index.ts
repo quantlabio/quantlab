@@ -1,13 +1,12 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
-import {
-  IClientSession
-} from '@quantlab/apputils';
-
 import {
   CodeEditor
 } from '@quantlab/codeeditor';
+
+import {
+  IDataConnector
+} from '@quantlab/coreutils';
 
 import {
   Token
@@ -17,9 +16,14 @@ import {
   Widget
 } from '@phosphor/widgets';
 
+import {
+  CompletionHandler
+} from './handler';
+
 import '../style/index.css';
 
 export * from './handler';
+export * from './kernelconnector';
 export * from './model';
 export * from './widget';
 
@@ -30,7 +34,7 @@ export * from './widget';
  * The completion manager token.
  */
 export
-const ICompletionManager = new Token<ICompletionManager>('jupyter.services.completer');
+const ICompletionManager = new Token<ICompletionManager>('@quantlab/completer:ICompletionManager');
 /* tslint:enable */
 
 
@@ -64,9 +68,9 @@ namespace ICompletionManager {
     editor: CodeEditor.IEditor | null;
 
     /**
-     * The session used by the completer to make API requests.
+     * The data connector used to populate the completer.
      */
-    session: IClientSession;
+    connector: IDataConnector<CompletionHandler.IReply, void, CompletionHandler.IRequest>;
   }
 
   /**

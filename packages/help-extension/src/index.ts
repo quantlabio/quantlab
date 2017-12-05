@@ -1,17 +1,20 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
 import {
-  Dialog, ICommandPalette, IFrame, IMainMenu, InstanceTracker, showDialog
+  Dialog, ICommandPalette, IFrame, InstanceTracker, showDialog
 } from '@quantlab/apputils';
 
 import {
   PageConfig, URLExt
 } from '@quantlab/coreutils';
+
+import {
+  IMainMenu
+} from '@quantlab/mainmenu';
 
 import {
   Message
@@ -22,7 +25,7 @@ import {
 } from '@phosphor/virtualdom';
 
 import {
-  Menu, PanelLayout, Widget
+  PanelLayout, Widget
 } from '@phosphor/widgets';
 
 import '../style/index.css';
@@ -108,10 +111,6 @@ const RESOURCES = [
     text: 'Markdown Reference',
     url: 'https://help.github.com/articles/' +
       'getting-started-with-writing-and-formatting-on-github/'
-  },
-  {
-    text: 'QuantLibXL Reference',
-    url: 'http://quantlib.org/quantlibxl/allfunctions.html'
   }
 ];
 
@@ -125,7 +124,7 @@ RESOURCES.sort((a: any, b: any) => {
  */
 const plugin: QuantLabPlugin<void> = {
   activate,
-  id: 'jupyter.extensions.help-handler',
+  id: '@quantlab/help-extension:plugin',
   requires: [IMainMenu, ICommandPalette, ILayoutRestorer],
   autoStart: true
 };
@@ -186,7 +185,6 @@ function activate(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, 
   let counter = 0;
   const category = 'Help';
   const namespace = 'help-doc';
-  const menu = createMenu();
   const { commands, shell, info} = app;
   const tracker = new InstanceTracker<HelpWidget>({ namespace });
 
@@ -210,26 +208,17 @@ function activate(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, 
     return iframe;
   }
 
-  /**
-   * Create a menu for the help plugin.
-   */
-  function createMenu(): Menu {
-    let { commands } = app;
-    let menu = new Menu({ commands });
-    menu.title.label = category;
-
-    menu.addItem({ command: CommandIDs.about });
-    menu.addItem({ command: 'faq-quantlab:open' });
-    menu.addItem({ command: CommandIDs.launchClassic });
-    menu.addItem({ type: 'separator' });
-    RESOURCES.forEach(args => {
-      menu.addItem({ args, command: CommandIDs.open });
-    });
-    menu.addItem({ type: 'separator' });
-    menu.addItem({ command: 'apputils:clear-statedb' });
-
-    return menu;
-  }
+  // Populate the Help menu.
+  const helpMenu = mainMenu.helpMenu;
+  const labGroup = [
+    CommandIDs.about,
+    'faq-quantlab:open',
+    CommandIDs.launchClassic
+  ].map(command => { return { command }; });
+  helpMenu.addGroup(labGroup, 0);
+  const resourcesGroup =
+    RESOURCES.map(args => { return { args, command: CommandIDs.open }; });
+  helpMenu.addGroup(resourcesGroup, 10);
 
   commands.addCommand(CommandIDs.about, {
     label: `About ${info.name}`,
@@ -259,7 +248,7 @@ function activate(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, 
         h.a({href: contributorsURL, target: '_blank', className: 'jp-Button-flat'}, 'CONTRIBUTOR LIST'),
         h.a({href: jupyterURL, target: '_blank', className: 'jp-Button-flat'}, 'ABOUT PROJECT QUANTLAB')
       );
-      let copyright = h.span({className: 'jp-About-copyright'},'© 2017 Project QuantLab');
+      let copyright = h.span({className: 'jp-About-copyright'}, '© 2017 Project QuantLab');
       let body = h.div({ className: 'jp-About-body' },
         externalLinks,
         copyright
@@ -303,5 +292,4 @@ function activate(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, 
   palette.addItem({ command: 'apputils:clear-statedb', category });
   palette.addItem({ command: CommandIDs.launchClassic, category });
 
-  mainMenu.addMenu(menu);
 }

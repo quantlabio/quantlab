@@ -2,14 +2,31 @@
   "name": "@quantlab/csvviewer-extension",
   "version": "0.4.0",
   "description": "QuantLab - CSV Widget Extension",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "homepage": "https://github.com/quantlabio/quantlab",
+  "bugs": {
+    "url": "https://github.com/quantlabio/quantlab/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Project Jupyter",
   "files": [
     "lib/*.d.ts",
+    "lib/*.js.map",
     "lib/*.js"
   ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "directories": {
     "lib": "lib/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quantlabio/quantlab.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf lib",
+    "prepublishOnly": "npm run build",
+    "watch": "tsc -w"
   },
   "dependencies": {
     "@quantlab/application": "^0.4.0",
@@ -17,25 +34,10 @@
     "@quantlab/csvviewer": "^0.4.0"
   },
   "devDependencies": {
-    "rimraf": "^2.5.2",
-    "typescript": "~2.4.1"
-  },
-  "scripts": {
-    "build": "tsc",
-    "clean": "rimraf lib",
-    "watch": "tsc -w"
+    "rimraf": "~2.6.2",
+    "typescript": "~2.6.2"
   },
   "quantlab": {
     "extension": true
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/quantlabio/quantlab.git"
-  },
-  "author": "Project Jupyter",
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/quantlabio/quantlab/issues"
-  },
-  "homepage": "https://github.com/quantlabio/quantlab"
+  }
 }

@@ -1,13 +1,11 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
 import {
-  Dialog, ICommandPalette, IMainMenu, InstanceTracker,
-  showDialog
+  Dialog, ICommandPalette, InstanceTracker, showDialog
 } from '@quantlab/apputils';
 
 import {
@@ -15,16 +13,24 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
+  ConsolePanel, IConsoleTracker
+} from '@quantlab/console';
+
+import {
   PageConfig
 } from '@quantlab/coreutils';
 
 import {
-  IConsoleTracker, ConsolePanel
-} from '@quantlab/console';
+  IFileBrowserFactory
+} from '@quantlab/filebrowser';
 
 import {
   ILauncher
 } from '@quantlab/launcher';
+
+import {
+  IEditMenu, IFileMenu, IKernelMenu, IMainMenu, IRunMenu
+} from '@quantlab/mainmenu';
 
 import {
   find
@@ -33,10 +39,6 @@ import {
 import {
   ReadonlyJSONObject
 } from '@phosphor/coreutils';
-
-import {
-  Menu
-} from '@phosphor/widgets';
 
 
 /**
@@ -50,7 +52,7 @@ namespace CommandIDs {
   const clear = 'console:clear';
 
   export
-  const run = 'console:run';
+  const runUnforced = 'console:run-unforced';
 
   export
   const runForced = 'console:run-forced';
@@ -75,22 +77,22 @@ namespace CommandIDs {
 
   export
   const changeKernel = 'console:change-kernel';
-};
+}
 
 
 /**
  * The console widget tracker provider.
  */
-export
-const trackerPlugin: QuantLabPlugin<IConsoleTracker> = {
-  id: 'jupyter.services.console-tracker',
+const tracker: QuantLabPlugin<IConsoleTracker> = {
+  id: '@quantlab/console-extension:tracker',
   provides: IConsoleTracker,
   requires: [
     IMainMenu,
     ICommandPalette,
     ConsolePanel.IContentFactory,
     IEditorServices,
-    ILayoutRestorer
+    ILayoutRestorer,
+    IFileBrowserFactory
   ],
   optional: [ILauncher],
   activate: activateConsole,
@@ -101,15 +103,14 @@ const trackerPlugin: QuantLabPlugin<IConsoleTracker> = {
 /**
  * The console widget content factory.
  */
-export
-const contentFactoryPlugin: QuantLabPlugin<ConsolePanel.IContentFactory> = {
-  id: 'jupyter.services.console-renderer',
+const factory: QuantLabPlugin<ConsolePanel.IContentFactory> = {
+  id: '@quantlab/console-extension:factory',
   provides: ConsolePanel.IContentFactory,
   requires: [IEditorServices],
   autoStart: true,
   activate: (app: QuantLab, editorServices: IEditorServices) => {
-    let editorFactory = editorServices.factoryService.newInlineEditor.bind(
-      editorServices.factoryService);
+    const editorFactory = editorServices.factoryService.newInlineEditor
+      .bind(editorServices.factoryService);
     return new ConsolePanel.ContentFactory({ editorFactory });
   }
 };
@@ -118,19 +119,17 @@ const contentFactoryPlugin: QuantLabPlugin<ConsolePanel.IContentFactory> = {
 /**
  * Export the plugins as the default.
  */
-const plugins: QuantLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin];
+const plugins: QuantLabPlugin<any>[] = [factory, tracker];
 export default plugins;
 
 
 /**
  * Activate the console extension.
  */
-function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: ConsolePanel.IContentFactory,  editorServices: IEditorServices, restorer: ILayoutRestorer, launcher: ILauncher | null): IConsoleTracker {
-  let manager = app.serviceManager;
-  let { commands, shell } = app;
-  let category = 'Console';
-  let command: string;
-  let menu = new Menu({ commands });
+function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, contentFactory: ConsolePanel.IContentFactory,  editorServices: IEditorServices, restorer: ILayoutRestorer, browserFactory: IFileBrowserFactory, launcher: ILauncher | null): IConsoleTracker {
+  const manager = app.serviceManager;
+  const { commands, shell } = app;
+  const category = 'Console';
 
   // Create an instance tracker for all console panels.
   const tracker = new InstanceTracker<ConsolePanel>({ namespace: 'console' });
@@ -144,13 +143,6 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
     }),
     name: panel => panel.console.session.path,
     when: manager.ready
-  });
-
-  // Update the command registry when the console state changes.
-  tracker.currentChanged.connect(() => {
-    if (tracker.size <= 1) {
-      commands.notifyCommandChanged(CommandIDs.interrupt);
-    }
   });
 
   // The launcher callback.
@@ -187,9 +179,6 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
     });
   }
 
-  // Set the main menu title.
-  menu.title.label = category;
-
   /**
    * Create a console for a given path.
    */
@@ -214,11 +203,12 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
   /**
    * Whether there is an active console.
    */
-  function hasWidget(): boolean {
-    return tracker.currentWidget !== null;
+  function isEnabled(): boolean {
+    return tracker.currentWidget !== null
+           && tracker.currentWidget === app.shell.currentWidget;
   }
 
-  command = CommandIDs.open;
+  let command = CommandIDs.open;
   commands.addCommand(command, {
     execute: (args: Partial<ConsolePanel.IOptions>) => {
       let path = args['path'];
@@ -243,13 +233,12 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
 
   command = CommandIDs.create;
   commands.addCommand(command, {
-    label: 'Start New Console',
+    label: 'Console',
     execute: (args: Partial<ConsolePanel.IOptions>) => {
-      let basePath = args.basePath || '.';
+      let basePath = args.basePath || browserFactory.defaultBrowser.model.path;
       return createConsole({ basePath, ...args });
     }
   });
-  palette.addItem({ command, category });
 
   // Get the current widget and activate unless the args specify otherwise.
   function getCurrent(args: ReadonlyJSONObject): ConsolePanel | null {
@@ -271,13 +260,13 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
       }
       current.console.clear();
     },
-    isEnabled: hasWidget
+    isEnabled
   });
   palette.addItem({ command, category });
 
-  command = CommandIDs.run;
+  command = CommandIDs.runUnforced;
   commands.addCommand(command, {
-    label: 'Run Cell',
+    label: 'Run Cell (unforced)',
     execute: args => {
       let current = getCurrent(args);
       if (!current) {
@@ -285,7 +274,7 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
       }
       return current.console.execute();
     },
-    isEnabled: hasWidget
+    isEnabled
   });
   palette.addItem({ command, category });
 
@@ -299,7 +288,7 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
       }
       current.console.execute(true);
     },
-    isEnabled: hasWidget
+    isEnabled
   });
   palette.addItem({ command, category });
 
@@ -313,7 +302,7 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
       }
       current.console.insertLinebreak();
     },
-    isEnabled: hasWidget
+    isEnabled
   });
   palette.addItem({ command, category });
 
@@ -330,7 +319,7 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
         return kernel.interrupt();
       }
     },
-    isEnabled: hasWidget
+    isEnabled
   });
   palette.addItem({ command, category });
 
@@ -344,7 +333,7 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
       }
       return current.console.session.restart();
     },
-    isEnabled: hasWidget
+    isEnabled
   });
   palette.addItem({ command, category });
 
@@ -370,7 +359,7 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
         }
       });
     },
-    isEnabled: hasWidget
+    isEnabled
   });
 
   command = CommandIDs.inject;
@@ -388,7 +377,7 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
         return false;
       });
     },
-    isEnabled: hasWidget
+    isEnabled
   });
 
   command = CommandIDs.changeKernel;
@@ -401,23 +390,66 @@ function activateConsole(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPa
       }
       return current.console.session.selectKernel();
     },
-    isEnabled: hasWidget
+    isEnabled
   });
   palette.addItem({ command, category });
 
-  menu.addItem({ command: CommandIDs.run });
-  menu.addItem({ command: CommandIDs.runForced });
-  menu.addItem({ command: CommandIDs.linebreak });
-  menu.addItem({ type: 'separator' });
-  menu.addItem({ command: CommandIDs.clear });
-  menu.addItem({ type: 'separator' });
-  menu.addItem({ command: CommandIDs.interrupt });
-  menu.addItem({ command: CommandIDs.restart });
-  menu.addItem({ command: CommandIDs.changeKernel });
-  menu.addItem({ type: 'separator' });
-  menu.addItem({ command: CommandIDs.closeAndShutdown });
+  // Add a console creator to the File menu
+  mainMenu.fileMenu.newMenu.addItem({ command: CommandIDs.create });
 
-  mainMenu.addMenu(menu, {rank: 50});
+  // Add a close and shutdown command to the file menu.
+  mainMenu.fileMenu.closeAndCleaners.add({
+    tracker,
+    action: 'Shutdown',
+    closeAndCleanup: (current: ConsolePanel) => {
+      return showDialog({
+        title: 'Shutdown the console?',
+        body: `Are you sure you want to close "${current.title.label}"?`,
+        buttons: [Dialog.cancelButton(), Dialog.warnButton()]
+      }).then(result => {
+        if (result.button.accept) {
+          current.console.session.shutdown().then(() => {
+            current.dispose();
+          });
+        } else {
+          return void 0;
+        }
+      });
+    }
+  } as IFileMenu.ICloseAndCleaner<ConsolePanel>);
+
+  // Add a kernel user to the Kernel menu
+  mainMenu.kernelMenu.kernelUsers.add({
+    tracker,
+    interruptKernel: current => {
+      let kernel = current.console.session.kernel;
+      if (kernel) {
+        return kernel.interrupt();
+      }
+      return Promise.resolve(void 0);
+    },
+    restartKernel: current => current.console.session.restart(),
+    changeKernel: current => current.console.session.selectKernel(),
+    shutdownKernel: current => current.console.session.shutdown()
+  } as IKernelMenu.IKernelUser<ConsolePanel>);
+
+  // Add a code runner to the Run menu.
+  mainMenu.runMenu.codeRunners.add({
+    tracker,
+    noun: 'Cell',
+    pluralNoun: 'Cells',
+    run: current => current.console.execute(true)
+  } as IRunMenu.ICodeRunner<ConsolePanel>);
+
+  // Add a group to the edit menu.
+  mainMenu.editMenu.addGroup([{ command: CommandIDs.linebreak }]);
+
+  // Add a clearer to the edit menu
+  mainMenu.editMenu.clearers.add({
+    tracker,
+    noun: 'Console',
+    clear: (current: ConsolePanel) => { return current.console.clear() }
+  } as IEditMenu.IClearer<ConsolePanel>);
 
   app.contextMenu.addItem({command: CommandIDs.clear, selector: '.jp-CodeConsole'});
   app.contextMenu.addItem({command: CommandIDs.restart, selector: '.jp-CodeConsole'});

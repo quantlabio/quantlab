@@ -11,8 +11,12 @@ import {
 } from '@phosphor/signaling';
 
 import {
-  IObservableJSON, ObservableJSON, nbformat
+  nbformat
 } from '@quantlab/coreutils';
+
+import {
+  IObservableJSON, ObservableJSON
+} from '@quantlab/observables';
 
 import {
   IRenderMime

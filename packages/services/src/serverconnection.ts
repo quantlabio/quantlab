@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   PageConfig
 } from '@quantlab/coreutils';
@@ -328,8 +327,8 @@ namespace Private {
       delegate.reject({ xhr, event, request, settings, message: 'Aborted' });
     };
 
-    xhr.onerror = (event: ErrorEvent) => {
-      delegate.reject({ xhr, event, request, settings, message: event.message });
+    xhr.onerror = (event?: ErrorEvent) => {
+      delegate.reject({ xhr, event, request, settings, message: event ? event.message : 'Errored' });
     };
 
     xhr.ontimeout = (event: ProgressEvent) => {

@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   InstanceTracker
 } from '@quantlab/apputils';
@@ -15,7 +14,7 @@ import {
 
 import {
   QuantLab, QuantLabPlugin
-} from '.';
+} from './index';
 
 import {
   ILayoutRestorer
@@ -27,21 +26,22 @@ import {
  */
 export
 function createRendermimePlugins(extensions: IRenderMime.IExtensionModule[]): QuantLabPlugin<void>[] {
-  let plugins: QuantLabPlugin<void>[] = [];
+  const plugins: QuantLabPlugin<void>[] = [];
+
   extensions.forEach(mod => {
     let data = mod.default;
-    // Handle commonjs exports.
+
+    // Handle CommonJS exports.
     if (!mod.hasOwnProperty('__esModule')) {
       data = mod as any;
     }
     if (!Array.isArray(data)) {
       data = [data] as ReadonlyArray<IRenderMime.IExtension>;
     }
-    (data as ReadonlyArray<IRenderMime.IExtension>).forEach(item => {
-      let plugin = createRendermimePlugin(item);
-      plugins.push(plugin);
-    });
+    (data as ReadonlyArray<IRenderMime.IExtension>)
+      .forEach(item => { plugins.push(createRendermimePlugin(item)); });
   });
+
   return plugins;
 }
 
@@ -52,7 +52,7 @@ function createRendermimePlugins(extensions: IRenderMime.IExtensionModule[]): Qu
 export
 function createRendermimePlugin(item: IRenderMime.IExtension): QuantLabPlugin<void> {
   return {
-    id: `jupyter.services.mimerenderer-${item.name}`,
+    id: item.id,
     requires: [ILayoutRestorer],
     autoStart: true,
     activate: (app: QuantLab, restorer: ILayoutRestorer) => {

@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   JSONObject
 } from '@phosphor/coreutils';
@@ -307,7 +306,7 @@ class OutputArea extends Widget {
       break;
     case 'update_display_data':
       output = msg.content as nbformat.IOutput;
-      output.output_type = msgType as nbformat.OutputType;
+      output.output_type = 'display_data';
       targets = this._displayIdMap.get(displayId);
       if (targets) {
         for (let index of targets) {

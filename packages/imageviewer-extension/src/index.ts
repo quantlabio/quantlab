@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
@@ -13,24 +12,19 @@ import {
   ImageViewer, ImageViewerFactory, IImageTracker
 } from '@quantlab/imageviewer';
 
-import {
-  CommandRegistry
-} from '@phosphor/commands';
-
-
 /**
  * The command IDs used by the image widget plugin.
  */
 namespace CommandIDs {
   export
+  const resetZoom = 'imageviewer:reset-zoom';
+
+  export
   const zoomIn = 'imageviewer:zoom-in';
 
   export
   const zoomOut = 'imageviewer:zoom-out';
-
-  export
-  const resetZoom = 'imageviewer:reset-zoom';
-};
+}
 
 
 /**
@@ -50,7 +44,7 @@ const FACTORY = 'Image';
  */
 const plugin: QuantLabPlugin<IImageTracker> = {
   activate,
-  id: 'jupyter.extensions.image-handler',
+  id: '@quantlab/imageviewer-extension:plugin',
   provides: IImageTracker,
   requires: [ICommandPalette, ILayoutRestorer],
   autoStart: true
@@ -91,17 +85,18 @@ function activate(app: QuantLab, palette: ICommandPalette, restorer: ILayoutRest
     widget.context.pathChanged.connect(() => { tracker.save(widget); });
     tracker.add(widget);
 
-    let fts = app.docRegistry.getFileTypesForPath(widget.context.path);
-    if (fts.length > 0) {
-      widget.title.iconClass = fts[0].iconClass;
-      widget.title.iconLabel = fts[0].iconLabel;
-    }
+    const types = app.docRegistry.getFileTypesForPath(widget.context.path);
 
+    if (types.length > 0) {
+      widget.title.iconClass = types[0].iconClass;
+      widget.title.iconLabel = types[0].iconLabel;
+    }
   });
 
-  addCommands(tracker, app.commands);
+  addCommands(app, tracker);
 
-  let category = 'Image Viewer';
+  const category = 'Image Viewer';
+
   [CommandIDs.zoomIn, CommandIDs.zoomOut, CommandIDs.resetZoom]
     .forEach(command => { palette.addItem({ command, category }); });
 
@@ -113,69 +108,56 @@ function activate(app: QuantLab, palette: ICommandPalette, restorer: ILayoutRest
  * Add the commands for the image widget.
  */
 export
-function addCommands(tracker: IImageTracker, commands: CommandRegistry) {
+function addCommands(app: QuantLab, tracker: IImageTracker) {
+  const { commands } = app;
 
   /**
-   * Whether there is an active notebook.
+   * Whether there is an active image viewer.
    */
-  function hasWidget(): boolean {
-    return tracker.currentWidget !== null;
+  function isEnabled(): boolean {
+    return tracker.currentWidget !== null &&
+           tracker.currentWidget === app.shell.currentWidget;
   }
-
-  // Update the command registry when the image viewer state changes.
-  tracker.currentChanged.connect(() => {
-    if (tracker.size <= 1) {
-      commands.notifyCommandChanged(CommandIDs.zoomIn);
-    }
-  });
 
   commands.addCommand('imageviewer:zoom-in', {
     execute: zoomIn,
     label: 'Zoom In',
-    isEnabled: hasWidget
+    isEnabled
   });
 
   commands.addCommand('imageviewer:zoom-out', {
     execute: zoomOut,
     label: 'Zoom Out',
-    isEnabled: hasWidget
+    isEnabled
   });
 
   commands.addCommand('imageviewer:reset-zoom', {
     execute: resetZoom,
     label: 'Reset Zoom',
-    isEnabled: hasWidget
+    isEnabled
   });
 
   function zoomIn(): void {
-    let widget = tracker.currentWidget;
-    if (!widget) {
-      return;
-    }
-    if (widget.scale > 1) {
-      widget.scale += .5;
-    } else {
-      widget.scale *= 2;
+    const widget = tracker.currentWidget;
+
+    if (widget) {
+      widget.scale = widget.scale > 1 ? widget.scale + 0.5 : widget.scale * 2;
     }
   }
 
   function zoomOut(): void {
-    let widget = tracker.currentWidget;
-    if (!widget) {
-      return;
-    }
-    if (widget.scale > 1) {
-      widget.scale -= .5;
-    } else {
-      widget.scale /= 2;
+    const widget = tracker.currentWidget;
+
+    if (widget) {
+      widget.scale = widget.scale > 1 ? widget.scale - 0.5 : widget.scale / 2;
     }
   }
 
   function resetZoom(): void {
-    let widget = tracker.currentWidget;
-    if (!widget) {
-      return;
+    const widget = tracker.currentWidget;
+
+    if (widget) {
+      widget.scale = 1;
     }
-    widget.scale = 1;
   }
 }

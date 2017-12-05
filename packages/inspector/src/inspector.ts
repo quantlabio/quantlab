@@ -1,5 +1,8 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
+import {
+  Toolbar, ToolbarButton
+} from '@quantlab/apputils';
 
 import {
   Token
@@ -18,16 +21,8 @@ import {
 } from '@phosphor/signaling';
 
 import {
-  PanelLayout, TabPanel
+  PanelLayout, TabPanel, Widget
 } from '@phosphor/widgets';
-
-import {
-  Widget
-} from '@phosphor/widgets';
-
-import {
-  Toolbar, ToolbarButton
-} from '@quantlab/apputils';
 
 
 /**
@@ -66,7 +61,7 @@ const FORWARD_CLASS = 'jp-InspectorItem-forward';
  * The inspector panel token.
  */
 export
-const IInspector = new Token<IInspector>('jupyter.services.inspector');
+const IInspector = new Token<IInspector>('@quantlab/inspector:IInspector');
 /* tslint:enable */
 
 
@@ -210,7 +205,7 @@ class InspectorPanel extends TabPanel implements IInspector {
     }
 
     // Clear the inspector child items (but maintain history) if necessary.
-    Object.keys(this._items).forEach(i => this._items[i].content = null);
+    Object.keys(this._items).forEach(i => { this._items[i].content = null; });
 
     this._source = source;
 

@@ -14,6 +14,8 @@
   flex: 1 1 auto;
   flex-direction: column;
   margin-top: -1px;
+  min-width: 240px;
+  min-height: 120px;
 }
 
 
@@ -58,8 +60,8 @@
   overflow: auto;
   border-top: var(--jp-border-width) solid var(--jp-toolbar-border-color);
   /* We used to have a bottom padding of 8px that was supposedly related to
-   * our implementation of the 2px margin the the panel to let the shadow in the 
-   * dock panel show. But that doesn't seem to be relevant now, so using the 
+   * our implementation of the 2px margin the the panel to let the shadow in the
+   * dock panel show. But that doesn't seem to be relevant now, so using the
    * matching padding. */
   padding: var(--jp-private-console-cell-padding);
   /* This matches the box shadow on the notebook toolbar, eventually we should create
@@ -69,9 +71,11 @@
 
 
 .jp-CodeConsole-content .jp-InputArea-editor.jp-InputArea-editor {
-  background: transparent;
-  border-color: transparent;
+  border: var(--jp-border-width) solid var(--jp-cell-editor-border-color-active);
+  box-shadow: var(--jp-input-box-shadow);
+  background-color: var(--jp-cell-editor-background-active);
 }
+
 
 .jp-CodeConsole-input .jp-CodeConsole-prompt .jp-InputArea {
   height: 100%;
@@ -79,6 +83,13 @@
 }
 
 
-.jp-CodeConsole-content .jp-CodeConsole-banner .jp-Cell-prompt {
+.jp-CodeConsole-content .jp-CodeConsole-banner .jp-InputPrompt {
   display: none;
+}
+
+
+.jp-CodeConsole-promptCell .jp-InputArea-editor.jp-mod-focused {
+  border: var(--jp-border-width) solid var(--jp-cell-editor-border-color-active);
+  box-shadow: var(--jp-input-box-shadow);
+  background-color: var(--jp-cell-editor-background-active);
 }

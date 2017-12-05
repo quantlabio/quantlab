@@ -11,7 +11,10 @@ from traitlets import Bool, Unicode
 
 from ._version import __version__
 from .extension import load_jupyter_server_extension
-from .commands import build, clean, get_app_dir, get_user_settings_dir
+from .commands import (
+    build, clean, get_app_dir, get_user_settings_dir, get_app_version,
+    ensure_dev
+)
 
 
 build_aliases = dict(base_aliases)
@@ -20,11 +23,16 @@ build_aliases['name'] = 'QuantLabBuildApp.name'
 build_aliases['version'] = 'QuantLabBuildApp.version'
 
 
+version = __version__
+app_version = get_app_version()
+if version != app_version:
+    version = '%s (dev), %s (app)' % (__version__, app_version)
+
+
 class QuantLabBuildApp(JupyterApp):
-    version = __version__
+    version = version
     description = """
     Build the QuantLab application
-
     The application is built in the QuantLab app directory in `/staging`.
     When the build is complete it is put in the QuantLab app `/static`
     directory, where it is used to serve the application.
@@ -49,10 +57,9 @@ clean_aliases['app-dir'] = 'QuantLabCleanApp.app_dir'
 
 
 class QuantLabCleanApp(JupyterApp):
-    version = __version__
+    version = version
     description = """
     Clean the QuantLab application
-
     This will clean the app directory by removing the `staging` and `static`
     directories.
     """
@@ -66,10 +73,9 @@ class QuantLabCleanApp(JupyterApp):
 
 
 class QuantLabPathApp(JupyterApp):
-    version = __version__
+    version = version
     description = """
     Print the configured paths for the QuantLab application
-
     The application path can be configured using the QUANTLAB_DIR environment variable.
     The user settings path can be configured using the QUANTLAB_SETTINGS_DIR
         environment variable or it will fall back to
@@ -90,29 +96,30 @@ quantlab_flags['core-mode'] = (
     "Start the app in core mode."
 )
 quantlab_flags['dev-mode'] = (
-    {'QuantLabApp': {'core_mode': True}},
+    {'QuantLabApp': {'dev_mode': True}},
     "Start the app in dev mode for running from source."
+)
+quantlab_flags['watch'] = (
+    {'QuantLabApp': {'watch': True}},
+    "Start the app in watch mode."
 )
 
 
 class QuantLabApp(NotebookApp):
-    version = __version__
+    version = version
 
     description = """
     QuantLab - An extensible computational environment for Jupyter.
-
     This launches a Tornado based HTML Server that serves up an
     HTML5/Javascript QuantLab client.
-
     QuantLab has three different modes of running:
-
     * Core mode (`--core-mode`): in this mode QuantLab will run using the JavaScript
       assets contained in the installed `quantlab` Python package. In core mode, no
       extensions are enabled. This is the default in a stable QuantLab release if you
       have no extensions installed.
-    * Dev mode (`--dev-mode`): like core mode, but when the `quantlab` Python package
-      is installed from source and installed using `pip install -e .`. In this case
-      QuantLab will show a red stripe at the top of the page.
+    * Dev mode (`--dev-mode`): uses the unpublished local JavaScript packages
+        in the `dev_mode` folder.  In this case QuantLab will show a red stripe at the top of the page.  It can only be used if QuantLab
+        is installed as `pip install -e .`.
     * App mode: QuantLab allows multiple QuantLab "applications" to be
       created by the user with different combinations of extensions. The `--app-dir` can
       be used to set a directory for different applications. The default application
@@ -140,7 +147,7 @@ class QuantLabApp(NotebookApp):
     default_url = Unicode('/quantlab', config=True,
         help="The default URL to redirect to from `/`")
 
-    app_dir = Unicode('', config=True,
+    app_dir = Unicode(get_app_dir(), config=True,
         help="The app directory to launch QuantLab from.")
 
     core_mode = Bool(False, config=True,
@@ -151,15 +158,21 @@ class QuantLabApp(NotebookApp):
         itself is installed in development mode (`pip install -e .`).
         """)
 
+    dev_mode = Bool(False, config=True,
+        help="""Whether to start the app in dev mode. Uses the unpublished local JavaScript packages
+        in the `dev_mode` folder.  In this case QuantLab will show a red stripe at the top of the page.  It can only be used if QuantLab
+        is installed as `pip install -e .`.
+        """)
+
+    watch = Bool(False, config=True,
+        help="Whether to serve the app in watch mode")
+
     def init_server_extensions(self):
         """Load any extensions specified by config.
-
         Import the module, then call the load_jupyter_server_extension function,
         if one exists.
-
         If the QuantLab server extension is not enabled, it will
         be manually loaded with a warning.
-
         The extension API is experimental, and may change in future releases.
         """
         super(QuantLabApp, self).init_server_extensions()
@@ -174,3 +187,6 @@ class QuantLabApp(NotebookApp):
 #-----------------------------------------------------------------------------
 
 main = launch_new_instance = QuantLabApp.launch_instance
+
+if __name__ == '__main__':
+    main()

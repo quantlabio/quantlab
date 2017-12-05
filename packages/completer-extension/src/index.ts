@@ -1,16 +1,12 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
-import {
-  Widget
-} from '@phosphor/widgets';
- 
 import {
   QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
 import {
-  CompleterModel, Completer, CompletionHandler, ICompletionManager
+  CompleterModel, Completer, CompletionHandler, ICompletionManager,
+  KernelConnector
 } from '@quantlab/completer';
 
 import {
@@ -20,6 +16,10 @@ import {
 import {
   INotebookTracker
 } from '@quantlab/notebook';
+
+import {
+  Widget
+} from '@phosphor/widgets';
 
 
 
@@ -48,10 +48,10 @@ namespace CommandIDs {
 
 
 /**
- * A service providing code completion for editors.
+ * A plugin providing code completion for editors.
  */
-const service: QuantLabPlugin<ICompletionManager> = {
-  id: 'jupyter.services.completer',
+const manager: QuantLabPlugin<ICompletionManager> = {
+  id: '@quantlab/completer-extension:manager',
   autoStart: true,
   provides: ICompletionManager,
   activate: (app: QuantLab): ICompletionManager => {
@@ -87,10 +87,10 @@ const service: QuantLabPlugin<ICompletionManager> = {
 
     return {
       register: (completable: ICompletionManager.ICompletable): ICompletionManager.ICompletableAttributes => {
-        const { editor, session, parent } = completable;
+        const { connector, editor, parent } = completable;
         const model = new CompleterModel();
         const completer = new Completer({ editor, model });
-        const handler = new CompletionHandler({ completer, session });
+        const handler = new CompletionHandler({ completer, connector });
         const id = parent.id;
 
         // Hide the widget when it first loads.
@@ -123,8 +123,8 @@ const service: QuantLabPlugin<ICompletionManager> = {
 /**
  * An extension that registers consoles for code completion.
  */
-const consolePlugin: QuantLabPlugin<void> = {
-  id: 'jupyter.extensions.console-completer',
+const consoles: QuantLabPlugin<void> = {
+  id: '@quantlab/completer-extension:consoles',
   requires: [ICompletionManager, IConsoleTracker],
   autoStart: true,
   activate: (app: QuantLab, manager: ICompletionManager, consoles: IConsoleTracker): void => {
@@ -135,7 +135,8 @@ const consolePlugin: QuantLabPlugin<void> = {
       const editor = cell && cell.editor;
       const session = anchor.session;
       const parent = panel;
-      const handler = manager.register({ editor, session, parent });
+      const connector = new KernelConnector({ session });
+      const handler = manager.register({ connector, editor, parent });
 
       // Listen for prompt creation.
       anchor.promptCellCreated.connect((sender, cell) => {
@@ -147,10 +148,10 @@ const consolePlugin: QuantLabPlugin<void> = {
     app.commands.addCommand(CommandIDs.invokeConsole, {
       execute: () => {
         const id = consoles.currentWidget && consoles.currentWidget.id;
-        if (!id) {
-          return;
+
+        if (id) {
+          return app.commands.execute(CommandIDs.invoke, { id });
         }
-        return app.commands.execute(CommandIDs.invoke, { id });
       }
     });
 
@@ -158,10 +159,10 @@ const consolePlugin: QuantLabPlugin<void> = {
     app.commands.addCommand(CommandIDs.selectConsole, {
       execute: () => {
         const id = consoles.currentWidget && consoles.currentWidget.id;
-        if (!id) {
-          return;
+
+        if (id) {
+          return app.commands.execute(CommandIDs.select, { id });
         }
-        return app.commands.execute(CommandIDs.select, { id });
       }
     });
 
@@ -177,8 +178,8 @@ const consolePlugin: QuantLabPlugin<void> = {
 /**
  * An extension that registers notebooks for code completion.
  */
-const notebookPlugin: QuantLabPlugin<void> = {
-  id: 'jupyter.extensions.notebook-completer',
+const notebooks: QuantLabPlugin<void> = {
+  id: '@quantlab/completer-extension:notebooks',
   requires: [ICompletionManager, INotebookTracker],
   autoStart: true,
   activate: (app: QuantLab, manager: ICompletionManager, notebooks: INotebookTracker): void => {
@@ -188,7 +189,8 @@ const notebookPlugin: QuantLabPlugin<void> = {
       const editor = cell && cell.editor;
       const session = panel.session;
       const parent = panel;
-      const handler = manager.register({ editor, session, parent });
+      const connector = new KernelConnector({ session });
+      const handler = manager.register({ connector, editor, parent });
 
       // Listen for active cell changes.
       panel.notebook.activeCellChanged.connect((sender, cell) => {
@@ -210,10 +212,10 @@ const notebookPlugin: QuantLabPlugin<void> = {
     app.commands.addCommand(CommandIDs.selectNotebook, {
       execute: () => {
         const id = notebooks.currentWidget && notebooks.currentWidget.id;
-        if (!id) {
-          return;
+
+        if (id) {
+          return app.commands.execute(CommandIDs.select, { id });
         }
-        return app.commands.execute(CommandIDs.select, { id });
       }
     });
 
@@ -229,7 +231,5 @@ const notebookPlugin: QuantLabPlugin<void> = {
 /**
  * Export the plugins as default.
  */
-const plugins: QuantLabPlugin<any>[] = [
-  service, consolePlugin, notebookPlugin
-];
+const plugins: QuantLabPlugin<any>[] = [manager, consoles, notebooks];
 export default plugins;

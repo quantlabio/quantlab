@@ -1,8 +1,7 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
- import {
-  URLExt, uuid
+import {
+  URLExt
 } from '@quantlab/coreutils';
 
 import {
@@ -51,7 +50,6 @@ class DefaultSession implements Session.ISession {
     this._type = options.type || 'file';
     this._name = options.name || '';
     this.serverSettings = options.serverSettings || ServerConnection.makeSettings();
-    this._uuid = uuid();
     Private.addRunning(this);
     this.setupKernel(kernel);
     this.terminated = new Signal<this, void>(this);
@@ -351,13 +349,13 @@ class DefaultSession implements Session.ISession {
       if (response.xhr.status !== 200) {
         throw ServerConnection.makeError(response);
       }
-      let value = response.data as Session.IModel;
+      let value = response.data;
       try {
-        validate.validateModel(value);
+        let model = validate.validateModel(value);
+        return Private.updateFromServer(model, settings.baseUrl);
       } catch (err) {
         throw ServerConnection.makeError(response, err.message);
       }
-      return Private.updateFromServer(value, settings.baseUrl);
     }, error => {
       this._updating = false;
       return Private.onSessionError(error);
@@ -384,7 +382,6 @@ class DefaultSession implements Session.ISession {
   private _name = '';
   private _type = '';
   private _kernel: Kernel.IKernel;
-  private _uuid = '';
   private _isDisposed = false;
   private _updating = false;
   private _kernelChanged = new Signal<this, Kernel.IKernelConnection>(this);

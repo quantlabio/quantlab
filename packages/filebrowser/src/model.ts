@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   IChangedArgs, IStateDB, PathExt
 } from '@quantlab/coreutils';
@@ -18,7 +17,7 @@ import {
 } from '@phosphor/algorithm';
 
 import {
-  PromiseDelegate
+  PromiseDelegate, ReadonlyJSONObject
 } from '@phosphor/coreutils';
 
 import {
@@ -226,7 +225,15 @@ class FileBrowserModel implements IDisposable {
       this._refreshed.emit(void 0);
     }).catch(error => {
       this._pendingPath = null;
-      this._connectionFailure.emit(error);
+      if (error.message === 'Not Found') {
+        let path = this._model.path;
+        error.message = `Directory not found: "${path}"`;
+        this._connectionFailure.emit(error);
+        let parent = PathExt.dirname(path);
+        if (parent !== path) {
+          this.cd('..');
+        }
+      }
     });
     return this._pending;
   }
@@ -278,7 +285,7 @@ class FileBrowserModel implements IDisposable {
         return;
       }
 
-      const path = cwd['path'] as string;
+      const path = (cwd as ReadonlyJSONObject)['path'] as string;
       const localPath = path.split(':').pop();
       return manager.services.contents.get(path)
         .then(() => this.cd(localPath))

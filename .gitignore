@@ -2,9 +2,12 @@ MANIFEST
 build
 dist
 lib
-quantlab/build
+quantlab/static
 quantlab/schemas
 quantlab/themes
+quantlab/geckodriver
+dev_mode/schemas
+dev_mode/themes
 
 node_modules
 .cache
@@ -30,3 +33,5 @@ packages/services/examples/node/config.json
 examples/app/build
 examples/app/themes
 examples/app/schemas
+
+lerna-debug.log

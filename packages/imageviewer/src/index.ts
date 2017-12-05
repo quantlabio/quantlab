@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   IInstanceTracker
 } from '@quantlab/apputils';
@@ -30,5 +29,5 @@ interface IImageTracker extends IInstanceTracker<ImageViewer> {}
  * The editor tracker token.
  */
 export
-const IImageTracker = new Token<IImageTracker>('jupyter.services.image-tracker');
+const IImageTracker = new Token<IImageTracker>('@quantlab/imageviewer:IImageTracker');
 /* tslint:enable */

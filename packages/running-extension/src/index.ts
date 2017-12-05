@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
@@ -15,7 +14,7 @@ import {
  */
 const plugin: QuantLabPlugin<void> = {
   activate,
-  id: 'jupyter.extensions.running-sessions',
+  id: '@quantlab/running-extension:plugin',
   requires: [ILayoutRestorer],
   autoStart: true
 };

@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   Kernel
 } from '@quantlab/services';
@@ -31,7 +30,7 @@ export * from './widget';
  * The tooltip manager token.
  */
 export
-const ITooltipManager = new Token<ITooltipManager>('jupyter.services.tooltip');
+const ITooltipManager = new Token<ITooltipManager>('@quantlab/tooltip:ITooltipManager');
 /* tslint:enable */
 
 

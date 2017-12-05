@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ArrayExt, each, find, IIterator, iter, toArray
 } from '@phosphor/algorithm';
@@ -117,7 +116,6 @@ class ApplicationShell extends Widget {
 
     rootLayout.direction = 'top-to-bottom';
     rootLayout.spacing = 0; // TODO make this configurable?
-
     BoxLayout.setStretch(topPanel, 0);
     BoxLayout.setStretch(hboxPanel, 1);
 

@@ -1,0 +1,11 @@
+{
+  "jupyter.quantlab.setting-icon-class": "jp-ChartIcon",
+  "jupyter.quantlab.setting-icon-label": "HighCharts",
+  "title": "HighCharts",
+  "description": "HighCharts settings",
+  "properties": {
+    "ApiKey": { "type": "string", "title": "Api Key", "default": "default" },
+    "chart": { "type": "string", "title": "chart", "default": "default" }
+  },
+  "type": "object"
+}

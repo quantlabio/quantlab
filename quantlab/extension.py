@@ -1,32 +1,18 @@
 # coding: utf-8
-"""A tornado based Quant Lab server."""
+"""A tornado based QuantLab server."""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-import os
-
-from quantlab_launcher import add_handlers, QuantLabConfig
-from notebook.utils import url_path_join as ujoin
-
-from notebook.base.handlers import FileFindHandler
-
-
-from .commands import (
-    get_app_dir, list_extensions, should_build, get_user_settings_dir
-)
-
-from .build_handler import build_path, Builder, BuildHandler
-from ._version import __version__
 
 #-----------------------------------------------------------------------------
 # Module globals
 #-----------------------------------------------------------------------------
+import os
 
 DEV_NOTE_NPM = """You're running QuantLab from source.
 If you're working on the TypeScript sources of QuantLab, try running
-    npm run watch
-from the QuantLab repo directory in another terminal window to have the
-system incrementally watch and build QuantLab's TypeScript for you, as you
+    qlpm run --dev-mode watch
+to have the system incrementally watch and build QuantLab for you, as you
 make changes.
 """
 
@@ -39,71 +25,107 @@ Running the core application with no additional extensions or settings
 def load_jupyter_server_extension(nbapp):
     """Load the QuantLab server extension.
     """
-    # Print messages.
-    here = os.path.dirname(__file__)
-    nbapp.log.info('QuantLab alpha preview extension loaded from %s' % here)
-
-    app_dir = get_app_dir()
-    if hasattr(nbapp, 'app_dir'):
-        app_dir = get_app_dir(nbapp.app_dir)
+    # Delay imports to speed up jlpmapp
+    from quantlab_launcher import add_handlers, QuantLabConfig
+    from notebook.utils import url_path_join as ujoin
+    from tornado.ioloop import IOLoop
+    from .build_handler import build_path, Builder, BuildHandler
+    from .commands import (
+        get_app_dir, get_user_settings_dir, watch, ensure_dev, watch_dev,
+        pjoin, DEV_DIR, HERE, get_app_version
+    )
+    from ._version import __version__
 
     web_app = nbapp.web_app
+    logger = nbapp.log
     config = QuantLabConfig()
+    app_dir = getattr(nbapp, 'app_dir', get_app_dir())
 
-    config.assets_dir = os.path.join(app_dir, 'static')
-    config.settings_dir = os.path.join(app_dir, 'settings')
+    # Print messages.
+    logger.info('QuantLab alpha preview extension loaded from %s' % HERE)
+    logger.info('QuantLab application directory is %s' % app_dir)
+
+    config.name = 'QuantLab'
     config.page_title = 'QuantLab Alpha Preview'
     config.page_url = '/quantlab'
-    config.dev_mode = False
 
     # Check for core mode.
-    core_mode = ''
-    if hasattr(nbapp, 'core_mode'):
-        core_mode = nbapp.core_mode
-
-    # Check for an app dir that is local.
-    if app_dir == here or app_dir == os.path.join(here, 'build'):
+    core_mode = False
+    if getattr(nbapp, 'core_mode', False) or app_dir.startswith(HERE):
         core_mode = True
+        logger.info('Running QuantLab in core mode')
+
+    # Check for dev mode.
+    dev_mode = False
+    if getattr(nbapp, 'dev_mode', False) or app_dir.startswith(DEV_DIR):
+        dev_mode = True
+        logger.info('Running QuantLab in dev mode')
+
+    # Check for watch.
+    watch_mode = getattr(nbapp, 'watch', False)
+
+    if watch_mode and core_mode:
+        logger.warn('Cannot watch in core mode, did you mean --dev-mode?')
+        watch_mode = False
+
+    if core_mode and dev_mode:
+        logger.warn('Conflicting modes, choosing dev_mode over core_mode')
+        core_mode = False
+
+    page_config = web_app.settings.setdefault('page_config_data', dict())
+    page_config['buildAvailable'] = not core_mode and not dev_mode
+    page_config['buildCheck'] = not core_mode and not dev_mode
+    page_config['token'] = nbapp.token
+
+    if core_mode:
+        config.assets_dir = pjoin(HERE, 'static')
+        config.schemas_dir = pjoin(HERE, 'schemas')
         config.settings_dir = ''
+        config.themes_dir = pjoin(HERE, 'themes')
+        config.version = get_app_version()
 
-    # Run core mode if explicit or there is no static dir and no
-    # installed extensions.
-    installed = list_extensions(app_dir)
-    fallback = not installed and not os.path.exists(config.assets_dir)
-
-    web_app.settings.setdefault('page_config_data', dict())
-    web_app.settings['page_config_data']['buildAvailable'] = True
-    web_app.settings['page_config_data']['token'] = nbapp.token
-
-    if core_mode or fallback:
-        config.assets_dir = os.path.join(here, 'build')
-        config.version = __version__
+        logger.info(CORE_NOTE.strip())
         if not os.path.exists(config.assets_dir):
             msg = 'Static assets not built, please see CONTRIBUTING.md'
-            nbapp.log.error(msg)
-        else:
-            sentinel = os.path.join(here, 'build', 'release_data.json')
-            config.dev_mode = not os.path.exists(sentinel)
+            logger.error(msg)
 
-    if config.dev_mode:
-        nbapp.log.info(DEV_NOTE_NPM)
-    elif core_mode or fallback:
-        nbapp.log.info(CORE_NOTE.strip())
+    elif dev_mode:
+        config.assets_dir = pjoin(DEV_DIR, 'build')
+        config.schemas_dir = pjoin(DEV_DIR, 'schemas')
+        config.settings_dir = ''
+        config.themes_dir = pjoin(DEV_DIR, 'themes')
+        config.version = __version__
 
-    if core_mode or fallback:
-        schemas_dir = os.path.join(here, 'schemas')
+        ensure_dev(logger)
+        if not watch_mode:
+            logger.info(DEV_NOTE)
+
     else:
-        schemas_dir = os.path.join(app_dir, 'schemas')
+        config.assets_dir = pjoin(app_dir, 'static')
+        config.schemas_dir = pjoin(app_dir, 'schemas')
+        config.settings_dir = pjoin(app_dir, 'settings')
+        config.themes_dir = pjoin(app_dir, 'themes')
+        config.version = get_app_version()
 
-    config.schemas_dir = schemas_dir
+    config.dev_mode = dev_mode
     config.user_settings_dir = get_user_settings_dir()
-    config.themes_dir = os.path.join(here, 'themes')
+
+    if watch_mode:
+        logger.info('Starting QuantLab watch mode...')
+
+        # Set the ioloop in case the watch fails.
+        nbapp.ioloop = IOLoop.current()
+        if config.dev_mode:
+            watch_dev(logger)
+        else:
+            watch(app_dir, logger)
+            page_config['buildAvailable'] = False
 
     add_handlers(web_app, config)
 
     base_url = web_app.settings['base_url']
     build_url = ujoin(base_url, build_path)
-    builder = Builder(nbapp.log, core_mode, app_dir)
+    builder = Builder(logger, core_mode, app_dir)
     build_handler = (build_url, BuildHandler, {'builder': builder})
 
     web_app.add_handlers(".*$", [build_handler])

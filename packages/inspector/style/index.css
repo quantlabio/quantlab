@@ -19,6 +19,8 @@
 
 .jp-Inspector {
   outline: none;
+  min-width: 120px;
+  min-height: 120px;
 }
 
 
@@ -91,6 +93,7 @@
 .jp-InspectorItem-content {
   overflow: auto;
   padding: 8px;
+  width: 100%;
 }
 
 

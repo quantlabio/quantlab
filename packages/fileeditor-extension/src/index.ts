@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
@@ -10,16 +9,16 @@ import {
 } from '@quantlab/apputils';
 
 import {
-  ISettingRegistry
-} from '@quantlab/coreutils';
-
-import {
   CodeEditor, IEditorServices
 } from '@quantlab/codeeditor';
 
 import {
-   MarkdownCodeBlocks, PathExt
+  ISettingRegistry, MarkdownCodeBlocks, PathExt
 } from '@quantlab/coreutils';
+
+import {
+  IFileBrowserFactory
+} from '@quantlab/filebrowser';
 
 import {
   FileEditor, FileEditorFactory, IEditorTracker
@@ -28,6 +27,10 @@ import {
 import {
   ILauncher
 } from '@quantlab/launcher';
+
+import {
+  IEditMenu, IMainMenu, IKernelMenu, IViewMenu
+} from '@quantlab/mainmenu';
 
 
 /**
@@ -45,6 +48,9 @@ const FACTORY = 'Editor';
  * The command IDs used by the fileeditor plugin.
  */
 namespace CommandIDs {
+  export
+  const createNew = 'fileeditor:create-new';
+
   export
   const lineNumbers = 'fileeditor:toggle-line-numbers';
 
@@ -68,7 +74,7 @@ namespace CommandIDs {
 
   export
   const markdownPreview = 'fileeditor:markdown-preview';
-};
+}
 
 
 /**
@@ -76,13 +82,9 @@ namespace CommandIDs {
  */
 const plugin: QuantLabPlugin<IEditorTracker> = {
   activate,
-  id: 'jupyter.services.editor-tracker',
-  requires: [
-    ILayoutRestorer,
-    IEditorServices,
-    ISettingRegistry
-  ],
-  optional: [ILauncher],
+  id: '@quantlab/fileeditor-extension:plugin',
+  requires: [IEditorServices, IFileBrowserFactory, ILayoutRestorer, ISettingRegistry],
+  optional: [ILauncher, IMainMenu],
   provides: IEditorTracker,
   autoStart: true
 };
@@ -97,7 +99,7 @@ export default plugin;
 /**
  * Activate the editor tracker plugin.
  */
-function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEditorServices, settingRegistry: ISettingRegistry, launcher: ILauncher | null): IEditorTracker {
+function activate(app: QuantLab, editorServices: IEditorServices, browserFactory: IFileBrowserFactory, restorer: ILayoutRestorer, settingRegistry: ISettingRegistry, launcher: ILauncher | null, menu: IMainMenu | null): IEditorTracker {
   const id = plugin.id;
   const namespace = 'editor';
   const factory = new FileEditorFactory({
@@ -106,7 +108,8 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
   });
   const { commands, restored } = app;
   const tracker = new InstanceTracker<FileEditor>({ namespace });
-  const hasWidget = () => !!tracker.currentWidget;
+  const isEnabled = () => tracker.currentWidget !== null &&
+                          tracker.currentWidget === app.shell.currentWidget;
 
   let {
     lineNumbers, lineWrap, matchBrackets, autoClosingBrackets
@@ -189,7 +192,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
         console.error(`Failed to set ${id}:${key} - ${reason.message}`);
       });
     },
-    isEnabled: hasWidget,
+    isEnabled,
     isToggled: () => lineNumbers,
     label: 'Line Numbers'
   });
@@ -204,7 +207,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
         console.error(`Failed to set ${id}:${key} - ${reason.message}`);
       });
     },
-    isEnabled: hasWidget,
+    isEnabled,
     isToggled: () => lineWrap,
     label: 'Word Wrap'
   });
@@ -222,7 +225,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
       editor.setOption('insertSpaces', insertSpaces);
       editor.setOption('tabSize', size);
     },
-    isEnabled: hasWidget,
+    isEnabled,
     isToggled: args => {
       let widget = tracker.currentWidget;
       if (!widget) {
@@ -247,7 +250,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
       return settingRegistry.set(id, 'matchBrackets', matchBrackets);
     },
     label: 'Match Brackets',
-    isEnabled: hasWidget,
+    isEnabled,
     isToggled: () => matchBrackets
   });
 
@@ -261,7 +264,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
         .set(id, 'autoClosingBrackets', autoClosingBrackets);
     },
     label: 'Auto-Closing Brackets',
-    isEnabled: hasWidget,
+    isEnabled,
     isToggled: () => autoClosingBrackets
   });
 
@@ -279,13 +282,13 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
         preferredLanguage: widget.context.model.defaultKernelLanguage
       });
     },
-    isEnabled: hasWidget,
+    isEnabled,
     label: 'Create Console for Editor'
   });
 
   commands.addCommand(CommandIDs.runCode, {
     execute: () => {
-      // This will run the current selection or the entire ```fenced``` code block.
+      // Run the appropriate code, taking into account a ```fenced``` code block.
       const widget = tracker.currentWidget;
 
       if (!widget) {
@@ -298,7 +301,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
       const extension = PathExt.extname(path);
       const selection = editor.getSelection();
       const { start, end } = selection;
-      const selected = start.column !== end.column || start.line !== end.line;
+      let selected = start.column !== end.column || start.line !== end.line;
 
       if (selected) {
         // Get the selected code from the editor.
@@ -313,9 +316,21 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
         for (let block of blocks) {
           if (block.startLine <= start.line && start.line <= block.endLine) {
             code = block.code;
+            selected = true;
             break;
           }
         }
+      }
+
+      if (!selected) {
+        // no selection, submit whole line and advance
+        code = editor.getLine(selection.start.line);
+        const cursor = editor.getCursorPosition();
+        if (cursor.line + 1 === editor.lineCount) {
+          let text = editor.model.value.text;
+          editor.model.value.text = text + '\n';
+        }
+        editor.setCursorPosition({ line: cursor.line + 1, column: cursor.column });
       }
 
       const activate = false;
@@ -325,7 +340,7 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
         return Promise.resolve(void 0);
       }
     },
-    isEnabled: hasWidget,
+    isEnabled,
     label: 'Run Code'
   });
 
@@ -345,6 +360,28 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
     label: 'Show Markdown Preview'
   });
 
+  // Function to create a new untitled text file, given
+  // the current working directory.
+  const createNew = (cwd: string) => {
+    return commands.execute('docmanager:new-untitled', {
+      path: cwd, type: 'file'
+    }).then(model => {
+      return commands.execute('docmanager:open', {
+        path: model.path, factory: FACTORY
+      });
+    });
+  }
+
+  // Add a command for creating a new text file.
+  commands.addCommand(CommandIDs.createNew, {
+    label: 'Text File',
+    caption: 'Create a new text file',
+    execute: () => {
+      let cwd = browserFactory.defaultBrowser.model.path;
+      return createNew(cwd);
+    }
+  });
+
   // Add a launcher item if the launcher is available.
   if (launcher) {
     launcher.add({
@@ -352,15 +389,59 @@ function activate(app: QuantLab, restorer: ILayoutRestorer, editorServices: IEdi
       category: 'Other',
       rank: 1,
       iconClass: EDITOR_ICON_CLASS,
-      callback: cwd => {
-        return commands.execute('docmanager:new-untitled', {
-          path: cwd, type: 'file'
-        }).then(model => {
-          return commands.execute('docmanager:open', {
-            path: model.path, factory: FACTORY
-          });
-        });
+      callback: createNew
+    });
+  }
+
+  if (menu) {
+    // Add new text file creation to the file menu.
+    menu.fileMenu.newMenu.addItem({ command: CommandIDs.createNew });
+
+    // Add undo/redo hooks to the edit menu.
+    menu.editMenu.undoers.add({
+      tracker,
+      undo: widget => { widget.editor.undo(); },
+      redo: widget => { widget.editor.redo(); }
+    } as IEditMenu.IUndoer<FileEditor>);
+
+    // Add editor view options.
+    menu.viewMenu.editorViewers.add({
+      tracker,
+      toggleLineNumbers: widget => {
+        const lineNumbers = !widget.editor.getOption('lineNumbers');
+        widget.editor.setOption('lineNumbers', lineNumbers);
+      },
+      toggleWordWrap: widget => {
+        const wordWrap = !widget.editor.getOption('lineWrap');
+        widget.editor.setOption('lineWrap', wordWrap);
+      },
+      toggleMatchBrackets: widget => {
+        const matchBrackets = !widget.editor.getOption('matchBrackets');
+        widget.editor.setOption('matchBrackets', matchBrackets);
+      },
+      lineNumbersToggled: widget => widget.editor.getOption('lineNumbers'),
+      wordWrapToggled: widget => widget.editor.getOption('lineWrap'),
+      matchBracketsToggled: widget => widget.editor.getOption('matchBrackets')
+    } as IViewMenu.IEditorViewer<FileEditor>);
+
+    // Add a console creator the the Kernel menu.
+    menu.kernelMenu.consoleCreators.add({
+      tracker,
+      createConsole: current => {
+        const options = {
+          path: current.context.path,
+          preferredLanguage: current.context.model.defaultKernelLanguage
+        };
+        return commands.execute('console:create', options);
       }
+    } as IKernelMenu.IConsoleCreator<FileEditor>);
+
+    // Add a code runner to the Run menu.
+    menu.runMenu.codeRunners.add({
+      tracker,
+      noun: 'Code',
+      pluralNoun: 'Code',
+      run: () => commands.execute(CommandIDs.runCode)
     });
   }
 

@@ -6,98 +6,97 @@
 :root {
 
   /* Images
-
   These images are included with JupyterLab for showing the Project Jupyter logo
   */
-  --jp-image-jupyter: url('./quantlab/api/themes/quantlab-theme-dark-extension/images/jupyter-white-moons.svg');
-  --jp-image-quantlab: url('./quantlab/api/themes/quantlab-theme-dark-extension/images/quantlab.svg');
-  --jp-image-quantlab-workmark: url('./quantlab/api/themes/quantlab-theme-dark-extension/images/quantlab-wordmark.svg');
-  --jp-image-jupyter-favicon: url('./quantlab/api/themes/quantlab-theme-dark-extension/images/jupyter-favicon.svg');
-  --jp-image-caretleft: url('./quantlab/api/themes/quantlab-theme-dark-extension/images/caretleft.png');
-  --jp-image-caretright: url('./quantlab/api/themes/quantlab-theme-dark-extension/images/caretright.png');
-  --jp-image-caretup: url('./quantlab/api/themes/quantlab-theme-dark-extension/images/caretup.png');
-  --jp-image-caretdown: url('./quantlab/api/themes/quantlab-theme-dark-extension/images/caretdown.png');
+  --jp-image-jupyter: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/jupyter-white-moons.svg');
+  --jp-image-quantlab: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/quantlab.svg');
+  --jp-image-quantlab-workmark: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/quantlab-wordmark.svg');
+  --jp-image-jupyter-favicon: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/jupyter-favicon.svg');
+  --jp-image-caretleft: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/caretleft.png');
+  --jp-image-caretright: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/caretright.png');
+  --jp-image-caretup: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/caretup.png');
+  --jp-image-caretdown: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/caretdown.png');
 
 
   /* Icons
-
   These icons are used throughout QuantLab.
   */
 
   /* The caret used for select dropdown styling. */
 
-  --jp-ui-select-caret: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/down_caret.svg');
+  --jp-ui-select-caret: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/down_caret.svg');
 
   /* Icons used in the application. */
 
-  --jp-icon-add: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/add.svg');
-  --jp-icon-book: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/book.svg');
-  --jp-icon-book-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/book_selected.svg');
-  --jp-icon-book-running: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/book_running.svg');
-  --jp-icon-book-running-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/book_running_selected.svg');
-  --jp-icon-calendar: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/calendar.svg');
-  --jp-icon-pdf: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/pdf.svg');
-  --jp-icon-javascript: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/javascript.svg');
-  --jp-icon-sql: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/sql.svg');
-  --jp-icon-highcharts: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/highcharts.svg');
-  --jp-icon-directory: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/directory.svg');
-  --jp-icon-directory-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/directory_selected.svg');
-  --jp-icon-new-directory: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/new-folder.svg');
-  --jp-icon-file-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/file_selected.svg');
-  --jp-icon-yaml: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/yml.svg');
-  --jp-icon-yaml-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/yml_selected.svg');
-  --jp-icon-spreadsheet: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/csv.svg');
-  --jp-icon-spreadsheet-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/csv_selected.svg');
-  --jp-icon-image: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/image.svg');
-  --jp-icon-image-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/image_selected.svg');
-  --jp-icon-json: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/json.svg');
-  --jp-icon-json-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/json_selected.svg');
-  --jp-icon-kernel-running: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/panorama_fish_eye.svg');
-  --jp-icon-markdown: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/markdown.svg');
-  --jp-icon-markdown-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/markdown_selected.svg');
-  --jp-icon-python: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/python.svg');
-  --jp-icon-python-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/python_selected.svg');
-  --jp-icon-r: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/r.svg');
-  --jp-icon-r-selected: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/r_selected.svg');
-  --jp-icon-console: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/console.svg');
-  --jp-icon-terminal: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/terminal.svg');
-  --jp-icon-file: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/file.svg');
-  --jp-icon-refresh: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/refresh.svg');
-  --jp-icon-close: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/close.svg');
-  --jp-icon-inverse-close: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/close-inverse.svg');
-  --jp-icon-circle: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/circle.svg');
-  --jp-icon-inverse-circle: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/circle-inverse.svg');
-  --jp-icon-close-circle: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/close-circle.svg');
-  --jp-icon-inverse-close-circle: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/close-circle-inverse.svg');
-  --jp-icon-search: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/search.svg');
-  --jp-icon-copy: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/copy.svg');
-  --jp-icon-cut: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/cut.svg');
-  --jp-icon-paste: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/paste.svg');
-  --jp-icon-download: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/download.svg');
-  --jp-icon-edit: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/edit.svg');
-  --jp-icon-ellipses: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/ellipses.svg');
-  --jp-icon-expand-less: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/expand-less.svg');
-  --jp-icon-expand-more: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/expand-more.svg');
-  --jp-icon-home: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/home.svg');
-  --jp-icon-jupyter: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/jupyter.svg');
-  --jp-icon-launcher: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/launcher.svg');
-  --jp-icon-more: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/more-horiz.svg');
-  --jp-icon-run: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/run.svg');
-  --jp-icon-save: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/save.svg');
-  --jp-icon-stop: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/stop.svg');
-  --jp-icon-text-editor: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/texteditor.svg');
-  --jp-icon-upload: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/upload.svg');
-  --jp-icon-question-mark: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/questionmark.svg');
-  --jp-icon-chat: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/chat.svg');
-  --jp-icon-checkmark: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/checkmark.svg');
-  --jp-icon-checkmark-disabled: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/checkmark-disabled.svg');
-  --jp-icon-caretup: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/caretup.svg');
-  --jp-icon-caretdown: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/caretdown.svg');
-  --jp-icon-caretleft: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/caretleft.svg');
-  --jp-icon-caretright: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/caretright.svg');
-  --jp-icon-undo: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/md/undo.svg');
-  --jp-icon-settings: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/settings.svg');
-  --jp-about-header-logo: url('./quantlab/api/themes/quantlab-theme-dark-extension/icons/jupyter/jupyter.svg');
-  --jp-about-header-logo: url('/lab/api/themes/quantlab-theme-dark-extension/images/jupyter-white-moons.svg');
-  --jp-about-header-wordmark: url('/lab/api/themes/quantlab-theme-dark-extension/images/quantlab-wordmark-inverse.svg');
+  --jp-icon-add: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/add.svg');
+  --jp-icon-book: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/book.svg');
+  --jp-icon-book-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/book_selected.svg');
+  --jp-icon-book-running: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/book_running.svg');
+  --jp-icon-book-running-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/book_running_selected.svg');
+  --jp-icon-bug: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/bug.svg');
+  --jp-icon-calendar: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/calendar.svg');
+  --jp-icon-pdf: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/pdf.svg');
+  --jp-icon-javascript: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/javascript.svg');
+  --jp-icon-sql: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/sql.svg');
+  --jp-icon-highcharts: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/highcharts.svg');
+  --jp-icon-directory: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/directory.svg');
+  --jp-icon-directory-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/directory_selected.svg');
+  --jp-icon-new-directory: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/new-folder.svg');
+  --jp-icon-file-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/file_selected.svg');
+  --jp-icon-yaml: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/yml.svg');
+  --jp-icon-yaml-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/yml_selected.svg');
+  --jp-icon-spreadsheet: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/csv.svg');
+  --jp-icon-spreadsheet-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/csv_selected.svg');
+  --jp-icon-image: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/image.svg');
+  --jp-icon-image-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/image_selected.svg');
+  --jp-icon-json: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/json.svg');
+  --jp-icon-json-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/json_selected.svg');
+  --jp-icon-kernel-running: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/panorama_fish_eye.svg');
+  --jp-icon-markdown: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/markdown.svg');
+  --jp-icon-markdown-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/markdown_selected.svg');
+  --jp-icon-python: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/python.svg');
+  --jp-icon-python-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/python_selected.svg');
+  --jp-icon-r: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/r.svg');
+  --jp-icon-r-selected: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/r_selected.svg');
+  --jp-icon-console: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/console.svg');
+  --jp-icon-terminal: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/terminal.svg');
+  --jp-icon-file: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/file.svg');
+  --jp-icon-refresh: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/refresh.svg');
+  --jp-icon-close: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/close.svg');
+  --jp-icon-inverse-close: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/close-inverse.svg');
+  --jp-icon-circle: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/circle.svg');
+  --jp-icon-inverse-circle: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/circle-inverse.svg');
+  --jp-icon-close-circle: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/close-circle.svg');
+  --jp-icon-inverse-close-circle: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/close-circle-inverse.svg');
+  --jp-icon-search: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/search.svg');
+  --jp-icon-copy: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/copy.svg');
+  --jp-icon-cut: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/cut.svg');
+  --jp-icon-paste: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/paste.svg');
+  --jp-icon-download: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/download.svg');
+  --jp-icon-edit: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/edit.svg');
+  --jp-icon-ellipses: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/ellipses.svg');
+  --jp-icon-expand-less: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/expand-less.svg');
+  --jp-icon-expand-more: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/expand-more.svg');
+  --jp-icon-home: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/home.svg');
+  --jp-icon-jupyter: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/jupyter.svg');
+  --jp-icon-launcher: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/launcher.svg');
+  --jp-icon-more: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/more-horiz.svg');
+  --jp-icon-run: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/run.svg');
+  --jp-icon-save: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/save.svg');
+  --jp-icon-stop: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/stop.svg');
+  --jp-icon-text-editor: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/texteditor.svg');
+  --jp-icon-upload: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/upload.svg');
+  --jp-icon-question-mark: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/questionmark.svg');
+  --jp-icon-chat: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/chat.svg');
+  --jp-icon-checkmark: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/checkmark.svg');
+  --jp-icon-checkmark-disabled: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/checkmark-disabled.svg');
+  --jp-icon-caretup: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/caretup.svg');
+  --jp-icon-caretdown: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/caretdown.svg');
+  --jp-icon-caretleft: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/caretleft.svg');
+  --jp-icon-caretright: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/caretright.svg');
+  --jp-icon-undo: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/md/undo.svg');
+  --jp-icon-settings: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/settings.svg');
+  --jp-about-header-logo: url('./quantlab/api/themes/@quantlab/theme-dark-extension/icons/jupyter/jupyter.svg');
+  --jp-about-header-logo: url('/quantlab/api/themes/@quantlab/theme-dark-extension/images/jupyter-white-moons.svg');
+  --jp-about-header-wordmark: url('/quantlab/api/themes/@quantlab/theme-dark-extension/images/quantlab-wordmark-inverse.svg');
 }

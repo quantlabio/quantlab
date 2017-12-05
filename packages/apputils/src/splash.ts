@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   IDisposable
 } from '@phosphor/disposable';
@@ -15,7 +14,7 @@ import {
  * The main menu token.
  */
 export
-const ISplashScreen = new Token<ISplashScreen>('jupyter.services.splash-screen');
+const ISplashScreen = new Token<ISplashScreen>('@quantlab/apputils:ISplashScreen');
 /* tslint:enable */
 
 

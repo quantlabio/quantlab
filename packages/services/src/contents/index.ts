@@ -1,9 +1,12 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
+import {
+  URLExt, PathExt
+} from '@quantlab/coreutils';
 
 import {
-  URLExt, PathExt, ModelDB
-} from '@quantlab/coreutils';
+  ModelDB
+} from '@quantlab/observables';
 
 import {
   JSONObject
@@ -109,6 +112,14 @@ namespace Contents {
   }
 
   /**
+   * Validates an IModel, thowing an error if it does not pass.
+   */
+  export
+  function validateContentsModel(contents: IModel): void {
+    validate.validateContentsModel(contents);
+  }
+
+  /**
    * A contents file type.
    */
   export
@@ -182,6 +193,14 @@ namespace Contents {
      * Last modified timestamp.
      */
     readonly last_modified: string;
+  }
+
+  /**
+   * Validates an ICheckpointModel, thowing an error if it does not pass.
+   */
+  export
+  function validateCheckpointModel(checkpoint: ICheckpointModel): void {
+    validate.validateCheckpointModel(checkpoint);
   }
 
   /**

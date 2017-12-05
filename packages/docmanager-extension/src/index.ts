@@ -1,12 +1,11 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
 import {
-  showDialog, Dialog, ICommandPalette, IMainMenu
+  showDialog, showErrorMessage, Spinner, Dialog, ICommandPalette
 } from '@quantlab/apputils';
 
 import {
@@ -14,7 +13,7 @@ import {
 } from '@quantlab/coreutils';
 
 import {
-  renameDialog, DocumentManager, IDocumentManager, showErrorMessage
+  renameDialog, DocumentManager, IDocumentManager
 } from '@quantlab/docmanager';
 
 import {
@@ -35,6 +34,9 @@ import {
  */
 namespace CommandIDs {
   export
+  const clone = 'docmanager:clone';
+
+  export
   const close = 'docmanager:close';
 
   export
@@ -53,7 +55,7 @@ namespace CommandIDs {
   const open = 'docmanager:open';
 
   export
-  const clone = 'docmanager:clone';
+  const rename = 'docmanager:rename';
 
   export
   const restoreCheckpoint = 'docmanager:restore-checkpoint';
@@ -63,20 +65,17 @@ namespace CommandIDs {
 
   export
   const saveAs = 'docmanager:save-as';
-
-  export
-  const rename = 'docmanager:rename';
-};
+}
 
 
 /**
  * The default document manager provider.
  */
 const plugin: QuantLabPlugin<IDocumentManager> = {
-  id: 'jupyter.services.document-manager',
+  id: '@quantlab/docmanager-extension:plugin',
   provides: IDocumentManager,
-  requires: [ICommandPalette, IMainMenu],
-  activate: (app: QuantLab, palette: ICommandPalette, mainMenu: IMainMenu): IDocumentManager => {
+  requires: [ICommandPalette],
+  activate: (app: QuantLab, palette: ICommandPalette): IDocumentManager => {
     const manager = app.serviceManager;
     const contexts = new WeakSet<DocumentRegistry.Context>();
     const opener: DocumentManager.IWidgetOpener = {
@@ -90,6 +89,11 @@ const plugin: QuantLabPlugin<IDocumentManager> = {
         };
         if (!widget.isAttached) {
           app.shell.addToMainArea(widget);
+
+          // Add a loading spinner, and remove it when the widget is ready.
+          let spinner = new Spinner();
+          widget.node.appendChild(spinner.node);
+          widget.ready.then(() => { widget.node.removeChild(spinner.node); });
         }
         app.shell.activateById(widget.id);
 
@@ -128,9 +132,28 @@ function addCommands(app: QuantLab, docManager: IDocumentManager, palette: IComm
     const { currentWidget } = app.shell;
     return !!(currentWidget && docManager.contextForWidget(currentWidget));
   };
+  const fileName = () => {
+    const { currentWidget } = app.shell;
+    if (!currentWidget) {
+      return 'File';
+    }
+    const context = docManager.contextForWidget(currentWidget);
+    if (!context) {
+      return 'File';
+    }
+    // TODO: we should consider eliding the name
+    // if it is very long.
+    return `"${currentWidget.title.label}"`;
+  };
 
   commands.addCommand(CommandIDs.close, {
-    label: 'Close',
+    label: () => {
+      const widget = app.shell.currentWidget;
+      return `Close ${widget && widget.title.label ?
+             `"${widget.title.label}"` : 'Tab'}`;
+    },
+    isEnabled: () => !!app.shell.currentWidget &&
+                     !!app.shell.currentWidget.title.closable,
     execute: () => {
       if (app.shell.currentWidget) {
         app.shell.currentWidget.close();
@@ -191,7 +214,7 @@ function addCommands(app: QuantLab, docManager: IDocumentManager, palette: IComm
   });
 
   commands.addCommand(CommandIDs.restoreCheckpoint, {
-    label: 'Revert to Checkpoint',
+    label: () => `Revert ${fileName()} to Checkpoint`,
     caption: 'Revert contents to previous checkpoint',
     isEnabled,
     execute: () => {
@@ -206,7 +229,7 @@ function addCommands(app: QuantLab, docManager: IDocumentManager, palette: IComm
   });
 
   commands.addCommand(CommandIDs.save, {
-    label: 'Save',
+    label: () => `Save ${fileName()}`,
     caption: 'Save and create checkpoint',
     isEnabled,
     execute: () => {
@@ -225,51 +248,31 @@ function addCommands(app: QuantLab, docManager: IDocumentManager, palette: IComm
   });
 
   commands.addCommand(CommandIDs.saveAs, {
-    label: 'Save As...',
-    caption: 'Save with new path and create checkpoint',
+    label: () => `Save ${fileName()} As…`,
+    caption: 'Save with new path',
     isEnabled,
     execute: () => {
       if (isEnabled()) {
         let context = docManager.contextForWidget(app.shell.currentWidget);
-        return context.saveAs().then(() => context.createCheckpoint());
+        return context.saveAs();
       }
     }
   });
 
   commands.addCommand(CommandIDs.rename, {
-    isVisible: () => {
-      const widget = app.shell.currentWidget;
-      if (!widget) {
-        return;
-      }
-      // Find the context for the widget.
-      let context = docManager.contextForWidget(widget);
-      return context !== null;
-    },
+    label: () => `Rename ${fileName()}`,
+    isEnabled,
     execute: () => {
-      const widget = app.shell.currentWidget;
-      if (!widget) {
-        return;
+      if (isEnabled()) {
+        let context = docManager.contextForWidget(app.shell.currentWidget);
+        return renameDialog(docManager, context!.path);
       }
-      // Find the context for the widget.
-      let context = docManager.contextForWidget(widget);
-      if (context) {
-        return renameDialog(docManager, context.path);
-      }
-    },
-    label: 'Rename'
+    }
   });
 
   commands.addCommand(CommandIDs.clone, {
-    isVisible: () => {
-      const widget = app.shell.currentWidget;
-      if (!widget) {
-        return;
-      }
-      // Find the context for the widget.
-      let context = docManager.contextForWidget(widget);
-      return context !== null;
-    },
+    label: () => `New View Into ${fileName()}`,
+    isEnabled,
     execute: () => {
       const widget = app.shell.currentWidget;
       if (!widget) {
@@ -281,7 +284,6 @@ function addCommands(app: QuantLab, docManager: IDocumentManager, palette: IComm
         opener.open(child);
       }
     },
-    label: 'New View into File'
   });
 
   app.contextMenu.addItem({

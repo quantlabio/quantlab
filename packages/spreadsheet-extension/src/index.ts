@@ -6,7 +6,7 @@ import {
 } from '@quantlab/application';
 
 import {
-  ICommandPalette, IMainMenu
+  ICommandPalette
 } from '@quantlab/apputils';
 
 import {
@@ -20,6 +20,10 @@ import {
 import {
   ILauncher
 } from '@quantlab/launcher';
+
+import {
+  IMainMenu
+} from '@quantlab/mainmenu';
 
 import {
   SheetTools, ISheetTools, ISpreadsheetTracker,
@@ -88,8 +92,8 @@ const EXPORT_TO_FORMATS = [
  * The spreadsheet widget tracker provider.
  */
 export
-const trackerPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
-  id: 'jupyter.extensions.spreadsheet',
+const tracker: QuantLabPlugin<ISpreadsheetTracker> = {
+  id: '@quantlab/spreadsheet-extension:tracker',
   provides: ISpreadsheetTracker,
   requires: [
     IMainMenu,
@@ -109,8 +113,8 @@ const trackerPlugin: QuantLabPlugin<ISpreadsheetTracker> = {
  * The spreadsheet cell factory provider.
  */
 export
-const contentFactoryPlugin: QuantLabPlugin<SpreadsheetPanel.IContentFactory> = {
-  id: 'jupyter.services.spreadsheet-renderer',
+const factory: QuantLabPlugin<SpreadsheetPanel.IContentFactory> = {
+  id: '@quantlab/spreadsheet-extension:factory',
   provides: SpreadsheetPanel.IContentFactory,
   autoStart: true,
   activate: (app: QuantLab) => {
@@ -121,10 +125,10 @@ const contentFactoryPlugin: QuantLabPlugin<SpreadsheetPanel.IContentFactory> = {
 /**
  * The sheet tools extension.
  */
-const sheetToolsPlugin: QuantLabPlugin<ISheetTools> = {
+const tools: QuantLabPlugin<ISheetTools> = {
   activate: activateSheetTools,
   provides: ISheetTools,
-  id: 'jupyter.extensions.sheet-tools',
+  id: '@quantlab/spreadsheet-extension:tools',
   autoStart: true,
   requires: [ISpreadsheetTracker, IEditorServices, IStateDB]
 };
@@ -136,7 +140,7 @@ const sheetToolsPlugin: QuantLabPlugin<ISheetTools> = {
 /**
  * Export the plugin as default.
  */
-const plugins: QuantLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin, sheetToolsPlugin];
+const plugins: QuantLabPlugin<any>[] = [factory, tracker, tools];
 export default plugins;
 
 /**
@@ -178,7 +182,7 @@ function activateSheetTools(app: QuantLab, tracker: ISpreadsheetTracker, editorS
 
   // Wait until the application has finished restoring before rendering.
   Promise.all([state.fetch(id), app.restored]).then(([args]) => {
-    const open = (args && args['open'] as boolean) || false;
+    const open = !!(args && (args as ReadonlyJSONObject)['open'] as boolean);
 
     // After initial restoration, check if the sheet tools should render.
     if (tracker.size) {
@@ -247,7 +251,7 @@ function activateSpreadsheet(app: QuantLab, mainMenu: IMainMenu, palette: IComma
   }
 
   // Fetch the initial state of the settings.
-  Promise.all([settingRegistry.load('jupyter.extensions.spreadsheet'), restored]).then(([settings]) => {
+  Promise.all([settingRegistry.load('@quantlab\\spreadsheet-extension\\spreadsheet'), restored]).then(([settings]) => {
     updateSettings(settings);
     updateTracker();
     settings.changed.connect(() => {
@@ -277,11 +281,11 @@ function activateSpreadsheet(app: QuantLab, mainMenu: IMainMenu, palette: IComma
   let registry = app.docRegistry;
   registry.addModelFactory(new SpreadsheetModelFactory({}));
   registry.addWidgetFactory(factory);
-  registry.addCreator({
-    name: 'Spreadsheet',
-    fileType: 'spreadsheet',
-    widgetName: 'Spreadsheet'
-  });
+  //registry.addCreator({
+  //  name: 'Spreadsheet',
+  //  fileType: 'spreadsheet',
+  //  widgetName: 'Spreadsheet'
+  //});
 
   addCommands(app, tracker);
   populatePalette(palette);

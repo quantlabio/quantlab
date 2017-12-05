@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   QuantLab, QuantLabPlugin, ILayoutRestorer, LayoutRestorer
 } from '@quantlab/application';
@@ -35,17 +34,23 @@ namespace CommandIDs {
 
   export
   const toggleMode: string = 'application:toggle-mode';
-};
+}
 
 
 /**
  * The main extension.
  */
-const mainPlugin: QuantLabPlugin<void> = {
-  id: 'jupyter.extensions.main',
+const main: QuantLabPlugin<void> = {
+  id: '@quantlab/application-extension:main',
   requires: [ICommandPalette],
   activate: (app: QuantLab, palette: ICommandPalette) => {
     addCommands(app, palette);
+
+    // If the currently active widget changes,
+    // trigger a refresh of the commands.
+    app.shell.currentChanged.connect(() => {
+      app.commands.notifyCommandChanged(CommandIDs.closeAll);
+    });
 
     let builder = app.serviceManager.builder;
 
@@ -69,7 +74,7 @@ const mainPlugin: QuantLabPlugin<void> = {
       });
     };
 
-    if (builder.isAvailable) {
+    if (builder.isAvailable && builder.shouldCheck) {
       builder.getStatus().then(response => {
         if (response.status === 'building') {
           return doBuild();
@@ -117,8 +122,8 @@ const mainPlugin: QuantLabPlugin<void> = {
 /**
  * The default layout restorer provider.
  */
-const layoutPlugin: QuantLabPlugin<ILayoutRestorer> = {
-  id: 'jupyter.services.layout-restorer',
+const layout: QuantLabPlugin<ILayoutRestorer> = {
+  id: '@quantlab/application-extension:layout',
   requires: [IStateDB],
   activate: (app: QuantLab, state: IStateDB) => {
     const first = app.started;
@@ -195,8 +200,6 @@ function addCommands(app: QuantLab, palette: ICommandPalette): void {
 /**
  * Export the plugins as default.
  */
-const plugins: QuantLabPlugin<any>[] = [
-  mainPlugin,
-  layoutPlugin
-];
+const plugins: QuantLabPlugin<any>[] = [main, layout];
+
 export default plugins;

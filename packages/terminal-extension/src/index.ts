@@ -1,17 +1,20 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
 import {
-  ICommandPalette, IMainMenu, InstanceTracker
+  ICommandPalette, InstanceTracker
 } from '@quantlab/apputils';
 
 import {
   ILauncher
 } from '@quantlab/launcher';
+
+import {
+  IMainMenu
+} from '@quantlab/mainmenu';
 
 import {
   ServiceManager
@@ -20,10 +23,6 @@ import {
 import {
   Terminal, ITerminalTracker
 } from '@quantlab/terminal';
-
-import {
-  Menu
-} from '@phosphor/widgets';
 
 
 /**
@@ -47,8 +46,7 @@ namespace CommandIDs {
 
   export
   const toggleTheme = 'terminal:toggle-theme';
-};
-
+}
 
 
 /**
@@ -62,7 +60,7 @@ const TERMINAL_ICON_CLASS = 'jp-TerminalIcon';
  */
 const plugin: QuantLabPlugin<ITerminalTracker> = {
   activate,
-  id: 'jupyter.extensions.terminal',
+  id: '@quantlab/terminal-extension:plugin',
   provides: ITerminalTracker,
   requires: [
     IMainMenu, ICommandPalette, ILayoutRestorer
@@ -100,31 +98,29 @@ function activate(app: QuantLab, mainMenu: IMainMenu, palette: ICommandPalette, 
     name: widget => widget.session && widget.session.name
   });
 
-  // Update the command registry when the terminal state changes.
-  tracker.currentChanged.connect(() => {
-    if (tracker.size <= 1) {
-      commands.notifyCommandChanged(CommandIDs.refresh);
-    }
-  });
-
   addCommands(app, serviceManager, tracker);
 
-  // Add command palette and menu items.
-  let menu = new Menu({ commands });
-  menu.title.label = category;
+  // Add some commands to the application view menu.
+  const viewGroup = [
+    CommandIDs.refresh,
+    CommandIDs.increaseFont,
+    CommandIDs.decreaseFont,
+    CommandIDs.toggleTheme
+  ].map(command => { return { command }; });
+  mainMenu.viewMenu.addGroup(viewGroup, 30);
+
+  // Add command palette items.
   [
-    CommandIDs.createNew,
     CommandIDs.refresh,
     CommandIDs.increaseFont,
     CommandIDs.decreaseFont,
     CommandIDs.toggleTheme
   ].forEach(command => {
     palette.addItem({ command, category });
-    if (command !== CommandIDs.createNew) {
-      menu.addItem({ command });
-    }
   });
-  mainMenu.addMenu(menu, {rank: 40});
+
+  // Add terminal creation to the file menu.
+  mainMenu.fileMenu.newMenu.addItem({ command: CommandIDs.createNew });
 
   // Add a launcher item if the launcher is available.
   if (launcher) {
@@ -155,13 +151,14 @@ function addCommands(app: QuantLab, services: ServiceManager, tracker: InstanceT
   /**
    * Whether there is an active terminal.
    */
-  function hasWidget(): boolean {
-    return tracker.currentWidget !== null;
+  function isEnabled(): boolean {
+    return tracker.currentWidget !== null &&
+           tracker.currentWidget === app.shell.currentWidget;
   }
 
   // Add terminal commands.
   commands.addCommand(CommandIDs.createNew, {
-    label: 'New Terminal',
+    label: 'Terminal',
     caption: 'Start a new terminal session',
     execute: args => {
       let name = args['name'] as string;
@@ -229,7 +226,7 @@ function addCommands(app: QuantLab, services: ServiceManager, tracker: InstanceT
         tracker.forEach(widget => { widget.fontSize = options.fontSize; });
       }
     },
-    isEnabled: hasWidget
+    isEnabled
   });
 
   commands.addCommand('terminal:decrease-font', {
@@ -241,21 +238,22 @@ function addCommands(app: QuantLab, services: ServiceManager, tracker: InstanceT
         tracker.forEach(widget => { widget.fontSize = options.fontSize; });
       }
     },
-    isEnabled: hasWidget
+    isEnabled
   });
 
+  let terminalTheme: Terminal.Theme = 'dark';
   commands.addCommand('terminal:toggle-theme', {
-    label: 'Toggle Terminal Theme',
-    caption: 'Switch Terminal Theme',
+    label: 'Use Dark Terminal Theme',
+    caption: 'Whether to use the dark terminal theme',
+    isToggled: () => terminalTheme === 'dark',
     execute: () => {
+      terminalTheme = terminalTheme === 'dark' ? 'light' : 'dark';
       tracker.forEach(widget => {
-        if (widget.theme === 'dark') {
-          widget.theme = 'light';
-        } else {
-          widget.theme = 'dark';
+        if (widget.theme !== terminalTheme) {
+          widget.theme = terminalTheme;
         }
       });
     },
-    isEnabled: hasWidget
+    isEnabled
   });
 }

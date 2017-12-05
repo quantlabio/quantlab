@@ -1,0 +1,10 @@
+{
+  "jupyter.quantlab.setting-icon-class": "jp-CalendarIcon",
+  "jupyter.quantlab.setting-icon-label": "Calendar",
+  "title": "Calendar",
+  "description": "Calendar settings",
+  "properties": {
+    "ApiKey": { "type": "string", "title": "Api Key", "default": "" }
+  },
+  "type": "object"
+}

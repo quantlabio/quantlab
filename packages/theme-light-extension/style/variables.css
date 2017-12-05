@@ -9,32 +9,22 @@ These variables should be used by all plugins wherever possible. In other
 words, plugins should not define custom colors, sizes, etc unless absolutely
 necessary. This enables users to change the visual theme of QuantLab
 by changing these variables.
-
 Many variables appear in an ordered sequence (0,1,2,3). These sequences
 are designed to work well together, so for example, `--jp-border-color1` should
 be used with `--jp-layout-color1`. The numbers have the following meanings:
-
 * 0: super-primary, reserved for special emphasis
 * 1: primary, most important under normal situations
 * 2: secondary, next most important under normal situations
 * 3: tertiary, next most important under normal situations
-
 Throughout QuantLab, we are mostly following principles from Google's
 Material Design when selecting colors. We are not, however, following
 all of MD as it is not optimized for dense, information rich UIs.
 */
 
 
-/*
- * Optional monospace font for input/output prompt.
- */
-@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
-
-
 :root {
 
   /* Borders
-
   The following variables, specify the visual styling of borders in QuantLab.
    */
 
@@ -45,7 +35,6 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-border-color3: var(--md-grey-200);
 
   /* UI Fonts
-
   The UI font CSS variables are used for the typography all of the QuantLab
   user interface elements that are not directly user generated content.
   */
@@ -76,7 +65,6 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-inverse-ui-font-color3: rgba(255,255,255,0.5);
 
   /* Content Fonts
-
   Content font variables are used for typography of user generated content.
   */
 
@@ -86,6 +74,8 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-content-font-color1: black;
   --jp-content-font-color2: var(--md-grey-700);
   --jp-content-font-color3: var(--md-grey-500);
+
+  --jp-content-link-color: var(--md-blue-600);
 
   --jp-ui-font-scale-factor: 1.2;
   --jp-ui-font-size0: calc(var(--jp-ui-font-size1)/var(--jp-ui-font-scale-factor));
@@ -99,7 +89,6 @@ all of MD as it is not optimized for dense, information rich UIs.
   --jp-code-font-family: monospace;
 
   /* Layout
-
   The following are the main layout colors use in QuantLab. In a light
   theme these would go from light to dark.
   */

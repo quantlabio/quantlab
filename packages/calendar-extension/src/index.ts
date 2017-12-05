@@ -6,7 +6,7 @@ import {
 } from '@quantlab/application';
 
 import {
-  ICommandPalette, IMainMenu
+  ICommandPalette
 } from '@quantlab/apputils';
 
 import {
@@ -20,6 +20,10 @@ import {
 import {
   ILauncher
 } from '@quantlab/launcher';
+
+import {
+  IMainMenu
+} from '@quantlab/mainmenu';
 
 import {
   CalendarTools, ICalendarTools, ICalendarTracker,
@@ -92,8 +96,8 @@ const HOLIDAY_CALENDARS = [
 /**
  * The Calendar widget tracker provider.
  */
-const trackerPlugin: QuantLabPlugin<ICalendarTracker> = {
-  id: 'jupyter.extensions.calendar',
+const tracker: QuantLabPlugin<ICalendarTracker> = {
+  id: '@quantlab/calendar-extension:tracker',
   provides: ICalendarTracker,
   requires: [
     IMainMenu,
@@ -113,8 +117,8 @@ const trackerPlugin: QuantLabPlugin<ICalendarTracker> = {
  * The Calendar factory provider.
  */
 export
-const contentFactoryPlugin: QuantLabPlugin<CalendarPanel.IContentFactory> = {
-  id: 'jupyter.services.calendar-renderer',
+const factory: QuantLabPlugin<CalendarPanel.IContentFactory> = {
+  id: '@quantlab/calendar-extension:factory',
   provides: CalendarPanel.IContentFactory,
   autoStart: true,
   activate: (app: QuantLab) => {
@@ -126,10 +130,10 @@ const contentFactoryPlugin: QuantLabPlugin<CalendarPanel.IContentFactory> = {
 /**
  * The calendar tools extension.
  */
-const calendarToolsPlugin: QuantLabPlugin<ICalendarTools> = {
+const tools: QuantLabPlugin<ICalendarTools> = {
+  id: '@quantlab/calendar-extension:tools',
   activate: activateCalendarTools,
   provides: ICalendarTools,
-  id: 'jupyter.extensions.calendar-tools',
   autoStart: true,
   requires: [ICalendarTracker, IEditorServices, IStateDB]
 };
@@ -138,7 +142,7 @@ const calendarToolsPlugin: QuantLabPlugin<ICalendarTools> = {
 /**
  * Export the plugin as default.
  */
-const plugins: QuantLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin, calendarToolsPlugin];
+const plugins: QuantLabPlugin<any>[] = [factory, tracker, tools];
 export default plugins;
 
 /**
@@ -178,7 +182,7 @@ function activateCalendarTools(app: QuantLab, tracker: ICalendarTracker, editorS
 
   // Wait until the application has finished restoring before rendering.
   Promise.all([state.fetch(id), app.restored]).then(([args]) => {
-    const open = (args && args['open'] as boolean) || false;
+    const open = !!(args && (args as ReadonlyJSONObject)['open'] as boolean);
 
     // After initial restoration, check if the calendar tools should render.
     if (tracker.size) {
@@ -244,7 +248,7 @@ function activateCalendar(app: QuantLab, mainMenu: IMainMenu, palette: ICommandP
   }
 
   // Fetch the initial state of the settings.
-  Promise.all([settingRegistry.load('jupyter.extensions.calendar'), restored]).then(([settings]) => {
+  Promise.all([settingRegistry.load('@quantlab\\calendar-extension\\calendar'), restored]).then(([settings]) => {
     updateSettings(settings);
     updateTracker();
     settings.changed.connect(() => {
@@ -274,11 +278,11 @@ function activateCalendar(app: QuantLab, mainMenu: IMainMenu, palette: ICommandP
   let registry = app.docRegistry;
   registry.addModelFactory(new CalendarModelFactory({}));
   registry.addWidgetFactory(factory);
-  registry.addCreator({
-    name: 'Calendar',
-    fileType: 'calendar',
-    widgetName: 'Calendar'
-  });
+  //registry.addCreator({
+  //  name: 'Calendar',
+  //  fileType: 'calendar',
+  //  widgetName: 'Calendar'
+  //});
 
   addCommands(app, tracker);
   populatePalette(palette);

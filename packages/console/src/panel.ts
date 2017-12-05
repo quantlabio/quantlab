@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ClientSession, IClientSession
 } from '@quantlab/apputils';
@@ -92,7 +91,6 @@ class ConsolePanel extends Panel {
       this._updateTitle();
     });
 
-    this._manager = manager;
     this.console.executed.connect(this._onExecuted, this);
     session.kernelChanged.connect(this._updateTitle, this);
     session.propertyChanged.connect(this._updateTitle, this);
@@ -171,7 +169,6 @@ class ConsolePanel extends Panel {
     Private.updateTitle(this, this._connected, this._executed);
   }
 
-  private _manager: ServiceManager.IManager;
   private _executed: Date | null = null;
   private _connected: Date | null = null;
   private _session: ClientSession;
@@ -281,7 +278,7 @@ namespace ConsolePanel {
    * The console renderer token.
    */
   export
-  const IContentFactory = new Token<IContentFactory>('jupyter.services.console.content-factory');
+  const IContentFactory = new Token<IContentFactory>('@quantlab/console:IContentFactory');
   /* tslint:enable */
 }
 

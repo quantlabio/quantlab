@@ -19,6 +19,12 @@
 }
 
 
+.jp-BugIcon {
+  background-image: var(--jp-icon-bug);
+}
+
+
+
 .jp-CalendarIcon {
   background-image: var(--jp-icon-calendar);
 }

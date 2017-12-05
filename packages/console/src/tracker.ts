@@ -1,17 +1,16 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
+import {
+  IInstanceTracker
+} from '@quantlab/apputils';
 
 import {
   Token
 } from '@phosphor/coreutils';
 
 import {
-  IInstanceTracker
-} from '@quantlab/apputils';
-
-import {
   ConsolePanel
-} from './';
+} from './panel';
 
 
 /* tslint:disable */
@@ -19,7 +18,7 @@ import {
  * The console tracker token.
  */
 export
-const IConsoleTracker = new Token<IConsoleTracker>('jupyter.services.consoles');
+const IConsoleTracker = new Token<IConsoleTracker>('@quantlab/console:IConsoleTracker');
 /* tslint:enable */
 
 

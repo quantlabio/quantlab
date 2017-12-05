@@ -126,16 +126,6 @@
 }
 
 
-.jp-RunningSessions-itemIcon.jp-mod-spreadsheet {
-  background-image: var(--jp-icon-spreadsheet);
-}
-
-
-.jp-RunningSessions-itemIcon.jp-mod-highcharts {
-  background-image: var(--jp-icon-highcharts);
-}
-
-
 .jp-RunningSessions-itemIcon.jp-mod-console {
   background-image: var(--jp-icon-console);
 }
@@ -158,7 +148,6 @@
   padding-left: 4px;
   text-overflow: ellipsis;
   overflow: hidden;
-  direction: rtl;
   white-space: nowrap;
   border-radius: 2px;
   transition: background-color 0.1s ease;

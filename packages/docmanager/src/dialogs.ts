@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   Dialog, showDialog
 } from '@quantlab/apputils';
@@ -110,23 +109,6 @@ function shouldOverwrite(path: string): Promise<boolean> {
     return Promise.resolve(result.button.accept);
   });
 }
-
-
-/**
- * An error message dialog to upon document manager errors.
- */
-export
-function showErrorMessage(title: string, error: Error): Promise<void> {
-  console.error(error);
-  let options = {
-    title: title,
-    body: error.message || `File ${title}`,
-    buttons: [Dialog.okButton()],
-    okText: 'DISMISS'
-  };
-  return showDialog(options).then(() => { /* no-op */ });
-}
-
 
 
 /**

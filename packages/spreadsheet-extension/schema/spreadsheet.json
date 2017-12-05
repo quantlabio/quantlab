@@ -1,0 +1,11 @@
+{
+  "jupyter.quantlab.setting-icon-class": "jp-SpreadsheetIcon",
+  "jupyter.quantlab.setting-icon-label": "Spreadsheet",
+  "title": "Spreadsheet",
+  "description": "Spreadsheet settings",
+  "properties": {
+    "ApiKey": { "type": "string", "title": "Api Key", "default": "default" },
+    "sheet": { "type": "string", "title": "sheet", "default": "default" }
+  },
+  "type": "object"
+}

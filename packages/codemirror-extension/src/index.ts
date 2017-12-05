@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   JSONObject
 } from '@phosphor/coreutils';
@@ -14,8 +13,12 @@ import {
 } from '@quantlab/application';
 
 import {
-  ICommandPalette, IMainMenu
+  ICommandPalette
 } from '@quantlab/apputils';
+
+import {
+  IMainMenu, IEditMenu
+} from '@quantlab/mainmenu';
 
 import {
   IEditorServices
@@ -30,7 +33,7 @@ import {
 } from '@quantlab/coreutils';
 
 import {
-  IEditorTracker
+  IEditorTracker, FileEditor
 } from '@quantlab/fileeditor';
 
 
@@ -52,15 +55,14 @@ namespace CommandIDs {
 
   export
   const findAndReplace = 'codemirror:find-and-replace';
-};
+}
 
 
 /**
  * The editor services.
  */
-export
-const servicesPlugin: QuantLabPlugin<IEditorServices> = {
-  id: 'jupyter.services.codemirror-services',
+const services: QuantLabPlugin<IEditorServices> = {
+  id: '@quantlab/codemirror-extension:services',
   provides: IEditorServices,
   activate: (): IEditorServices => editorServices
 };
@@ -69,10 +71,15 @@ const servicesPlugin: QuantLabPlugin<IEditorServices> = {
 /**
  * The editor commands.
  */
-export
-const commandsPlugin: QuantLabPlugin<void> = {
-  id: 'jupyter.services.codemirror-commands',
-  requires: [IEditorTracker, IMainMenu, ICommandPalette, IStateDB, ISettingRegistry],
+const commands: QuantLabPlugin<void> = {
+  id: '@quantlab/codemirror-extension:commands',
+  requires: [
+    IEditorTracker,
+    IMainMenu,
+    ICommandPalette,
+    IStateDB,
+    ISettingRegistry
+  ],
   activate: activateEditorCommands,
   autoStart: true
 };
@@ -81,16 +88,20 @@ const commandsPlugin: QuantLabPlugin<void> = {
 /**
  * Export the plugins as default.
  */
-const plugins: QuantLabPlugin<any>[] = [commandsPlugin, servicesPlugin];
+const plugins: QuantLabPlugin<any>[] = [commands, services];
 export default plugins;
 
+
+/**
+ * The plugin ID used as the key in the setting registry.
+ */
+const id = commands.id;
 
 /**
  * Set up the editor widget menu and commands.
  */
 function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu: IMainMenu, palette: ICommandPalette, state: IStateDB, settingRegistry: ISettingRegistry): void {
   const { commands, restored } = app;
-  const { id } = commandsPlugin;
   let { theme, keyMap } = CodeMirrorEditor.defaultConfig;
 
   /**
@@ -138,18 +149,12 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
     }
   });
 
-  // Update the command registry when the codemirror state changes.
-  tracker.currentChanged.connect(() => {
-    if (tracker.size <= 1) {
-      commands.notifyCommandChanged(CommandIDs.changeKeyMap);
-    }
-  });
-
   /**
    * A test for whether the tracker has an active widget.
    */
-  function hasWidget(): boolean {
-    return tracker.currentWidget !== null;
+  function isEnabled(): boolean {
+    return tracker.currentWidget !== null &&
+           tracker.currentWidget === app.shell.currentWidget;
   }
 
   /**
@@ -179,7 +184,7 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
           console.error(`Failed to set ${id}:${key} - ${reason.message}`);
         });
       },
-      isEnabled: hasWidget,
+      isEnabled,
       isToggled: args => args['theme'] === theme
     });
 
@@ -197,12 +202,12 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
           console.error(`Failed to set ${id}:${key} - ${reason.message}`);
         });
       },
-      isEnabled: hasWidget,
+      isEnabled,
       isToggled: args => args['keyMap'] === keyMap
     });
 
     commands.addCommand(CommandIDs.find, {
-      label: 'Find',
+      label: 'Find...',
       execute: () => {
         let widget = tracker.currentWidget;
         if (!widget) {
@@ -211,11 +216,11 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
         let editor = widget.editor as CodeMirrorEditor;
         editor.execCommand('find');
       },
-      isEnabled: hasWidget
+      isEnabled
     });
 
     commands.addCommand(CommandIDs.findAndReplace, {
-      label: 'Find & Replace',
+      label: 'Find & Replace...',
       execute: () => {
         let widget = tracker.currentWidget;
         if (!widget) {
@@ -224,7 +229,7 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
         let editor = widget.editor as CodeMirrorEditor;
         editor.execCommand('replace');
       },
-      isEnabled: hasWidget
+      isEnabled
     });
 
     commands.addCommand(CommandIDs.changeMode, {
@@ -239,7 +244,7 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
           }
         }
       },
-      isEnabled: hasWidget,
+      isEnabled,
       isToggled: args => {
         let widget = tracker.currentWidget;
         if (!widget) {
@@ -298,15 +303,10 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
       palette.addItem({ command, args, category: 'Editor' });
     }
 
-    menu.addItem({ type: 'submenu', submenu: modeMenu });
-    menu.addItem({ type: 'submenu', submenu: tabMenu });
-    menu.addItem({ command: CommandIDs.find });
-    menu.addItem({ command: CommandIDs.findAndReplace });
-    menu.addItem({ type: 'separator' });
-    menu.addItem({ command: 'fileeditor:toggle-line-numbers' });
-    menu.addItem({ command: 'fileeditor:toggle-line-wrap' });
-    menu.addItem({ command: 'fileeditor:toggle-match-brackets' });
     menu.addItem({ command: 'fileeditor:toggle-autoclosing-brackets' });
+    menu.addItem({ type: 'submenu', submenu: tabMenu });
+    menu.addItem({ type: 'separator' });
+    menu.addItem({ type: 'submenu', submenu: modeMenu });
     menu.addItem({ type: 'submenu', submenu: keyMapMenu });
     menu.addItem({ type: 'submenu', submenu: themeMenu });
 
@@ -315,13 +315,16 @@ function activateEditorCommands(app: QuantLab, tracker: IEditorTracker, mainMenu
 
   mainMenu.addMenu(createMenu(), { rank: 30 });
 
-  [
-    'editor:line-numbers',
-    'editor:line-wrap',
-    'editor:match-brackets',
-    'editor-autoclosing-brackets',
-    'editor:create-console',
-    'editor:run-code'
-  ].forEach(command => palette.addItem({ command, category: 'Editor' }));
-
+  // Add find-replace capabilities to the edit menu.
+  mainMenu.editMenu.findReplacers.add({
+    tracker,
+    find: (widget: FileEditor) => {
+      let editor = widget.editor as CodeMirrorEditor;
+      editor.execCommand('find');
+    },
+    findAndReplace: (widget: FileEditor) => {
+      let editor = widget.editor as CodeMirrorEditor;
+      editor.execCommand('replace');
+    }
+  } as IEditMenu.IFindReplacer<FileEditor>)
 }

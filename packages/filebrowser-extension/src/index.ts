@@ -1,12 +1,11 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
 
 import {
-  ICommandPalette, IMainMenu, InstanceTracker, ToolbarButton
+  InstanceTracker, ToolbarButton
 } from '@quantlab/apputils';
 
 import {
@@ -63,7 +62,6 @@ namespace CommandIDs {
 
   export
   const hideBrowser = 'filebrowser:hide-main'; // For main browser only.
-
   export
   const open = 'filebrowser:open';
 
@@ -75,54 +73,34 @@ namespace CommandIDs {
 
   export
   const showBrowser = 'filebrowser:activate-main'; // For main browser only.
-
   export
   const shutdown = 'filebrowser:shutdown';
 
   export
   const toggleBrowser = 'filebrowser:toggle-main'; // For main browser only.
-
   export
   const createLauncher = 'filebrowser:create-main-launcher'; // For main browser only.
-};
+}
 
 
 /**
  * The default file browser extension.
  */
-const fileBrowserPlugin: QuantLabPlugin<void> = {
-  activate: activateFileBrowser,
-  id: 'jupyter.extensions.filebrowser',
-  requires: [
-    IFileBrowserFactory,
-    IDocumentManager,
-    ICommandPalette,
-    ILayoutRestorer
-  ],
+const browser: QuantLabPlugin<void> = {
+  activate: activateBrowser,
+  id: '@quantlab/filebrowser-extension:browser',
+  requires: [IFileBrowserFactory, ILayoutRestorer],
   autoStart: true
 };
 
 /**
  * The default file browser factory provider.
  */
-const factoryPlugin: QuantLabPlugin<IFileBrowserFactory> = {
+const factory: QuantLabPlugin<IFileBrowserFactory> = {
   activate: activateFactory,
-  id: 'jupyter.services.filebrowser',
+  id: '@quantlab/filebrowser-extension:factory',
   provides: IFileBrowserFactory,
-  requires: [IDocumentManager, IStateDB],
-  autoStart: true
-};
-
-/**
- * The default file browser menu extension.
- */
-const fileBrowserMenuPlugin: QuantLabPlugin<void> = {
-  activate: activateFileBrowserMenu,
-  id: 'jupyter.extensions.filebrowsermenu',
-  requires: [
-    IMainMenu,
-  ],
-  autoStart: true
+  requires: [IDocumentManager, IStateDB]
 };
 
 /**
@@ -130,11 +108,10 @@ const fileBrowserMenuPlugin: QuantLabPlugin<void> = {
  */
 const namespace = 'filebrowser';
 
-
 /**
  * Export the plugins as default.
  */
-const plugins: QuantLabPlugin<any>[] = [factoryPlugin, fileBrowserPlugin, fileBrowserMenuPlugin];
+const plugins: QuantLabPlugin<any>[] = [factory, browser];
 export default plugins;
 
 
@@ -144,8 +121,7 @@ export default plugins;
 function activateFactory(app: QuantLab, docManager: IDocumentManager, state: IStateDB): IFileBrowserFactory {
   const { commands } = app;
   const tracker = new InstanceTracker<FileBrowser>({ namespace });
-
-  const createFileBrowser = (id: string, options: IFileBrowserFactory.IOptions = {}) => {
+  const createFileBrowser = (id: string, options: IFileBrowserFactory.IOptions = { }) => {
     const model = new FileBrowserModel({
       manager: docManager,
       driveName: options.driveName || '',
@@ -180,15 +156,18 @@ function activateFactory(app: QuantLab, docManager: IDocumentManager, state: ISt
 
     return widget;
   };
-  let defaultBrowser = createFileBrowser('filebrowser');
+  const defaultBrowser = createFileBrowser('filebrowser');
+
   return { createFileBrowser, defaultBrowser, tracker };
 }
+
 
 /**
  * Activate the default file browser in the sidebar.
  */
-function activateFileBrowser(app: QuantLab, factory: IFileBrowserFactory, docManager: IDocumentManager, palette: ICommandPalette, restorer: ILayoutRestorer): void {
-  const fbWidget = factory.defaultBrowser;
+function activateBrowser(app: QuantLab, factory: IFileBrowserFactory, restorer: ILayoutRestorer): void {
+  const browser = factory.defaultBrowser;
+  const { commands, shell } = app;
 
   // Let the application restorer track the primary file browser (that is
   // automatically created) for restoration of application state (e.g. setting
@@ -196,46 +175,42 @@ function activateFileBrowser(app: QuantLab, factory: IFileBrowserFactory, docMan
   //
   // All other file browsers created by using the factory function are
   // responsible for their own restoration behavior, if any.
-  restorer.add(fbWidget, namespace);
+  restorer.add(browser, namespace);
 
-  addCommands(app, factory.tracker, fbWidget);
+  addCommands(app, factory.tracker, browser);
 
-  fbWidget.title.label = 'Files';
-  app.shell.addToLeftArea(fbWidget, { rank: 100 });
+  browser.title.label = 'Files';
+  shell.addToLeftArea(browser, { rank: 100 });
 
   // If the layout is a fresh session without saved data, open file browser.
   app.restored.then(layout => {
     if (layout.fresh) {
-      app.commands.execute(CommandIDs.showBrowser, void 0);
+      commands.execute(CommandIDs.showBrowser, void 0);
     }
   });
 
-  // Create a launcher if there are no open items.
-  app.shell.layoutModified.connect(() => {
-    if (app.shell.isEmpty('main')) {
-      // Make sure the model is restored.
-      fbWidget.model.restored.then(() => {
-        createLauncher(app.commands, fbWidget);
-      });
+  Promise.all([app.restored, browser.model.restored]).then(() => {
+    const { model } = browser;
+
+    function maybeCreate() {
+      // Create a launcher if there are no open items.
+      if (app.shell.isEmpty('main')) {
+        model.restored.then(() => createLauncher(commands, browser));
+      }
     }
+
+    // When layout is modified, create a launcher if there are no open items.
+    shell.layoutModified.connect(() => { maybeCreate(); });
+
+    maybeCreate();
   });
-}
-
-
-/**
- * Activate the default file browser menu in the main menu.
- */
-function activateFileBrowserMenu(app: QuantLab, mainMenu: IMainMenu): void {
-  let menu = createMenu(app);
-
-  mainMenu.addMenu(menu, { rank: 1 });
 }
 
 
 /**
  * Add the main file browser commands to the application's command registry.
  */
-function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, mainBrowser: FileBrowser): void {
+function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, browser: FileBrowser): void {
   const { commands } = app;
 
   commands.addCommand(CommandIDs.del, {
@@ -307,7 +282,7 @@ function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, mainB
 
   commands.addCommand(CommandIDs.hideBrowser, {
     execute: () => {
-      if (!mainBrowser.isHidden) {
+      if (!browser.isHidden) {
         app.shell.collapseLeft();
       }
     }
@@ -361,7 +336,7 @@ function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, mainB
   });
 
   commands.addCommand(CommandIDs.showBrowser, {
-    execute: () => { app.shell.activateById(mainBrowser.id); }
+    execute: () => { app.shell.activateById(browser.id); }
   });
 
   commands.addCommand(CommandIDs.shutdown, {
@@ -379,7 +354,7 @@ function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, mainB
 
   commands.addCommand(CommandIDs.toggleBrowser, {
     execute: () => {
-      if (mainBrowser.isHidden) {
+      if (browser.isHidden) {
         return commands.execute(CommandIDs.showBrowser, void 0);
       } else {
         return commands.execute(CommandIDs.hideBrowser, void 0);
@@ -389,35 +364,8 @@ function addCommands(app: QuantLab, tracker: InstanceTracker<FileBrowser>, mainB
 
   commands.addCommand(CommandIDs.createLauncher, {
     label: 'New...',
-    execute: () => {
-      return createLauncher(commands, mainBrowser);
-    }
+    execute: () => createLauncher(commands, browser)
   });
-}
-
-
-/**
- * Create a top level menu for the file browser.
- */
-function createMenu(app: QuantLab): Menu {
-  const { commands } = app;
-  const menu = new Menu({ commands });
-
-  menu.title.label = 'File';
-  [
-    CommandIDs.createLauncher,
-    'docmanager:save',
-    'docmanager:save-as',
-    'docmanager:rename',
-    'docmanager:restore-checkpoint',
-    'docmanager:clone',
-    'docmanager:close',
-    'docmanager:close-all-files'
-  ].forEach(command => { menu.addItem({ command }); });
-  menu.addItem({ type: 'separator' });
-  menu.addItem({ command: 'settingeditor:open' });
-
-  return menu;
 }
 
 
@@ -428,7 +376,7 @@ function createMenu(app: QuantLab): Menu {
  * This function generates temporary commands with an incremented name. These
  * commands are disposed when the menu itself is disposed.
  */
-function createContextMenu(path: string, commands: CommandRegistry, registry: DocumentRegistry):  Menu {
+function createContextMenu(path: string, commands: CommandRegistry, registry: DocumentRegistry): Menu {
   const menu = new Menu({ commands });
 
   menu.addItem({ command: CommandIDs.open });
@@ -460,12 +408,12 @@ function createContextMenu(path: string, commands: CommandRegistry, registry: Do
 /**
  * Create a launcher for a given filebrowser widget.
  */
-function createLauncher(commands: CommandRegistry, widget: FileBrowser): Promise<void> {
-  return commands.execute('launcher:create', {
-    cwd: widget.model.path
-  }).then((launcher: Launcher) => {
-    widget.model.pathChanged.connect(() => {
-      launcher.cwd = widget.model.path;
-    }, launcher);
-  });
+function createLauncher(commands: CommandRegistry, browser: FileBrowser): Promise<Launcher> {
+  const { model } = browser;
+
+  return commands.execute('launcher:create', { cwd: model.path })
+    .then((launcher: Launcher) => {
+      model.pathChanged.connect(() => { launcher.cwd = model.path; }, launcher);
+      return launcher;
+    });
 }

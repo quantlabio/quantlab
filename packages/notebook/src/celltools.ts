@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ArrayExt, each
 } from '@phosphor/algorithm';
@@ -34,8 +33,12 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  IObservableMap, nbformat, ObservableJSON
+  nbformat
 } from '@quantlab/coreutils';
+
+import {
+  IObservableMap, ObservableJSON
+} from '@quantlab/observables';
 
 import {
   INotebookTracker
@@ -73,7 +76,7 @@ const KEYSELECTOR_CLASS = 'jp-KeySelector';
  * The main menu token.
  */
 export
-const ICellTools = new Token<ICellTools>('jupyter.services.cell-tools');
+const ICellTools = new Token<ICellTools>('@quantlab/notebook:ICellTools');
 /* tslint:enable */
 
 
@@ -81,7 +84,7 @@ const ICellTools = new Token<ICellTools>('jupyter.services.cell-tools');
  * The interface for cell metadata tools.
  */
 export
-interface ICellTools extends CellTools {};
+interface ICellTools extends CellTools {}
 
 
 /**

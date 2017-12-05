@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   IInstanceTracker
 } from '@quantlab/apputils';
@@ -29,5 +28,5 @@ interface ITerminalTracker extends IInstanceTracker<Terminal> {}
  * The editor tracker token.
  */
 export
-const ITerminalTracker = new Token<ITerminalTracker>('jupyter.services.terminal-tracker');
+const ITerminalTracker = new Token<ITerminalTracker>('@quantlab/terminal:ITerminalTracker');
 /* tslint:enable */

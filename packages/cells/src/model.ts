@@ -21,7 +21,7 @@ import {
 
 import {
   IObservableJSON, IModelDB, IObservableValue, ObservableValue
-} from '@quantlab/coreutils';
+} from '@quantlab/observables';
 
 import {
   IOutputAreaModel, OutputAreaModel

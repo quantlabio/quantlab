@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
@@ -36,7 +35,7 @@ namespace CommandIDs {
  */
 const plugin: QuantLabPlugin<void> = {
   activate,
-  id: 'jupyter.extensions.rendered-markdown',
+  id: '@quantlab/markdownviewer-extension:plugin',
   requires: [ILayoutRestorer],
   autoStart: true
 };
@@ -51,14 +50,13 @@ function activate(app: QuantLab, restorer: ILayoutRestorer) {
       name: FACTORY,
       primaryFileType,
       fileTypes: ['markdown'],
-      defaultFor: ['markdown'],
       rendermime: app.rendermime
     });
-    app.docRegistry.addWidgetFactory(factory);
-
     const { commands } = app;
     const namespace = 'rendered-markdown';
     const tracker = new InstanceTracker<MimeDocument>({ namespace });
+
+    app.docRegistry.addWidgetFactory(factory);
 
     // Handle state restoration.
     restorer.restore(tracker, {

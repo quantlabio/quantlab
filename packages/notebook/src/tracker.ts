@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   IInstanceTracker, InstanceTracker
 } from '@quantlab/apputils';
@@ -55,7 +54,7 @@ interface INotebookTracker extends IInstanceTracker<NotebookPanel> {
  * The notebook tracker token.
  */
 export
-const INotebookTracker = new Token<INotebookTracker>('jupyter.services.notebooks');
+const INotebookTracker = new Token<INotebookTracker>('@quantlab/notebook:INotebookTracker');
 /* tslint:enable */
 
 

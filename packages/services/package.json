@@ -2,64 +2,67 @@
   "name": "@quantlab/services",
   "version": "0.4.0",
   "description": "Client APIs for the Jupyter services REST APIs",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "dependencies": {
-    "@phosphor/algorithm": "^1.1.1",
-    "@phosphor/coreutils": "^1.2.0",
-    "@phosphor/disposable": "^1.1.1",
-    "@phosphor/signaling": "^1.2.1",
-    "@quantlab/coreutils": "^0.3.0"
-  },
-  "devDependencies": {
-    "@types/expect.js": "^0.3.29",
-    "@types/mocha": "^2.2.32",
-    "@types/text-encoding": "0.0.30",
-    "@types/ws": "0.0.39",
-    "expect.js": "^0.3.1",
-    "istanbul": "^0.3.18",
-    "mocha": "^3.2.0",
-    "requirejs": "^2.2.0",
-    "rimraf": "^2.5.2",
-    "text-encoding": "^0.5.2",
-    "typescript": "~2.4.1",
-    "webpack": "^2.2.1",
-    "ws": "^1.1.1",
-    "xmlhttprequest": "^1.8.0"
-  },
-  "scripts": {
-    "clean": "rimraf docs && rimraf lib && rimraf test/build && rimraf test/coverage",
-    "build:src": "tsc --project src",
-    "build:test": "tsc --project test/src",
-    "build": "npm run build:src",
-    "prepublishOnly": "npm run build:src && webpack",
-    "test:coverage": "istanbul cover --dir test/coverage _mocha -- --retries 3 test/build/**/*.spec.js test/build/*.spec.js --jupyter-config-data=./test/config.json",
-    "test:integration": "cd test && python integration_test.py",
-    "test:devtool": "devtool node_modules/.bin/_mocha -qc test/build/**/*.spec.js test/build/*.spec.js --jupyter-config-data=./test/config.json --timeout=50000",
-    "test:debug": "mocha test/build/**/*.spec.js test/build/*.spec.js  --jupyter-config-data=./test/config.json --debug-brk",
-    "test": "mocha --retries 3 test/build/**/*.spec.js test/build/*.spec.js --jupyter-config-data=./test/config.json"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/quantlabio/quantlab"
-  },
   "keywords": [
     "jupyter",
-    "services",
-    "notebook"
+    "notebook",
+    "services"
   ],
+  "homepage": "https://github.com/quantlabio/quantlab",
+  "bugs": {
+    "url": "https://github.com/quantlabio/quantlab/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Project Jupyter",
   "files": [
     "lib/**/*.js",
+    "lib/*.js.map",
     "lib/**/*.d.ts",
+    "lib/**/*.js.map",
     "lib/*.js",
     "lib/*.d.ts",
     "dist/*.js",
     "dist/**/*.js"
   ],
-  "author": "Project Jupyter",
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/quantlabio/quantlab/issues"
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quantlabio/quantlab"
   },
-  "homepage": "https://github.com/quantlabio/quantlab"
+  "scripts": {
+    "build": "qlpm run build:src",
+    "build:src": "tsc --project src",
+    "build:test": "tsc --project test/src",
+    "clean": "rimraf docs && rimraf lib && rimraf test/build && rimraf test/coverage",
+    "prepublishOnly": "qlpm run build:src && webpack",
+    "test": "mocha --retries 3 test/build/**/*.spec.js test/build/*.spec.js --jupyter-config-data=./test/config.json",
+    "test:coverage": "istanbul cover --dir test/coverage _mocha -- --retries 3 test/build/**/*.spec.js test/build/*.spec.js --jupyter-config-data=./test/config.json",
+    "test:debug": "mocha test/build/**/*.spec.js test/build/*.spec.js  --jupyter-config-data=./test/config.json --debug-brk",
+    "test:devtool": "devtool node_modules/.bin/_mocha -qc test/build/**/*.spec.js test/build/*.spec.js --jupyter-config-data=./test/config.json --timeout=50000",
+    "test:integration": "cd test && python integration_test.py"
+  },
+  "dependencies": {
+    "@phosphor/algorithm": "^1.1.2",
+    "@phosphor/coreutils": "^1.3.0",
+    "@phosphor/disposable": "^1.1.2",
+    "@phosphor/signaling": "^1.2.2",
+    "@quantlab/coreutils": "^0.3.0",
+    "@quantlab/observables": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/expect.js": "~0.3.29",
+    "@types/mocha": "~2.2.44",
+    "@types/text-encoding": "~0.0.30",
+    "@types/ws": "~0.0.39",
+    "expect.js": "~0.3.1",
+    "istanbul": "~0.3.22",
+    "mocha": "~3.5.3",
+    "requirejs": "~2.3.5",
+    "rimraf": "~2.6.2",
+    "text-encoding": "~0.5.5",
+    "typescript": "~2.6.2",
+    "webpack": "~2.7.0",
+    "ws": "~1.1.4",
+    "xmlhttprequest": "~1.8.0"
+  }
 }

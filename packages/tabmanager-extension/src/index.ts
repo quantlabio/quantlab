@@ -1,10 +1,9 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
- 
+
 import {
   each
 } from '@phosphor/algorithm';
@@ -19,7 +18,7 @@ import '../style/index.css';
  * The default tab manager extension.
  */
 const plugin: QuantLabPlugin<void> = {
-  id: 'jupyter.extensions.tab-manager',
+  id: '@quantlab/tabmanager-extension:plugin',
   activate: (app: QuantLab, restorer: ILayoutRestorer): void => {
     const { shell } = app;
     const tabs = new TabBar<Widget>({ orientation: 'vertical' });

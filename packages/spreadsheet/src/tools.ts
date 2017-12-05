@@ -30,8 +30,12 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  IObservableMap, nbformat, ObservableJSON
+  nbformat
 } from '@quantlab/coreutils';
+
+import {
+  IObservableMap, ObservableJSON
+} from '@quantlab/observables';
 
 import {
   ISpreadsheetTracker

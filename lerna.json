@@ -1,8 +1,7 @@
 {
-  "lerna": "2.0.0",
-  "packages": [
-    "quantlab",
-    "packages/*"
-  ],
-  "version": "independent"
+  "lerna": "2.4.0",
+  "version": "independent",
+  "npmClient": "qlpm",
+  "registry": "https://registry.npmjs.org/",
+  "useWorkspaces": true
 }

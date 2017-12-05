@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   InstanceTracker
 } from '@quantlab/apputils';
@@ -27,7 +26,7 @@ import {
  * The path tracker token.
  */
 export
-const IFileBrowserFactory = new Token<IFileBrowserFactory>('jupyter.services.file-browser');
+const IFileBrowserFactory = new Token<IFileBrowserFactory>('@quantlab/filebrowser:IFileBrowserFactory');
 /* tslint:enable */
 
 

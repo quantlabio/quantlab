@@ -1,13 +1,8 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ISettingRegistry, URLExt
 } from '@quantlab/coreutils';
-
-import {
-  JSONObject
-} from '@phosphor/coreutils';
 
 import {
   ServerConnection
@@ -68,17 +63,17 @@ class SettingManager {
    *
    * @param id - The plugin's ID.
    *
-   * @param user - The plugin's user setting values.
+   * @param raw - The user setting values as a raw string of JSON with comments.
    *
    * @returns A promise that resolves when saving is complete or rejects
    * with a `ServerConnection.IError`.
    */
-  save(id: string, user: JSONObject): Promise<void> {
+  save(id: string, raw: string): Promise<void> {
     const base = this.serverSettings.baseUrl;
     const request = {
-      data: JSON.stringify(user),
-      contentType: 'application/json',
-      method: 'PATCH',
+      data: raw,
+      contentType: 'text/javascript',
+      method: 'PUT',
       url: Private.url(base, id)
     };
     const { serverSettings } = this;

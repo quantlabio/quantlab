@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   JSONObject
 } from '@phosphor/coreutils';
@@ -14,9 +13,13 @@ import {
 } from '@phosphor/signaling';
 
 import {
-  IModelDB, ModelDB, IObservableValue, ObservableValue,
-  IObservableMap, IObservableString, IChangedArgs
+  IChangedArgs
 } from '@quantlab/coreutils';
+
+import {
+  IModelDB, ModelDB, IObservableValue, ObservableValue,
+  IObservableMap, IObservableString
+} from '@quantlab/observables';
 
 
 /**

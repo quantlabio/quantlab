@@ -30,8 +30,12 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  nbformat, ObservableJSON
+  nbformat
 } from '@quantlab/coreutils';
+
+import {
+  ObservableJSON
+} from '@quantlab/observables';
 
 import {
   ICalendarTracker
@@ -87,7 +91,7 @@ class CalendarTools extends Widget {
     super();
     this.addClass(CELLTOOLS_CLASS);
     this.layout = new PanelLayout();
-    this._tracker = options.tracker;
+    //this._tracker = options.tracker;
 
   }
 
@@ -123,7 +127,7 @@ class CalendarTools extends Widget {
   }
 
   private _items: Private.IRankItem[] = [];
-  private _tracker: ICalendarTracker;
+  //private _tracker: ICalendarTracker;
   //private _prevActive: any | null;
 }
 
@@ -274,7 +278,7 @@ namespace CalendarTools {
       super({ node: Private.createSelectorNode(options) });
       this.addClass(KEYSELECTOR_CLASS);
       this.key = options.key;
-      this._validCellTypes = options.validCellTypes || [];
+      //this._validCellTypes = options.validCellTypes || [];
 
     }
 
@@ -328,7 +332,7 @@ namespace CalendarTools {
 
 
 
-    private _validCellTypes: string[];
+    //private _validCellTypes: string[];
 
   }
 

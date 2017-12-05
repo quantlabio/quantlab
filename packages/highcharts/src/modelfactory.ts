@@ -6,12 +6,12 @@ import {
 } from '@quantlab/services';
 
 import {
-  IModelDB
-} from '@quantlab/coreutils';
-
-import {
   DocumentRegistry
 } from '@quantlab/docregistry';
+
+import {
+  IModelDB
+} from '@quantlab/observables';
 
 import {
   IHighChartsModel, HighChartsModel

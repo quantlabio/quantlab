@@ -8,12 +8,12 @@ import {
 } from '@quantlab/application';
 
 import {
-  ICommandPalette, IMainMenu, MainMenu, IThemeManager, ThemeManager,
+  ICommandPalette, IThemeManager, ThemeManager,
   ISplashScreen
 } from '@quantlab/apputils';
 
 import {
-  IDataConnector, ISettingRegistry, IStateDB, SettingRegistry, StateDB
+  DataConnector, ISettingRegistry, IStateDB, SettingRegistry, StateDB
 } from '@quantlab/coreutils';
 
 import {
@@ -29,10 +29,6 @@ import {
 } from '@phosphor/disposable';
 
 import {
-  Widget
-} from '@phosphor/widgets';
-
-import {
   activatePalette
 } from './palette';
 
@@ -45,89 +41,69 @@ import '../style/index.css';
 namespace CommandIDs {
   export
   const clearStateDB = 'apputils:clear-statedb';
-};
-
-
-/**
- * Convert an API `XMLHTTPRequest` error to a simple error.
- */
-function apiError(id: string, xhr: XMLHttpRequest): Error {
-  let message: string;
-
-  try {
-    message = JSON.parse(xhr.response).message;
-  } catch (error) {
-    message = `Error accessing ${id} HTTP ${xhr.status} ${xhr.statusText}`;
-  }
-
-  return new Error(message);
 }
 
 
 /**
- * Create a data connector to access plugin settings.
+ * A data connector to access plugin settings.
  */
-function newConnector(manager: ServiceManager): IDataConnector<ISettingRegistry.IPlugin, JSONObject> {
-  return {
-    /**
-     * Retrieve a saved bundle from the data connector.
-     */
-    fetch(id: string): Promise<ISettingRegistry.IPlugin> {
-      return manager.settings.fetch(id).catch(reason => {
-        throw apiError(id, (reason as ServerConnection.IError).xhr);
-      });
-    },
+class SettingsConnector extends DataConnector<ISettingRegistry.IPlugin, string> {
+  /**
+   * Create a new settings connector.
+   */
+  constructor(manager: ServiceManager) {
+    super();
+    this._manager = manager;
+  }
 
-    /**
-     * Remove a value from the data connector.
-     */
-    remove(): Promise<void> {
-      const message = 'Removing setting resources is not supported.';
+  /**
+   * Retrieve a saved bundle from the data connector.
+   */
+  fetch(id: string): Promise<ISettingRegistry.IPlugin> {
+    return this._manager.settings.fetch(id).then(data => {
+      // Replace the server ID with the original unmodified version.
+      data.id = id;
 
-      return Promise.reject(new Error(message));
-    },
+      return data;
+    }).catch(reason => {
+      throw this._error(id, (reason as ServerConnection.IError).xhr);
+    });
+  }
 
-    /**
-     * Save the user setting data in the data connector.
-     */
-    save(id: string, user: JSONObject): Promise<void> {
-      return manager.settings.save(id, user).catch(reason => {
-        throw apiError(id, (reason as ServerConnection.IError).xhr);
-      });
+  /**
+   * Save the user setting data in the data connector.
+   */
+  save(id: string, raw: string): Promise<void> {
+    return this._manager.settings.save(id, raw).catch(reason => {
+      throw this._error(id, (reason as ServerConnection.IError).xhr);
+    });
+  }
+
+  /**
+   * Convert an API `XMLHTTPRequest` error to a simple error.
+   */
+  private _error(id: string, xhr: XMLHttpRequest): Error {
+    let message: string;
+
+    try {
+      message = JSON.parse(xhr.response).message;
+    } catch (error) {
+      message = `Error accessing ${id} HTTP ${xhr.status} ${xhr.statusText}`;
     }
-  };
-}
 
-
-/**
- * A service providing an interface to the main menu.
- */
-const mainMenuPlugin: QuantLabPlugin<IMainMenu> = {
-  id: 'jupyter.services.main-menu',
-  provides: IMainMenu,
-  activate: (app: QuantLab): IMainMenu => {
-    let menu = new MainMenu();
-    menu.id = 'jp-MainMenu';
-
-    let logo = new Widget();
-    logo.addClass('jp-MainAreaPortraitIcon');
-    logo.addClass('jp-JupyterIcon');
-    logo.id = 'jp-MainLogo';
-
-    app.shell.addToTopArea(logo);
-    app.shell.addToTopArea(menu);
-
-    return menu;
+    return new Error(message);
   }
-};
+
+  private _manager: ServiceManager;
+}
 
 
 /**
  * The default commmand palette extension.
  */
-const palettePlugin: QuantLabPlugin<ICommandPalette> = {
+const palette: QuantLabPlugin<ICommandPalette> = {
   activate: activatePalette,
-  id: 'jupyter.services.commandpalette',
+  id: '@quantlab/apputils-extension:palette',
   provides: ICommandPalette,
   requires: [ILayoutRestorer],
   autoStart: true
@@ -137,36 +113,36 @@ const palettePlugin: QuantLabPlugin<ICommandPalette> = {
 /**
  * The default setting registry provider.
  */
-const settingPlugin: QuantLabPlugin<ISettingRegistry> = {
-  id: 'jupyter.services.setting-registry',
+const settings: QuantLabPlugin<ISettingRegistry> = {
+  id: '@quantlab/apputils-extension:settings',
   activate: (app: QuantLab): ISettingRegistry => {
-    return new SettingRegistry({ connector: newConnector(app.serviceManager) });
+    const connector = new SettingsConnector(app.serviceManager);
+
+    return new SettingRegistry({ connector });
   },
   autoStart: true,
   provides: ISettingRegistry
 };
 
 
-
 /**
  * The default theme manager provider.
  */
-const themePlugin: QuantLabPlugin<IThemeManager> = {
-  id: 'jupyter.services.theme-manger',
+const themes: QuantLabPlugin<IThemeManager> = {
+  id: '@quantlab/apputils-extension:themes',
   requires: [ISettingRegistry, ISplashScreen],
   activate: (app: QuantLab, settingRegistry: ISettingRegistry, splash: ISplashScreen): IThemeManager => {
-    let baseUrl = app.serviceManager.serverSettings.baseUrl;
-    let host = app.shell;
-    let when = app.started;
-    let manager = new ThemeManager({ baseUrl,  settingRegistry, host, when });
-    let disposable = splash.show();
-    manager.ready.then(() => {
-      setTimeout(() => {
-        disposable.dispose();
-      }, 2500);
-    }, () => {
-      disposable.dispose();
+    const host = app.shell;
+    const when = app.started;
+    const manager = new ThemeManager({
+      key: themes.id,
+      host, settingRegistry, when
     });
+    const disposable = splash.show();
+    const dispose = () => { disposable.dispose(); };
+
+    manager.ready.then(dispose, dispose);
+
     return manager;
   },
   autoStart: true,
@@ -177,8 +153,8 @@ const themePlugin: QuantLabPlugin<IThemeManager> = {
 /**
  * The default splash screen provider.
  */
-const splashPlugin: QuantLabPlugin<ISplashScreen> = {
-  id: 'jupyter.services.splash-screen',
+const splash: QuantLabPlugin<ISplashScreen> = {
+  id: '@quantlab/apputils-extension:splash',
   autoStart: true,
   provides: ISplashScreen,
   activate: () => {
@@ -191,12 +167,11 @@ const splashPlugin: QuantLabPlugin<ISplashScreen> = {
 };
 
 
-
 /**
  * The default state database for storing application state.
  */
-const stateDBPlugin: QuantLabPlugin<IStateDB> = {
-  id: 'jupyter.services.statedb',
+const state: QuantLabPlugin<IStateDB> = {
+  id: '@quantlab/apputils-extension:state',
   autoStart: true,
   provides: IStateDB,
   activate: (app: QuantLab) => {
@@ -229,12 +204,7 @@ const stateDBPlugin: QuantLabPlugin<IStateDB> = {
  * Export the plugins as default.
  */
 const plugins: QuantLabPlugin<any>[] = [
-  mainMenuPlugin,
-  palettePlugin,
-  settingPlugin,
-  stateDBPlugin,
-  splashPlugin,
-  themePlugin
+  palette, settings, state, splash, themes
 ];
 export default plugins;
 

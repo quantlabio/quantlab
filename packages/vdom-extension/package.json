@@ -1,0 +1,47 @@
+{
+  "name": "@quantlab/vdom-extension",
+  "version": "0.1.0",
+  "description": "QuantLab - VDOM Renderer",
+  "homepage": "https://github.com/quantlabio/quantlab",
+  "bugs": {
+    "url": "https://github.com/quantlabio/quantlab/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Project Jupyter",
+  "files": [
+    "lib/*.d.ts",
+    "lib/*.js",
+    "style/*"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quantlabio/quantlab.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf lib",
+    "prepublishOnly": "npm run build",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "@nteract/transform-vdom": "^1.1.1",
+    "@phosphor/widgets": "^1.5.0",
+    "@quantlab/rendermime-interfaces": "^0.3.0",
+    "react": "~16.0.0",
+    "react-dom": "~16.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "~16.0.19",
+    "@types/react-dom": "~16.0.2",
+    "rimraf": "~2.6.2",
+    "typescript": "~2.6.2"
+  },
+  "quantlab": {
+    "mimeExtension": true
+  }
+}

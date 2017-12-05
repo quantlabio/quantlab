@@ -29,7 +29,7 @@ import {
 
 import {
   ApplicationShell
-} from '.';
+} from './shell';
 
 
 
@@ -38,7 +38,7 @@ import {
  * The layout restorer token.
  */
 export
-const ILayoutRestorer = new Token<ILayoutRestorer>('jupyter.services.layout-restorer');
+const ILayoutRestorer = new Token<ILayoutRestorer>('@quantlab/application:ILayoutRestorer');
 /* tslint:enable */
 
 

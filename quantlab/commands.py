@@ -1,51 +1,46 @@
 # coding: utf-8
-"""QuantLab entry points"""
+"""QuantLab command handler"""
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 from __future__ import print_function
+
 from distutils.version import LooseVersion
 import errno
+import glob
+import hashlib
 import json
 import logging
-import pipes
 import os
-import glob
-from functools import partial
-from os import path as osp
-from os.path import join as pjoin
-from tornado import gen
-from tornado.ioloop import IOLoop
-from subprocess import CalledProcessError, Popen, STDOUT
+import os.path as osp
+import re
 import shutil
+import site
 import sys
 import tarfile
-from jupyter_core.paths import ENV_JUPYTER_PATH, jupyter_config_path
-from notebook.nbextensions import (
-    GREEN_ENABLED, GREEN_OK, RED_DISABLED, RED_X
-)
+from threading import Event
+
+from ipython_genutils.tempdir import TemporaryDirectory
+from ipython_genutils.py3compat import which
+from jupyter_core.paths import jupyter_config_path
+from notebook.nbextensions import GREEN_ENABLED, GREEN_OK, RED_DISABLED, RED_X
 
 from .semver import Range, gte, lt, lte, gt
-from ._version import __version__
+from .qlpmapp import YARN_PATH, HERE
+from .process import Process, WatchHelper
 
 
-if sys.platform == 'win32':
-    from subprocess import list2cmdline
-else:
-    def list2cmdline(cmd_list):
-        return ' '.join(map(pipes.quote, cmd_list))
+# The regex for expecting the webpack output.
+WEBPACK_EXPECT = re.compile(r'.*/index.out.js')
+
+# The dev mode directory.
+DEV_DIR = osp.realpath(os.path.join(HERE, '..', 'dev_mode'))
 
 
-here = osp.dirname(osp.abspath(__file__))
-logging.basicConfig(format='%(message)s', level=logging.INFO)
-
-
-def get_app_dir(app_dir=None):
-    """Get the configured QuantLab app directory.
+def pjoin(*args):
+    """Join paths to create a real path.
     """
-    app_dir = app_dir or os.environ.get('QUANTLAB_DIR')
-    app_dir = app_dir or pjoin(ENV_JUPYTER_PATH[0], 'quantlab')
-    return os.path.realpath(app_dir)
+    return osp.realpath(osp.join(*args))
 
 
 def get_user_settings_dir():
@@ -53,604 +48,1058 @@ def get_user_settings_dir():
     """
     settings_dir = os.environ.get('QUANTLAB_SETTINGS_DIR')
     settings_dir = settings_dir or pjoin(
-        jupyter_config_path()[0], 'quantlab', 'user-settings'
+        jupyter_config_path()[0], 'lab', 'user-settings'
     )
-    return os.path.realpath(settings_dir)
+    return osp.realpath(settings_dir)
 
 
-@gen.coroutine
-def run(cmd, **kwargs):
-    """Run a command in the given working directory.
+def get_app_dir():
+    """Get the configured QuantLab app directory.
     """
-    logger = kwargs.pop('logger', logging) or logging
-    abort_callback = kwargs.pop('abort_callback', None)
-    logger.info('> ' + list2cmdline(cmd))
-    kwargs.setdefault('shell', sys.platform == 'win32')
-    kwargs.setdefault('env', os.environ)
-    kwargs.setdefault('stderr', STDOUT)
-    yield gen.moment  # Sync up to the iterator
-    try:
-        proc = Popen(cmd, **kwargs)
-        # Poll the process once per second until finished.
-        while 1:
-            yield gen.sleep(1)
-            if proc.poll() is not None:
-                break
-            if abort_callback and abort_callback():
-                raise ValueError('Aborted')
-    except CalledProcessError as error:
-        output = error.output.decode('utf-8')
-        logger.info(output)
-        raise error
-    finally:
-        if proc:
-            proc.wait()
+    # Default to the override environment variable.
+    if os.environ.get('QUANTLAB_DIR'):
+        return osp.realpath(os.environ['QUANTLAB_DIR'])
+
+    # Use the default locations for data_files.
+    app_dir = pjoin(sys.prefix, 'share', 'jupyter', 'quantlab')
+
+    # Check for a user level install.
+    # Ensure that USER_BASE is defined
+    if hasattr(site, 'getuserbase'):
+        site.getuserbase()
+    userbase = getattr(site, 'USER_BASE', None)
+    if HERE.startswith(userbase) and not app_dir.startswith(userbase):
+        app_dir = pjoin(userbase, 'share', 'jupyter', 'quantlab')
+
+    # Check for a system install in '/usr/local/share'.
+    elif (sys.prefix.startswith('/usr') and not
+          osp.exists(app_dir) and
+          osp.exists('/usr/local/share/jupyter/quantlab')):
+        app_dir = '/usr/local/share/jupyter/quantlab'
+
+    return osp.realpath(app_dir)
+
+
+def ensure_dev(logger=None):
+    """Ensure that the dev assets are available.
+    """
+    parent = pjoin(HERE, '..')
+
+    if not osp.exists(pjoin(parent, 'node_modules')):
+        yarn_proc = Process(['node', YARN_PATH], cwd=parent, logger=logger)
+        yarn_proc.wait()
+
+    if not osp.exists(pjoin(parent, 'dev_mode', 'build')):
+        yarn_proc = Process(['node', YARN_PATH, 'build'], cwd=parent,
+                            logger=logger)
+        yarn_proc.wait()
+
+
+def watch_dev(logger=None):
+    """Run watch mode in a given directory.
+    Parameters
+    ----------
+    logger: :class:`~logger.Logger`, optional
+        The logger instance.
+    Returns
+    -------
+    A list of `WatchHelper` objects.
+    """
+    parent = pjoin(HERE, '..')
+
+    if not osp.exists(pjoin(parent, 'node_modules')):
+        yarn_proc = Process(['node', YARN_PATH], cwd=parent, logger=logger)
+        yarn_proc.wait()
+
+    logger = logger or logging.getLogger('quantlab')
+    ts_dir = osp.realpath(osp.join(HERE, '..', 'packages', 'metapackage'))
+
+    # Run typescript watch and wait for compilation.
+    ts_regex = r'.* Compilation complete\. Watching for file changes\.'
+    ts_proc = WatchHelper(['node', YARN_PATH, 'run', 'watch'],
+        cwd=ts_dir, logger=logger, startup_regex=ts_regex)
+
+    # Run the metapackage file watcher.
+    tsf_regex = 'Watching the metapackage files...'
+    tsf_proc = WatchHelper(['node', YARN_PATH, 'run', 'watch:files'],
+        cwd=ts_dir, logger=logger, startup_regex=tsf_regex)
+
+    # Run webpack watch and wait for compilation.
+    wp_proc = WatchHelper(['node', YARN_PATH, 'run', 'watch'],
+        cwd=DEV_DIR, logger=logger,
+        startup_regex=WEBPACK_EXPECT)
+
+    return [ts_proc, tsf_proc, wp_proc]
+
+
+def watch(app_dir=None, logger=None):
+    """Watch the application.
+    Parameters
+    ----------
+    app_dir: string, optional
+        The application directory.
+    logger: :class:`~logger.Logger`, optional
+        The logger instance.
+    Returns
+    -------
+    A list of processes to run asynchronously.
+    """
+    handler = _AppHandler(app_dir, logger)
+    return handler.watch()
 
 
 def install_extension(extension, app_dir=None, logger=None):
     """Install an extension package into QuantLab.
-
-    Follows the semantics of https://docs.npmjs.com/cli/install.
-
     The extension is first validated.
-
-    If link is true, the source directory is linked using `npm link`.
     """
-    func = partial(install_extension_async, extension, app_dir=app_dir,
-                   logger=logger)
-    return IOLoop.instance().run_sync(func)
-
-
-@gen.coroutine
-def install_extension_async(extension, app_dir=None, logger=None, abort_callback=None):
-    """Install an extension package into QuantLab.
-
-    Follows the semantics of https://docs.npmjs.com/cli/install.
-
-    The extension is first validated.
-
-    If link is true, the source directory is linked using `npm link`.
-    """
-    app_dir = get_app_dir(app_dir)
-    logger = logger or logging
-    if app_dir == here:
-        raise ValueError('Cannot install extensions in core app')
-    extension = _normalize_path(extension)
-
-    # Check for a core extensions here.
-    data = _get_core_data()
-    if extension in _get_core_extensions():
-        config = _get_build_config(app_dir)
-        uninstalled = config.get('uninstalled_core_extensions', [])
-        if extension in uninstalled:
-            uninstalled.remove(extension)
-            config['uninstalled_core_extensions'] = uninstalled
-            _write_build_config(config, app_dir, logger=logger)
-        return
-
-    _ensure_app_dirs(app_dir, logger)
-
-    target = pjoin(app_dir, 'extensions', 'temp')
-    if os.path.exists(target):
-        shutil.rmtree(target)
-    os.makedirs(target)
-
-    # npm pack the extension
-    yield run([get_npm_name(), 'pack', extension], cwd=target, logger=logger, abort_callback=abort_callback)
-
-    fname = os.path.basename(glob.glob(pjoin(target, '*.*'))[0])
-    data = _read_package(pjoin(target, fname))
-
-    # Remove the tarball if the package is not an extension.
-    if not _is_extension(data):
-        shutil.rmtree(target)
-        msg = '%s is not a valid QuantLab extension' % extension
-        raise ValueError(msg)
-
-    # Remove the tarball if the package is not compatible.
-    core_data = _get_core_data()
-    deps = data.get('dependencies', dict())
-    errors = _validate_compatibility(extension, deps, core_data)
-    if errors:
-        shutil.rmtree(target)
-        msg = _format_compatibility_errors(
-            data['name'], data['version'], errors
-        )
-        raise ValueError(msg)
-
-    # Check for existing app extension of the same name.
-    extensions = _get_extensions(app_dir)
-    if data['name'] in extensions:
-        other = extensions[data['name']]
-        path = other['path']
-        if osp.exists(path) and other['location'] == 'app':
-            os.remove(path)
-
-    # Handle any schemas.
-    schemaDir = data['quantlab'].get('schemaDir', None)
-    if schemaDir:
-        dest = pjoin(app_dir, 'schemas')
-        _copy_tar_files(pjoin(target, fname), schemaDir, dest)
-
-    # Handle a theme.
-    themeDir = data['quantlab'].get('themeDir', None)
-    if themeDir:
-        normedName = data['name'].replace('@', '').replace('/', '')
-        dest = pjoin(app_dir, 'themes', normedName)
-        _copy_tar_files(pjoin(target, fname), themeDir, dest)
-
-    # Remove an existing extension tarball.
-    ext_path = pjoin(app_dir, 'extensions', fname)
-    if os.path.exists(ext_path):
-        os.remove(ext_path)
-
-    shutil.move(pjoin(target, fname), pjoin(app_dir, 'extensions'))
-    shutil.rmtree(target)
-
-    # Remove any existing package from staging/node_modules
-    target = pjoin(app_dir, 'staging', 'node_modules', data['name'])
-    target = target.replace('/', os.sep)
-    if os.path.exists(target):
-        shutil.rmtree(target)
-
-
-def link_package(path, app_dir=None, logger=None):
-    """Link a package against the QuantLab build."""
-    func = partial(link_package_async, path, app_dir=app_dir, logger=logger)
-    return IOLoop.instance().run_sync(func)
-
-
-@gen.coroutine
-def link_package_async(path, app_dir=None, logger=None, abort_callback=None):
-    """Link a package against the QuantLab build.
-    """
-    logger = logger or logging
-    app_dir = get_app_dir(app_dir)
-    if app_dir == here:
-        raise ValueError('Cannot link packages in core app')
-
-    path = _normalize_path(path)
-    _ensure_app_dirs(app_dir, logger)
-
-    # Verify the package.json data.
-    pkg_path = osp.join(path, 'package.json')
-    if not osp.exists(pkg_path):
-        msg = 'Linked package must point to a directory with package.json'
-        raise ValueError(msg)
-
-    with open(pkg_path) as fid:
-        data = json.load(fid)
-
-    # Check for a core extensions here.
-    core_extensions = _get_core_extensions()
-    if data['name'] in core_extensions:
-        raise ValueError('Cannot link a core extension')
-
-    is_extension = _is_extension(data)
-    if is_extension:
-        yield install_extension_async(path, app_dir, abort_callback=abort_callback)
-    else:
-        msg = ('*** Note: Linking non-extension package "%s" (lacks ' +
-               '`quantlab.extension` metadata)')
-        logger.info(msg % data['name'])
-
-    core_data = _get_core_data()
-    deps = data.get('dependencies', dict())
-    name = data['name']
-    errors = _validate_compatibility(name, deps, core_data)
-    if errors:
-        msg = _format_compatibility_errors(name, data['version'], errors)
-        raise ValueError(msg)
-
-    config = _get_build_config(app_dir)
-    config.setdefault('linked_packages', dict())
-    config['linked_packages'][data['name']] = path
-    _write_build_config(config, app_dir, logger=logger)
-
-
-def unlink_package(package, app_dir=None, logger=None):
-    """Unlink a package from QuantLab by path or name.
-    """
-    logger = logger or logging
-    package = _normalize_path(package)
-    name = None
-    app_dir = get_app_dir(app_dir)
-    if app_dir == here:
-        raise ValueError('Cannot link packages in core app')
-
-    config = _get_build_config(app_dir)
-    linked = config.setdefault('linked_packages', dict())
-    for (key, value) in linked.items():
-        if value == package or key == package:
-            name = key
-            break
-
-    if not name:
-        logger.warn('No package matching "%s" is linked' % package)
-        return False
-
-    del linked[name]
-    config['linked_packages'] = linked
-    _write_build_config(config, app_dir, logger=logger)
-
-    extensions = _get_extensions(app_dir)
-    if name in extensions:
-        uninstall_extension(name, app_dir)
-
-    return True
-
-
-def enable_extension(extension, app_dir=None, logger=None):
-    """Enable a QuantLab extension.
-    """
-    _toggle_extension(extension, False, app_dir, logger)
-
-
-def disable_extension(extension, app_dir=None, logger=None):
-    """Disable a QuantLab package.
-    """
-    _toggle_extension(extension, True, app_dir, logger)
-
-
-def get_npm_name():
-    """Get the appropriate npm executable name.
-    """
-    return 'npm.cmd' if os.name == 'nt' else 'npm'
-
-
-@gen.coroutine
-def check_node():
-    """Check for the existence of node and whether it is the right version.
-    """
-    try:
-        yield run(['node', 'node-version-check.js'], cwd=here)
-    except Exception as e:
-        raise ValueError('`node` version 5+ is required, see extensions in README')
-
-
-def should_build(app_dir=None, logger=None):
-    """Determine whether QuantLab should be built.
-
-    Note: Linked packages should be updated by manually building.
-
-    Returns a tuple of whether a build is necessary, and an associated message.
-    """
-    logger = logger or logging
-    app_dir = get_app_dir(app_dir)
-
-    # Check for installed extensions
-    extensions = _get_extensions(app_dir)
-
-    # No linked and no extensions and no built version.
-    if not extensions and not os.path.exists(pjoin(app_dir, 'static')):
-        return False, ''
-
-    pkg_path = pjoin(app_dir, 'static', 'package.json')
-    if not os.path.exists(pkg_path):
-        return True, 'Installed extensions with no built application'
-
-    with open(pkg_path) as fid:
-        static_data = json.load(fid)
-
-    # Look for mismatched version.
-    version = static_data['quantlab'].get('version', '')
-    if LooseVersion(version) != LooseVersion(__version__):
-        msg = 'Version mismatch: %s (built), %s (current)'
-        return True, msg % (version, __version__)
-
-    # Look for mismatched extensions.
-    template_data = _get_package_template(app_dir, logger)
-
-    template_exts = template_data['quantlab']['extensions']
-
-    if set(template_exts) != set(static_data['quantlab']['extensions']):
-        return True, 'Installed extensions changed'
-
-    template_mime_exts = set(template_data['quantlab']['mimeExtensions'])
-    staging_mime_exts = set(static_data['quantlab']['mimeExtensions'])
-
-    if template_mime_exts != staging_mime_exts:
-        return True, 'Installed extensions changed'
-
-    deps = static_data.get('dependencies', dict())
-
-    # Look for mismatched extension paths.
-    for name in extensions:
-        # Check for dependencies that were rejected as incompatible.
-        if name not in template_data['dependencies']:
-            continue
-
-        path = deps[name]
-        if path.startswith('file:'):
-            path = path.replace('file:', '')
-            path = os.path.abspath(pjoin(app_dir, 'staging', path))
-
-        template_path = template_data['dependencies'][name]
-        if sys.platform == 'win32':
-            path = path.lower()
-            template_path = template_path.lower()
-
-        if path != template_path:
-            return True, 'Installed extensions changed'
-
-    return False, ''
-
-
-def validate_compatibility(extension, app_dir=None, logger=None):
-    """Validate the compatibility of an extension.
-    """
-    app_dir = get_app_dir(app_dir)
-    extensions = _get_extensions(app_dir)
-
-    if extension not in extensions:
-        raise ValueError('%s is not an installed extension')
-
-    deps = extensions[extension].get('dependencies', dict())
-    core_data = _get_core_data()
-    return _validate_compatibility(extension, deps, core_data)
+    handler = _AppHandler(app_dir, logger)
+    handler.install_extension(extension)
 
 
 def uninstall_extension(name, app_dir=None, logger=None):
-    """Uninstall an extension by name.
+    """Uninstall an extension by name or path.
     """
-    logger = logger or logging
-    app_dir = get_app_dir(app_dir)
-    if app_dir == here:
-        raise ValueError('Cannot install packages in core app')
-    # Allow for uninstalled core extensions here.
-    data = _get_core_data()
-    if name in _get_core_extensions():
-        logger.info('Uninstalling core extension %s' % name)
-        config = _get_build_config(app_dir)
-        uninstalled = config.get('uninstalled_core_extensions', [])
-        if name not in uninstalled:
-            uninstalled.append(name)
-            config['uninstalled_core_extensions'] = uninstalled
-            _write_build_config(config, app_dir, logger=logger)
-        return True
-
-    for (extname, data) in _get_extensions(app_dir).items():
-        path = data['path']
-        if extname == name:
-            msg = 'Uninstalling %s from %s' % (name, os.path.dirname(path))
-            logger.info(msg)
-            os.remove(path)
-            return True
-
-    logger.warn('No quantlab extension named "%s" installed' % name)
-    return False
-
-
-def list_extensions(app_dir=None, logger=None):
-    """List the extensions.
-    """
-    logger = logger or logging
-    app_dir = get_app_dir(app_dir)
-    extensions = _get_extensions(app_dir)
-    disabled = _get_disabled(app_dir)
-    all_linked = _get_linked_packages(app_dir, logger=logger)
-    app = []
-    sys = []
-    linked = []
-    errors = dict()
-
-    core_data = _get_core_data()
-
-    # We want to organize by dir.
-    sys_path = pjoin(get_app_dir(), 'extensions')
-    for (key, value) in extensions.items():
-        deps = extensions[key].get('dependencies', dict())
-        errors[key] = _validate_compatibility(key, deps, core_data)
-        if key in all_linked:
-            linked.append(key)
-        if value['path'] == sys_path and sys_path != app_dir:
-            sys.append(key)
-            continue
-        app.append(key)
-
-    logger.info('QuantLab v%s' % __version__)
-    logger.info('Known quantlab extensions:')
-    if app:
-        logger.info('   app dir: %s' % app_dir)
-        for item in sorted(app):
-            version = extensions[item]['version']
-            extra = ''
-            if item in disabled:
-                extra += ' %s' % RED_DISABLED
-            else:
-                extra += ' %s' % GREEN_ENABLED
-            if errors[item]:
-                extra += ' %s' % RED_X
-            else:
-                extra += ' %s' % GREEN_OK
-            logger.info('        %s@%s%s' % (item, version, extra))
-            if errors[item]:
-                msg = _format_compatibility_errors(item, version, errors[item])
-                logger.warn(msg + '\n')
-
-    if sys:
-        logger.info('   sys dir: %s' % sys_path)
-        for item in sorted(sys):
-            version = extensions[item]['version']
-            extra = ''
-            if item in disabled:
-                extra += ' %s' % RED_DISABLED
-            else:
-                extra += ' %s' % GREEN_ENABLED
-            logger.info('        %s%s' % (item, extra))
-            if errors[item]:
-                extra += ' %s' % RED_X
-            else:
-                extra += ' %s' % GREEN_OK
-            if item in linked:
-                extra += '*'
-            logger.info('        %s@%s%s' % (item, version, extra))
-            if errors[item]:
-                msg = _format_compatibility_errors(item, version, errors[item])
-                logger.warn(msg + '\n')
-
-    if linked:
-        logger.info('   linked extensions:')
-        for item in sorted(linked):
-            logger.info('        %s: %s' % (item, all_linked[item]))
-
-    if len(all_linked) > len(linked):
-        logger.info('   linked packages:')
-        for key in sorted(all_linked.keys()):
-            if (key in linked):
-                continue
-            logger.info('        %s: %s' % (key, all_linked[key]))
-
-    # Handle uninstalled and disabled core packages
-    uninstalled_core = _get_uinstalled_core_extensions(app_dir)
-    if uninstalled_core:
-        logger.info('\nUninstalled core extensions:')
-        [logger.info('    %s' % item) for item in sorted(uninstalled_core)]
-
-    core_extensions = _get_core_extensions()
-
-    disabled_core = []
-    for key in core_extensions:
-        if key in disabled:
-            disabled_core.append(key)
-
-    if disabled_core:
-        logger.info('\nDisabled core extensions:')
-        [logger.info('    %s' % item) for item in sorted(disabled_core)]
+    handler = _AppHandler(app_dir, logger)
+    handler.uninstall_extension(name)
 
 
 def clean(app_dir=None):
     """Clean the QuantLab application directory."""
-    app_dir = get_app_dir(app_dir)
-    if app_dir == here:
+    app_dir = app_dir or get_app_dir()
+    if app_dir == pjoin(HERE, 'dev'):
+        raise ValueError('Cannot clean the dev app')
+    if app_dir == pjoin(HERE, 'core'):
         raise ValueError('Cannot clean the core app')
-    for name in ['static', 'staging']:
+    for name in ['staging']:
         target = pjoin(app_dir, name)
         if osp.exists(target):
             shutil.rmtree(target)
 
 
-def build(app_dir=None, name=None, version=None, logger=None):
+def build(app_dir=None, name=None, version=None, logger=None,
+        command='build:prod', kill_event=None,
+        clean_staging=False):
     """Build the QuantLab application.
     """
-    func = partial(build_async, app_dir=app_dir, name=name, version=version,
-                   logger=logger)
-    return IOLoop.instance().run_sync(func)
+    handler = _AppHandler(app_dir, logger, kill_event=kill_event)
+    handler.build(name=name, version=version,
+                  command=command, clean_staging=clean_staging)
 
 
-@gen.coroutine
-def build_async(app_dir=None, name=None, version=None, logger=None, abort_callback=None):
-    """Build the QuantLab application.
+def get_app_info(app_dir=None, logger=None):
+    """Get a dictionary of information about the app.
     """
-    # Set up the build directory.
-    logger = logger or logging
-    app_dir = get_app_dir(app_dir)
+    handler = _AppHandler(app_dir, logger)
+    return handler.info
 
-    # Set up the build directory.
-    yield check_node()
-    if app_dir == here:
-        raise ValueError('Cannot build extensions in the core app')
 
-    _ensure_package(app_dir, name=name, version=version, logger=logger)
-    staging = pjoin(app_dir, 'staging')
+def enable_extension(extension, app_dir=None, logger=None):
+    """Enable a QuantLab extension.
+    """
+    handler = _AppHandler(app_dir, logger)
+    handler.toggle_extension(extension, False)
 
-    extensions = _get_extensions(app_dir)
 
-    # Ensure an empty linked_packages directory
-    linked_packages = pjoin(staging, 'linked_packages')
-    if osp.exists(linked_packages):
-        shutil.rmtree(linked_packages)
-    os.makedirs(linked_packages)
+def disable_extension(extension, app_dir=None, logger=None):
+    """Disable a QuantLab package.
+    """
+    handler = _AppHandler(app_dir, logger)
+    handler.toggle_extension(extension, True)
 
-    # Install the linked packages.
-    for (name, path) in _get_linked_packages(app_dir, logger=logger).items():
-        # Handle linked extensions.
+
+def build_check(app_dir=None, logger=None):
+    """Determine whether QuantLab should be built.
+    Returns a list of messages.
+    """
+    handler = _AppHandler(app_dir, logger)
+    return handler.build_check()
+
+
+def list_extensions(app_dir=None, logger=None):
+    """List the extensions.
+    """
+    handler = _AppHandler(app_dir, logger)
+    handler.list_extensions()
+
+
+def link_package(path, app_dir=None, logger=None):
+    """Link a package against the QuantLab build."""
+    handler = _AppHandler(app_dir, logger)
+    handler.link_package(path)
+
+
+def unlink_package(package, app_dir=None, logger=None):
+    """Unlink a package from QuantLab by path or name.
+    """
+    handler = _AppHandler(app_dir, logger)
+    handler.unlink_package(package)
+
+
+def get_app_version():
+    """Get the application version."""
+    return _get_core_data()['quantlab']['version']
+
+
+# ----------------------------------------------------------------------
+# Implementation details
+# ----------------------------------------------------------------------
+
+
+class _AppHandler(object):
+
+    def __init__(self, app_dir, logger=None, kill_event=None):
+        if app_dir and app_dir.startswith(HERE):
+            raise ValueError('Cannot run lab extension commands in core app')
+        self.app_dir = app_dir or get_app_dir()
+        self.sys_dir = get_app_dir()
+        self.logger = logger or logging.getLogger('quantlab')
+        self.info = self._get_app_info()
+        self.kill_event = kill_event or Event()
+
+    def install_extension(self, extension, existing=None):
+        """Install an extension package into QuantLab.
+        The extension is first validated.
+        """
+        extension = _normalize_path(extension)
+        extensions = self.info['extensions']
+
+        # Check for a core extensions.
+        if extension in self.info['core_extensions']:
+            config = self._read_build_config()
+            uninstalled = config.get('uninstalled_core_extensions', [])
+            if extension in uninstalled:
+                uninstalled.remove(extension)
+                config['uninstalled_core_extensions'] = uninstalled
+                self._write_build_config(config)
+            return
+
+        # Create the app dirs if needed.
+        self._ensure_app_dirs()
+
+        # Install the package using a temporary directory.
+        with TemporaryDirectory() as tempdir:
+            info = self._install_extension(extension, tempdir)
+
+        name = info['name']
+
+        # Local directories get name mangled and stored in metadata.
+        if info['is_dir']:
+            config = self._read_build_config()
+            local = config.setdefault('local_extensions', dict())
+            local[name] = info['source']
+            self._write_build_config(config)
+
+        # Remove an existing extension with the same name and different path
         if name in extensions:
-            yield install_extension_async(path, app_dir, abort_callback=abort_callback)
-        # Handle linked packages that are not extensions.
-        else:
-            yield _install_linked_package(staging, name, path, logger, abort_callback=abort_callback)
+            other = extensions[name]
+            if other['path'] != info['path'] and other['location'] == 'app':
+                os.remove(other['path'])
 
-    npm = get_npm_name()
+    def build(self, name=None, version=None, command='build:prod',
+            clean_staging=False):
+        """Build the application.
+        """
+        # Set up the build directory.
+        app_dir = self.app_dir
 
-    # Make sure packages are installed.
-    yield run([npm, 'install', '--no-optional'], cwd=staging, logger=logger, abort_callback=abort_callback)
-
-    # Build the app.
-    yield run([npm, 'run', 'build'], cwd=staging, logger=logger, abort_callback= abort_callback)
-
-    # Move the app to the static dir.
-    static = pjoin(app_dir, 'static')
-    if os.path.exists(static):
-        shutil.rmtree(static)
-    shutil.copytree(pjoin(app_dir, 'staging', 'build'), static)
-
-
-@gen.coroutine
-def _install_linked_package(staging, name, path, logger, abort_callback=None):
-    """Install a linked non-extension package using a package tarball
-    to prevent it from being treated as a symlink.
-    """
-    # Remove any existing package from staging/node_modules
-    target = pjoin(staging, 'node_modules', name)
-    target = target.replace('/', os.sep)
-    if os.path.exists(target):
-        shutil.rmtree(target)
-
-    linked = pjoin(staging, 'linked_packages')
-
-    target = pjoin(linked, 'temp')
-    if os.path.exists(target):
-        shutil.rmtree(target)
-    os.makedirs(target)
-
-    # npm pack the extension
-    yield run([get_npm_name(), 'pack', path], cwd=target, logger=logger, abort_callback=abort_callback)
-
-    fname = os.path.basename(glob.glob(pjoin(target, '*.*'))[0])
-    data = _read_package(pjoin(target, fname))
-
-    # Remove the tarball if the package is not compatible.
-    core_data = _get_core_data()
-    deps = data.get('dependencies', dict())
-    errors = _validate_compatibility(path, deps, core_data)
-    if errors:
-        shutil.rmtree(target)
-        msg = _format_compatibility_errors(
-            data['name'], data['version'], errors
+        self._populate_staging(
+            name=name, version=version, clean=clean_staging
         )
-        raise ValueError(msg)
 
-    # Remove an existing extension tarball.
-    ext_path = pjoin(linked, fname)
-    if os.path.exists(ext_path):
-        os.remove(ext_path)
+        staging = pjoin(app_dir, 'staging')
 
-    # Move
-    shutil.move(pjoin(target, fname), linked)
-    shutil.rmtree(target)
+        # Make sure packages are installed.
+        self._run(['node', YARN_PATH, 'install'], cwd=staging)
+
+        # Build the app.
+        self._run(['node', YARN_PATH, 'run', command], cwd=staging)
+
+    def watch(self):
+        """Start the application watcher and then run the watch in
+        the background.
+        """
+        staging = pjoin(self.app_dir, 'staging')
+
+        self._populate_staging()
+
+        # Make sure packages are installed.
+        self._run(['node', YARN_PATH, 'install'], cwd=staging)
+
+        proc = WatchHelper(['node', YARN_PATH, 'run', 'watch'],
+            cwd=pjoin(self.app_dir, 'staging'),
+            startup_regex=WEBPACK_EXPECT,
+            logger=self.logger)
+        return [proc]
+
+    def list_extensions(self):
+        """Print an output of the extensions.
+        """
+        logger = self.logger
+        info = self.info
+
+        logger.info('QuantLab v%s' % info['version'])
+
+        if info['extensions']:
+            info['compat_errors'] = self._get_extension_compat()
+            logger.info('Known labextensions:')
+            self._list_extensions(info, 'app')
+            self._list_extensions(info, 'sys')
+        else:
+            logger.info('No installed extensions')
+
+        local = info['local_extensions']
+        if local:
+            logger.info('   local extensions:')
+            for name in sorted(local):
+                logger.info('        %s: %s' % (name, local[name]))
+
+        linked_packages = info['linked_packages']
+        if linked_packages:
+            logger.info('   linked packages:')
+            for key in sorted(linked_packages):
+                source = linked_packages[key]['source']
+                logger.info('        %s: %s' % (key, source))
+
+        uninstalled_core = info['uninstalled_core']
+        if uninstalled_core:
+            logger.info('\nUninstalled core extensions:')
+            [logger.info('    %s' % item) for item in sorted(uninstalled_core)]
+
+        disabled_core = info['disabled_core']
+        if disabled_core:
+            logger.info('\nDisabled core extensions:')
+            [logger.info('    %s' % item) for item in sorted(disabled_core)]
+
+        messages = self.build_check(fast=True)
+        if messages:
+            logger.info('\nBuild recommended:')
+            [logger.info('    %s' % item) for item in messages]
+
+    def build_check(self, fast=False):
+        """Determine whether QuantLab should be built.
+        Returns a list of messages.
+        """
+        app_dir = self.app_dir
+        local = self.info['local_extensions']
+        linked = self.info['linked_packages']
+        messages = []
+
+        # Check for no application.
+        pkg_path = pjoin(app_dir, 'static', 'package.json')
+        if not osp.exists(pkg_path):
+            return ['No built application']
+
+        with open(pkg_path) as fid:
+            static_data = json.load(fid)
+
+        old_jlab = static_data['quantlab']
+        old_deps = static_data.get('dependencies', dict())
+
+        # Look for mismatched version.
+        static_version = old_jlab.get('version', '')
+        core_version = old_jlab['version']
+        if LooseVersion(static_version) != LooseVersion(core_version):
+            msg = 'Version mismatch: %s (built), %s (current)'
+            return [msg % (static_version, core_version)]
+
+        # Look for mismatched extensions.
+        new_package = self._get_package_template(silent=fast)
+        new_jlab = new_package['quantlab']
+        new_deps = new_package.get('dependencies', dict())
+
+        for ext_type in ['extensions', 'mimeExtensions']:
+            # Extensions that were added.
+            for ext in new_jlab[ext_type]:
+                if ext not in old_jlab[ext_type]:
+                    messages.append('%s needs to be included' % ext)
+
+            # Extensions that were removed.
+            for ext in old_jlab[ext_type]:
+                if ext not in new_jlab[ext_type]:
+                    messages.append('%s needs to be removed' % ext)
+
+        # Look for mismatched dependencies
+        for (pkg, dep) in new_deps.items():
+            if pkg not in old_deps:
+                continue
+            # Skip local and linked since we pick them up separately.
+            if pkg in local or pkg in linked:
+                continue
+            if old_deps[pkg] != dep:
+                msg = '%s changed from %s to %s'
+                messages.append(msg % (pkg, old_deps[pkg], new_deps[pkg]))
+
+        # Look for updated local extensions.
+        for (name, source) in local.items():
+            if fast:
+                continue
+            dname = pjoin(app_dir, 'extensions')
+            if self._check_local(name, source, dname):
+                messages.append('%s content changed' % name)
+
+        # Look for updated linked packages.
+        for (name, item) in linked.items():
+            if fast:
+                continue
+            dname = pjoin(app_dir, 'staging', 'linked_packages')
+            if self._check_local(name, item['source'], dname):
+                messages.append('%s content changed' % name)
+
+        return messages
+
+    def uninstall_extension(self, name):
+        """Uninstall an extension by name.
+        """
+        # Allow for uninstalled core extensions.
+        data = self.info['core_data']
+        if name in self.info['core_extensions']:
+            self.logger.info('Uninstalling core extension %s' % name)
+            config = self._read_build_config()
+            uninstalled = config.get('uninstalled_core_extensions', [])
+            if name not in uninstalled:
+                uninstalled.append(name)
+                config['uninstalled_core_extensions'] = uninstalled
+                self._write_build_config(config)
+            return True
+
+        local = self.info['local_extensions']
+
+        for (extname, data) in self.info['extensions'].items():
+            path = data['path']
+            if extname == name:
+                msg = 'Uninstalling %s from %s' % (name, osp.dirname(path))
+                self.logger.info(msg)
+                os.remove(path)
+                # Handle local extensions.
+                if extname in local:
+                    config = self._read_build_config()
+                    data = config.setdefault('local_extensions', dict())
+                    del data[extname]
+                    self._write_build_config(config)
+                return True
+
+        self.logger.warn('No labextension named "%s" installed' % name)
+        return False
+
+    def link_package(self, path):
+        """Link a package at the given path.
+        """
+        path = _normalize_path(path)
+        if not osp.exists(path) or not osp.isdir(path):
+            msg = 'Can install "%s" only link local directories'
+            raise ValueError(msg % path)
+
+        with TemporaryDirectory() as tempdir:
+            info = self._extract_package(path, tempdir)
+
+        messages = _validate_extension(info['data'])
+        if not messages:
+            return self.install_extension(path)
+
+        # Warn that it is a linked package.
+        self.logger.warn('Installing %s as a linked package:', path)
+        [self.logger.warn(m) for m in messages]
+
+        # Add to metadata.
+        config = self._read_build_config()
+        linked = config.setdefault('linked_packages', dict())
+        linked[info['name']] = info['source']
+        self._write_build_config(config)
+
+    def unlink_package(self, path):
+        """Link a package by name or at the given path.
+        """
+        path = _normalize_path(path)
+        config = self._read_build_config()
+        linked = config.setdefault('linked_packages', dict())
+
+        found = None
+        for (name, source) in linked.items():
+            if name == path or source == path:
+                found = name
+
+        if found:
+            del linked[found]
+        else:
+            local = config.setdefault('local_extensions', dict())
+            for (name, source) in local.items():
+                if name == path or source == path:
+                    found = name
+            if found:
+                del local[found]
+                path = self.info['extensions'][found]['path']
+                os.remove(path)
+
+        if not found:
+            raise ValueError('No linked package for %s' % path)
+
+        self._write_build_config(config)
+
+    def toggle_extension(self, extension, value):
+        """Enable or disable a lab extension.
+        """
+        config = self._read_page_config()
+        disabled = config.setdefault('disabledExtensions', [])
+        if value and extension not in disabled:
+            disabled.append(extension)
+        if not value and extension in disabled:
+            disabled.remove(extension)
+        self._write_page_config(config)
+
+    def _get_app_info(self):
+        """Get information about the app.
+        """
+
+        info = dict()
+        info['core_data'] = core_data = _get_core_data()
+        info['extensions'] = extensions = self._get_extensions(core_data)
+        page_config = self._read_page_config()
+        info['disabled'] = page_config.get('disabledExtensions', [])
+        info['local_extensions'] = self._get_local_extensions()
+        info['linked_packages'] = self._get_linked_packages()
+        info['app_extensions'] = app = []
+        info['sys_extensions'] = sys = []
+        for (name, data) in extensions.items():
+            data['is_local'] = name in info['local_extensions']
+            if data['location'] == 'app':
+                app.append(name)
+            else:
+                sys.append(name)
+
+        info['uninstalled_core'] = self._get_uninstalled_core_extensions()
+        info['version'] = core_data['quantlab']['version']
+        info['sys_dir'] = self.sys_dir
+        info['app_dir'] = self.app_dir
+
+        info['core_extensions'] = core_extensions = _get_core_extensions()
+
+        disabled_core = []
+        for key in core_extensions:
+            if key in info['disabled']:
+                disabled_core.append(key)
+
+        info['disabled_core'] = disabled_core
+        return info
+
+    def _populate_staging(self, name=None, version=None, clean=False):
+        """Set up the assets in the staging directory.
+        """
+        app_dir = self.app_dir
+        staging = pjoin(app_dir, 'staging')
+        if clean and osp.exists(staging):
+            self.logger.info("Cleaning %s", staging)
+            shutil.rmtree(staging)
+
+        self._ensure_app_dirs()
+        if not version:
+            version = self.info['core_data']['quantlab']['version']
+
+        # Look for mismatched version.
+        pkg_path = pjoin(staging, 'package.json')
+        overwrite_lock = False
+
+        if osp.exists(pkg_path):
+            with open(pkg_path) as fid:
+                data = json.load(fid)
+            if data['quantlab'].get('version', '') != version:
+                shutil.rmtree(staging)
+                os.makedirs(staging)
+            else:
+                overwrite_lock = False
+
+        for fname in ['index.js', 'webpack.config.js',
+                'yarn.lock', '.yarnrc', 'yarn.js']:
+            if fname == 'yarn.lock' and not overwrite_lock:
+                continue
+            shutil.copy(pjoin(HERE, 'staging', fname), pjoin(staging, fname))
+
+        # Ensure a clean linked packages directory.
+        linked_dir = pjoin(staging, 'linked_packages')
+        if osp.exists(linked_dir):
+            shutil.rmtree(linked_dir)
+        os.makedirs(linked_dir)
+
+        # Template the package.json file.
+        # Update the local extensions.
+        extensions = self.info['extensions']
+        for (key, source) in self.info['local_extensions'].items():
+            dname = pjoin(app_dir, 'extensions')
+            self._update_local(key, source, dname, extensions[key],
+                'local_extensions')
+
+        # Update the linked packages.
+        linked = self.info['linked_packages']
+        for (key, item) in linked.items():
+            dname = pjoin(staging, 'linked_packages')
+            self._update_local(key, item['source'], dname, item,
+                'linked_packages')
+
+        # Then get the package template.
+        data = self._get_package_template()
+
+        if version:
+            data['quantlab']['version'] = version
+
+        if name:
+            data['quantlab']['name'] = name
+
+        pkg_path = pjoin(staging, 'package.json')
+        with open(pkg_path, 'w') as fid:
+            json.dump(data, fid, indent=4)
+
+    def _get_package_template(self, silent=False):
+        """Get the template the for staging package.json file.
+        """
+        logger = self.logger
+        data = self.info['core_data']
+        local = self.info['local_extensions']
+        linked = self.info['linked_packages']
+        extensions = self.info['extensions']
+        jlab = data['quantlab']
+
+        def format_path(path):
+            path = osp.relpath(path, pjoin(self.app_dir, 'staging'))
+            path = 'file:' + path.replace(os.sep, '/')
+            if os.name == 'nt':
+                path = path.lower()
+            return path
+
+        # Handle extensions
+        compat_errors = self._get_extension_compat()
+        for (key, value) in extensions.items():
+            # Reject incompatible extensions with a message.
+            errors = compat_errors[key]
+            if errors:
+                msg = _format_compatibility_errors(
+                    key, value['version'], errors
+                )
+                if not silent:
+                    logger.warn(msg + '\n')
+                continue
+
+            data['dependencies'][key] = format_path(value['path'])
+
+            jlab_data = value['quantlab']
+            for item in ['extension', 'mimeExtension']:
+                ext = jlab_data.get(item, False)
+                if not ext:
+                    continue
+                if ext is True:
+                    ext = ''
+                jlab[item + 's'][key] = ext
+
+        jlab['linkedPackages'] = dict()
+
+        # Handle local extensions.
+        for (key, source) in local.items():
+            jlab['linkedPackages'][key] = source
+
+        # Handle linked packages.
+        for (key, item) in linked.items():
+            path = pjoin(self.app_dir, 'staging', 'linked_packages')
+            path = pjoin(path, item['filename'])
+            data['dependencies'][key] = format_path(path)
+            jlab['linkedPackages'][key] = item['source']
+
+        # Handle uninstalled core extensions.
+        for item in self.info['uninstalled_core']:
+            if item in jlab['extensions']:
+                data['quantlab']['extensions'].pop(item)
+            else:
+                data['quantlab']['mimeExtensions'].pop(item)
+            # Remove from dependencies as well.
+            data['dependencies'].pop(item)
+
+        return data
+
+    def _check_local(self, name, source, dname):
+        # Extract the package in a temporary directory.
+        with TemporaryDirectory() as tempdir:
+            info = self._extract_package(source, tempdir)
+            # Test if the file content has changed.
+            target = pjoin(dname, info['filename'])
+            return not osp.exists(target)
+
+    def _update_local(self, name, source, dname, data, dtype):
+        """Update a local dependency.  Return `True` if changed.
+        """
+        # Extract the package in a temporary directory.
+        existing = data['filename']
+        with TemporaryDirectory() as tempdir:
+            info = self._extract_package(source, tempdir)
+
+            # Bail if the file content has not changed.
+            if info['filename'] == existing:
+                return existing
+
+            shutil.move(info['path'], pjoin(dname, info['filename']))
+
+        # Remove the existing tarball and return the new file name.
+        if existing:
+            os.remove(pjoin(dname, existing))
+
+        data['filename'] = info['filename']
+        data['path'] = pjoin(data['tar_dir'], data['filename'])
+        return info['filename']
+
+    def _get_extensions(self, core_data):
+        """Get the extensions for the application.
+        """
+        app_dir = self.app_dir
+        extensions = dict()
+
+        # Get system level packages.
+        sys_path = pjoin(self.sys_dir, 'extensions')
+        app_path = pjoin(self.app_dir, 'extensions')
+
+        extensions = self._get_extensions_in_dir(self.sys_dir, core_data)
+
+        # Look in app_dir if different.
+        app_path = pjoin(app_dir, 'extensions')
+        if app_path == sys_path or not osp.exists(app_path):
+            return extensions
+
+        extensions.update(self._get_extensions_in_dir(app_dir, core_data))
+
+        return extensions
+
+    def _get_extensions_in_dir(self, dname, core_data):
+        """Get the extensions in a given directory.
+        """
+        extensions = dict()
+        location = 'app' if dname == self.app_dir else 'sys'
+        for target in glob.glob(pjoin(dname, 'extensions', '*.tgz')):
+            data = _read_package(target)
+            deps = data.get('dependencies', dict())
+            name = data['name']
+            jlab = data.get('quantlab', dict())
+            path = osp.realpath(target)
+            extensions[name] = dict(path=path,
+                                    filename=osp.basename(path),
+                                    version=data['version'],
+                                    quantlab=jlab,
+                                    dependencies=deps,
+                                    tar_dir=osp.dirname(path),
+                                    location=location)
+        return extensions
+
+    def _get_extension_compat(self):
+        """Get the extension compatibility info.
+        """
+        compat = dict()
+        core_data = self.info['core_data']
+        for (name, data) in self.info['extensions'].items():
+            deps = data['dependencies']
+            compat[name] = _validate_compatibility(name, deps, core_data)
+        return compat
+
+    def _get_local_extensions(self):
+        """Get the locally installed extensions.
+        """
+        return self._get_local_data('local_extensions')
+
+    def _get_linked_packages(self):
+        """Get the linked packages.
+        """
+        info = self._get_local_data('linked_packages')
+        dname = pjoin(self.app_dir, 'staging', 'linked_packages')
+        for (name, source) in info.items():
+            info[name] = dict(source=source, filename='', tar_dir=dname)
+
+        if not osp.exists(dname):
+            return info
+
+        for path in glob.glob(pjoin(dname, '*.tgz')):
+            path = osp.realpath(path)
+            data = _read_package(path)
+            name = data['name']
+            if name not in info:
+                self.logger.warn('Removing orphaned linked package %s' % name)
+                os.remove(path)
+                continue
+            item = info[name]
+            item['filename'] = osp.basename(path)
+            item['path'] = path
+            item['version'] = data['version']
+            item['data'] = data
+        return info
+
+    def _get_uninstalled_core_extensions(self):
+        """Get the uninstalled core extensions.
+        """
+        config = self._read_build_config()
+        return config.get('uninstalled_core_extensions', [])
+
+    def _ensure_app_dirs(self):
+        """Ensure that the application directories exist"""
+        dirs = ['extensions', 'settings', 'staging', 'schemas', 'themes']
+        for dname in dirs:
+            path = pjoin(self.app_dir, dname)
+            if not osp.exists(path):
+                try:
+                    os.makedirs(path)
+                except OSError as e:
+                    if e.errno != errno.EEXIST:
+                        raise
+
+    def _list_extensions(self, info, ext_type):
+        """List the extensions of a given type.
+        """
+        logger = self.logger
+        names = info['%s_extensions' % ext_type]
+        if not names:
+            return
+
+        dname = info['%s_dir' % ext_type]
+
+        logger.info('   %s dir: %s' % (ext_type, dname))
+        for name in sorted(names):
+            logger.info(name)
+            data = info['extensions'][name]
+            version = data['version']
+            errors = info['compat_errors'][name]
+            extra = ''
+            if _is_disabled(name, info['disabled']):
+                extra += ' %s' % RED_DISABLED
+            else:
+                extra += ' %s' % GREEN_ENABLED
+            if errors:
+                extra += ' %s' % RED_X
+            else:
+                extra += ' %s' % GREEN_OK
+            if data['is_local']:
+                extra += '*'
+            logger.info('        %s v%s%s' % (name, version, extra))
+            if errors:
+                msg = _format_compatibility_errors(
+                    name, version, errors
+                )
+                logger.warn(msg + '\n')
+
+    def _read_build_config(self):
+        """Get the build config data for the app dir.
+        """
+        target = pjoin(self.app_dir, 'settings', 'build_config.json')
+        if not osp.exists(target):
+            return {}
+        else:
+            with open(target) as fid:
+                return json.load(fid)
+
+    def _write_build_config(self, config):
+        """Write the build config to the app dir.
+        """
+        self._ensure_app_dirs()
+        target = pjoin(self.app_dir, 'settings', 'build_config.json')
+        with open(target, 'w') as fid:
+            json.dump(config, fid, indent=4)
+
+    def _read_page_config(self):
+        """Get the page config data for the app dir.
+        """
+        target = pjoin(self.app_dir, 'settings', 'page_config.json')
+        if not osp.exists(target):
+            return {}
+        else:
+            with open(target) as fid:
+                return json.load(fid)
+
+    def _write_page_config(self, config):
+        """Write the build config to the app dir.
+        """
+        self._ensure_app_dirs()
+        target = pjoin(self.app_dir, 'settings', 'page_config.json')
+        with open(target, 'w') as fid:
+            json.dump(config, fid, indent=4)
+
+    def _get_local_data(self, source):
+        """Get the local data for extensions or linked packages.
+        """
+        config = self._read_build_config()
+
+        data = config.setdefault(source, dict())
+        dead = []
+        for (name, source) in data.items():
+            if not osp.exists(source):
+                dead.append(name)
+
+        for name in dead:
+            link_type = source.replace('_', ' ')
+            msg = '**Note: Removing dead %s "%s"' % (link_type, name)
+            self.logger.warn(msg)
+            del data[name]
+
+        if dead:
+            self._write_build_config(config)
+
+        return data
+
+    def _install_extension(self, extension, tempdir):
+        """Install an extension with validation and return the name and path.
+        """
+        info = self._extract_package(extension, tempdir)
+        data = info['data']
+
+        # Verify that the package is an extension.
+        messages = _validate_extension(data)
+        if messages:
+            msg = '"%s" is not a valid extension:\n%s'
+            raise ValueError(msg % (extension, '\n'.join(messages)))
+
+        # Verify package compatibility.
+        core_data = _get_core_data()
+        deps = data.get('dependencies', dict())
+        errors = _validate_compatibility(extension, deps, core_data)
+        if errors:
+            msg = _format_compatibility_errors(
+                data['name'], data['version'], errors
+            )
+            raise ValueError(msg)
+
+        # Move the file to the app directory.
+        target = pjoin(self.app_dir, 'extensions', info['filename'])
+        if osp.exists(target):
+            os.remove(target)
+
+        shutil.move(info['path'], target)
+
+        info['path'] = target
+        return info
+
+    def _extract_package(self, source, tempdir):
+        # npm pack the extension
+        is_dir = osp.exists(source) and osp.isdir(source)
+        if is_dir and not osp.exists(pjoin(source, 'node_modules')):
+            self._run(['node', YARN_PATH, 'install'], cwd=source)
+
+        info = dict(source=source, is_dir=is_dir)
+
+        ret = self._run([which('npm'), 'pack', source], cwd=tempdir)
+        if ret != 0:
+            msg = '"%s" is not a valid npm package'
+            raise ValueError(msg % source)
+
+        path = glob.glob(pjoin(tempdir, '*.tgz'))[0]
+        info['data'] = _read_package(path)
+        if is_dir:
+            info['sha'] = sha = _tarsum(path)
+            target = path.replace('.tgz', '-%s.tgz' % sha)
+            shutil.move(path, target)
+            info['path'] = target
+        else:
+            info['path'] = path
+
+        info['filename'] = osp.basename(info['path'])
+        info['name'] = info['data']['name']
+        info['version'] = info['data']['version']
+
+        return info
+
+    def _run(self, cmd, **kwargs):
+        """Run the command using our logger and abort callback.
+        Returns the exit code.
+        """
+        if self.kill_event.is_set():
+            raise ValueError('Command was killed')
+
+        kwargs['logger'] = self.logger
+        kwargs['kill_event'] = self.kill_event
+        proc = Process(cmd, **kwargs)
+        return proc.wait()
 
 
-def _get_build_config(app_dir):
-    """Get the build config data for the given app dir
+def _normalize_path(extension):
+    """Normalize a given extension if it is a path.
     """
-    target = pjoin(app_dir, 'settings', 'build_config.json')
-    if not os.path.exists(target):
-        return {}
-    else:
-        with open(target) as fid:
-            return json.load(fid)
+    extension = osp.expanduser(extension)
+    if osp.exists(extension):
+        extension = osp.abspath(extension)
+    return extension
 
 
-def _get_page_config(app_dir):
-    """Get the page config data for the given app dir
+def _read_package(target):
+    """Read the package data in a given target tarball.
     """
-    target = pjoin(app_dir, 'settings', 'page_config.json')
-    if not os.path.exists(target):
-        return {}
-    else:
-        with open(target) as fid:
-            return json.load(fid)
+    tar = tarfile.open(target, "r:gz")
+    f = tar.extractfile('package/package.json')
+    data = json.loads(f.read().decode('utf8'))
+    data['quantlab_extracted_files'] = [
+        f.path[len('package/'):] for f in tar.getmembers()
+    ]
+    tar.close()
+    return data
+
+
+def _validate_extension(data):
+    """Detect if a package is an extension using its metadata.
+    Returns any problems it finds.
+    """
+    jlab = data.get('quantlab', None)
+    if jlab is None:
+        return ['No `quantlab` key']
+    if not isinstance(jlab, dict):
+        return ['The `quantlab` key must be a JSON object']
+    extension = jlab.get('extension', False)
+    mime_extension = jlab.get('mimeExtension', False)
+    themeDir = jlab.get('themeDir', '')
+    schemaDir = jlab.get('schemaDir', '')
+
+    messages = []
+    if not extension and not mime_extension:
+        messages.append('No `extension` or `mimeExtension` key present')
+
+    if extension == mime_extension:
+        msg = '`mimeExtension` and `extension` must point to different modules'
+        messages.append(msg)
+
+    files = data['quantlab_extracted_files']
+    main = data.get('main', 'index.js')
+
+    if extension is True:
+        if main not in files:
+            messages.append('Missing extension module "%s"' % main)
+    elif extension and extension not in files:
+        messages.append('Missing extension module "%s"' % extension)
+
+    if mime_extension is True:
+        if main not in files:
+            messages.append('Missing mimeExtension module "%s"' % main)
+    elif mime_extension and mime_extension not in files:
+        messages.append('Missing mimeExtension module "%s"' % mime_extension)
+
+    if themeDir and not any(f.startswith(themeDir) for f in files):
+        messages.append('themeDir is empty: "%s"' % themeDir)
+
+    if schemaDir and not any(f.startswith(schemaDir) for f in files):
+        messages.append('schemaDir is empty: "%s"' % schemaDir)
+
+    return messages
+
+
+def _tarsum(input_file):
+    """
+    Compute the recursive sha sum of a tar file.
+    """
+    tar = tarfile.open(input_file, "r:gz")
+    chunk_size = 100 * 1024
+    h = hashlib.new("sha1")
+
+    for member in tar:
+        if not member.isfile():
+            continue
+        f = tar.extractfile(member)
+        data = f.read(chunk_size)
+        while data:
+            h.update(data)
+            data = f.read(chunk_size)
+    return h.hexdigest()
+
+
+def _get_core_data():
+    """Get the data for the app template.
+    """
+    with open(pjoin(HERE, 'staging', 'package.json')) as fid:
+        return json.load(fid)
 
 
 def _validate_compatibility(extension, deps, core_data):
@@ -670,16 +1119,8 @@ def _validate_compatibility(extension, deps, core_data):
     return errors
 
 
-def _get_core_data():
-    """Get the data for the app template.
-    """
-    with open(pjoin(here, 'package.app.json')) as fid:
-        return json.load(fid)
-
-
 def _test_overlap(spec1, spec2):
     """Test whether two version specs overlap.
-
     Returns `None` if we cannot determine compatibility,
     otherwise whether there is an overlap
     """
@@ -727,6 +1168,17 @@ def _test_overlap(spec1, spec2):
     )
 
 
+def _is_disabled(name, disabled=[]):
+    """Test whether the package is disabled.
+    """
+    for pattern in disabled:
+        if name == pattern:
+            return True
+        if re.compile(pattern).match(name) is not None:
+            return True
+    return False
+
+
 def _format_compatibility_errors(name, version, errors):
     """Format a message for compatibility errors.
     """
@@ -754,287 +1206,8 @@ def _format_compatibility_errors(name, version, errors):
     return msg
 
 
-def _toggle_extension(extension, value, app_dir=None, logger=None):
-    """Enable or disable a quantlab extension.
-    """
-    app_dir = get_app_dir(app_dir)
-    config = _get_page_config(app_dir)
-    extensions = _get_extensions(app_dir)
-    core_extensions = _get_core_extensions()
-
-    if extension not in extensions and extension not in core_extensions:
-        raise ValueError('Extension %s is not installed' % extension)
-    disabled = config.get('disabledExtensions', [])
-    if value and extension not in disabled:
-        disabled.append(extension)
-    if not value and extension in disabled:
-        disabled.remove(extension)
-
-    # Prune extensions that are not installed.
-    disabled = [ext for ext in disabled
-                if (ext in extensions or ext in core_extensions)]
-    config['disabledExtensions'] = disabled
-    _write_page_config(config, app_dir, logger=logger)
-
-
-def _write_build_config(config, app_dir, logger):
-    """Write the build config to the app dir.
-    """
-    _ensure_app_dirs(app_dir, logger)
-    target = pjoin(app_dir, 'settings', 'build_config.json')
-    with open(target, 'w') as fid:
-        json.dump(config, fid, indent=4)
-
-
-def _write_page_config(config, app_dir, logger):
-    """Write the build config to the app dir.
-    """
-    _ensure_app_dirs(app_dir, logger)
-    target = pjoin(app_dir, 'settings', 'page_config.json')
-    with open(target, 'w') as fid:
-        json.dump(config, fid, indent=4)
-
-
-def _ensure_package(app_dir, logger=None, name=None, version=None):
-    """Make sure the build dir is set up.
-    """
-    logger = logger or logging
-    version = version or __version__
-    _ensure_app_dirs(app_dir, logger)
-
-    # Look for mismatched version.
-    staging = pjoin(app_dir, 'staging')
-    pkg_path = pjoin(staging, 'package.json')
-    version_updated = False
-    if os.path.exists(pkg_path):
-        with open(pkg_path) as fid:
-            data = json.load(fid)
-        if data['quantlab'].get('version', '') != version:
-            shutil.rmtree(staging)
-            os.makedirs(staging)
-            version_updated = True
-
-    for fname in ['index.app.js', 'webpack.config.js']:
-        dest = pjoin(staging, fname.replace('.app', ''))
-        shutil.copy(pjoin(here, fname), dest)
-
-    # Template the package.json file.
-    data = _get_package_template(app_dir, logger)
-    data['quantlab']['name'] = name or 'QuantLab'
-    data['quantlab']['version'] = version
-
-    pkg_path = pjoin(staging, 'package.json')
-    with open(pkg_path, 'w') as fid:
-        json.dump(data, fid, indent=4)
-
-    # Copy any missing or outdated schema or theme items.
-    for item in ['schemas', 'themes']:
-        local = pjoin(here, item)
-        if not os.path.exists(local):
-            os.makedirs(local)
-
-        for item_path in os.listdir(local):
-            src = pjoin(local, item_path)
-            dest = pjoin(app_dir, item, item_path)
-            if version_updated or not os.path.exists(dest):
-                if os.path.isdir(src):
-                    if os.path.exists(dest):
-                        shutil.rmtree(dest)
-                    shutil.copytree(src, dest)
-                else:
-                    shutil.copy(src, dest)
-
-
-def _ensure_app_dirs(app_dir, logger):
-    """Ensure that the application directories exist"""
-    dirs = ['extensions', 'settings', 'schemas', 'themes', 'staging']
-    for dname in dirs:
-        path = pjoin(app_dir, dname)
-        if not osp.exists(path):
-            try:
-                os.makedirs(path)
-            except OSError as e:
-                if e.errno != errno.EEXIST:
-                    raise
-
-
-def _get_package_template(app_dir, logger):
-    # Get the template the for package.json file.
-    data = _get_core_data()
-    extensions = _get_extensions(app_dir)
-
-    # Handle extensions
-    for (key, value) in extensions.items():
-        # Reject incompatible extensions with a message.
-        deps = value.get('dependencies', dict())
-        errors = _validate_compatibility(key, deps, data)
-        if errors:
-            msg = _format_compatibility_errors(key, value['version'], errors)
-            logger.warn(msg + '\n')
-            continue
-        data['dependencies'][key] = value['path']
-        jquantlab_data = value['quantlab']
-        for item in ['extension', 'mimeExtension']:
-            ext = jquantlab_data.get(item, False)
-            if not ext:
-                continue
-            if ext is True:
-                ext = ''
-            data['quantlab'][item + 's'][key] = ext
-
-    # Handle linked packages.
-    linked = _get_linked_packages(app_dir, logger)
-    for (key, path) in linked.items():
-        if key in extensions:
-            continue
-        data['dependencies'][key] = path
-
-    # Handle uninstalled core extensions.
-    for item in _get_uinstalled_core_extensions(app_dir):
-        if item in data['quantlab']['extensions']:
-            data['quantlab']['extensions'].pop(item)
-        else:
-            data['quantlab']['mimeExtensions'].pop(item)
-
-    return data
-
-
-def _is_extension(data):
-    """Detect if a package is an extension using its metadata.
-    """
-    if 'quantlab' not in data:
-        return False
-    if not isinstance(data['quantlab'], dict):
-        return False
-    is_extension = data['quantlab'].get('extension', False)
-    is_mime_extension = data['quantlab'].get('mimeExtension', False)
-    return is_extension or is_mime_extension
-
-
-def _get_uinstalled_core_extensions(app_dir):
-    """Get the uninstalled core extensions.
-    """
-    config = _get_build_config(app_dir)
-    return config.get('uninstalled_core_extensions', [])
-
-
-def _validate_package(data, extension):
-    """Validate package.json data.
-    """
-    msg = '%s is not a valid QuantLab extension' % extension
-    if not _is_extension(data):
-        raise ValueError(msg)
-
-
-def _get_disabled(app_dir):
-    """Get the disabled extensions.
-    """
-    config = _get_page_config(app_dir)
-    return config.get('disabledExtensions', [])
-
-
 def _get_core_extensions():
     """Get the core extensions.
     """
     data = _get_core_data()['quantlab']
     return list(data['extensions']) + list(data['mimeExtensions'])
-
-
-def _get_extensions(app_dir):
-    """Get the extensions in a given app dir.
-    """
-    extensions = dict()
-
-    # Get system level packages
-    sys_path = pjoin(get_app_dir(), 'extensions')
-    app_path = pjoin(app_dir, 'extensions')
-    for target in glob.glob(pjoin(sys_path, '*.tgz')):
-        location = 'app' if app_path == sys_path else 'system'
-        data = _read_package(target)
-        deps = data.get('dependencies', dict())
-        extensions[data['name']] = dict(path=os.path.realpath(target),
-                                        version=data['version'],
-                                        quantlab=data['quantlab'],
-                                        dependencies=deps,
-                                        location=location)
-
-    # Look in app_dir if different
-    app_path = pjoin(app_dir, 'extensions')
-    if app_path == sys_path or not os.path.exists(app_path):
-        return extensions
-
-    for target in glob.glob(pjoin(app_path, '*.tgz')):
-        data = _read_package(target)
-        deps = data.get('dependencies', dict())
-        extensions[data['name']] = dict(path=os.path.realpath(target),
-                                        version=data['version'],
-                                        quantlab=data['quantlab'],
-                                        dependencies=deps,
-                                        location='app')
-
-    return extensions
-
-
-def _get_linked_packages(app_dir=None, logger=None):
-    """Get the linked packages metadata.
-    """
-    logger = logger or logging
-    app_dir = get_app_dir(app_dir)
-    config = _get_build_config(app_dir)
-    linked = config.get('linked_packages', dict())
-    dead = []
-    for (name, path) in linked.items():
-        if not os.path.exists(path):
-            dead.append(name)
-
-    if dead:
-        extensions = _get_extensions(app_dir)
-
-    for name in dead:
-        path = linked[name]
-        if name in extensions:
-            uninstall_extension(name)
-            logger.warn('**Note: Removing dead linked extension "%s"' % name)
-        else:
-            logger.warn('**Note: Removing dead linked package "%s"' % name)
-        del linked[name]
-
-    if dead:
-        config['linked_packages'] = linked
-        _write_build_config(config, app_dir, logger=logger)
-
-    return config.get('linked_packages', dict())
-
-
-def _read_package(target):
-    """Read the package data in a given target tarball.
-    """
-    tar = tarfile.open(target, "r:gz")
-    f = tar.extractfile('package/package.json')
-    data = json.loads(f.read().decode('utf8'))
-    tar.close()
-    return data
-
-
-def _copy_tar_files(fname, source, dest):
-    """Copy the files from a target path to the destination.
-    """
-    tar = tarfile.open(fname, "r:gz")
-    subdir_and_files = [
-        tarinfo for tarinfo in tar.getmembers()
-        if tarinfo.name.startswith('package/' + source)
-    ]
-    offset = len('package/' + source + '/')
-    for member in subdir_and_files:
-        member.path = member.path[offset:]
-    tar.extractall(path=dest, members=subdir_and_files)
-    tar.close()
-
-
-def _normalize_path(extension):
-    """Normalize a given extension if it is a path.
-    """
-    extension = osp.expanduser(extension)
-    if osp.exists(extension):
-        extension = osp.abspath(extension)
-    return extension

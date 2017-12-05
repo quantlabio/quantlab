@@ -1,7 +1,14 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import * as dsv from 'd3-dsv';
+
+import {
+  ActivityMonitor, PathExt
+} from '@quantlab/coreutils';
+
+import {
+  ABCWidgetFactory, DocumentRegistry
+} from '@quantlab/docregistry';
 
 import {
   PromiseDelegate
@@ -18,14 +25,6 @@ import {
 import {
   PanelLayout, Widget
 } from '@phosphor/widgets';
-
-import {
-  ActivityMonitor, PathExt
-} from '@quantlab/coreutils';
-
-import {
-  ABCWidgetFactory, DocumentRegistry
-} from '@quantlab/docregistry';
 
 import {
   CSVToolbar

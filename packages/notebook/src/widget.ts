@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ArrayExt, each
 } from '@phosphor/algorithm';
@@ -48,8 +47,12 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  IChangedArgs, IObservableMap, IObservableList, nbformat
+  IChangedArgs, nbformat
 } from '@quantlab/coreutils';
+
+import {
+  IObservableMap, IObservableList
+} from '@quantlab/observables';
 
 import {
   RenderMime
@@ -59,6 +62,21 @@ import {
   INotebookModel
 } from './model';
 
+
+/**
+ * The data attribute added to a widget that has an active kernel.
+ */
+const KERNEL_USER = 'jpKernelUser';
+
+/**
+ * The data attribute added to a widget that can run code.
+ */
+const CODE_RUNNER = 'jpCodeRunner';
+
+/**
+ * The data attribute added to a widget that can undo.
+ */
+const UNDOER = 'jpUndoer';
 
 /**
  * The class name added to notebook widgets.
@@ -169,6 +187,9 @@ class StaticNotebook extends Widget {
   constructor(options: StaticNotebook.IOptions) {
     super();
     this.addClass(NB_CLASS);
+    this.node.dataset[KERNEL_USER] = 'true';
+    this.node.dataset[CODE_RUNNER] = 'true';
+    this.node.dataset[UNDOER] = 'true';
     this.rendermime = options.rendermime;
     this.layout = new Private.NotebookPanelLayout();
     this.contentFactory = (

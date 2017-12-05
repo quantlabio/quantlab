@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   PageConfig, URLExt
 } from '@quantlab/coreutils';
@@ -39,6 +38,13 @@ class BuildManager {
    */
   get isAvailable(): boolean {
     return PageConfig.getOption('buildAvailable').toLowerCase() === 'true';
+  }
+
+  /**
+   * Test whether to check build status automatically.
+   */
+  get shouldCheck(): boolean {
+    return PageConfig.getOption('buildCheck').toLowerCase() === 'true';
   }
 
   /**

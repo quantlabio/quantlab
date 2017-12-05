@@ -30,8 +30,12 @@ import {
 } from '@quantlab/codeeditor';
 
 import {
-  nbformat, ObservableJSON
+  nbformat
 } from '@quantlab/coreutils';
+
+import {
+  ObservableJSON
+} from '@quantlab/observables';
 
 import {
   IHighChartsTracker
@@ -87,7 +91,7 @@ class ChartTools extends Widget {
     super();
     this.addClass(CELLTOOLS_CLASS);
     this.layout = new PanelLayout();
-    this._tracker = options.tracker;
+    //this._tracker = options.tracker;
 
   }
 
@@ -122,7 +126,7 @@ class ChartTools extends Widget {
   }
 
   private _items: Private.IRankItem[] = [];
-  private _tracker: IHighChartsTracker;
+  //private _tracker: IHighChartsTracker;
   //private _prevActive: ICellModel | null;
 }
 
@@ -271,7 +275,7 @@ namespace ChartTools {
       super({ node: Private.createSelectorNode(options) });
       this.addClass(KEYSELECTOR_CLASS);
       this.key = options.key;
-      this._validCellTypes = options.validCellTypes || [];
+      //this._validCellTypes = options.validCellTypes || [];
 
     }
 
@@ -325,7 +329,7 @@ namespace ChartTools {
 
 
 
-    private _validCellTypes: string[];
+    //private _validCellTypes: string[];
 
   }
 

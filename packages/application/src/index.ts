@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 // Local CSS must be loaded prior to loading other libs.
 import '../style/index.css';
 
@@ -63,7 +62,9 @@ class QuantLab extends Application<ApplicationShell> {
       version:  options.version || 'unknown',
       devMode: options.devMode || false,
       settingsDir: options.settingsDir || '',
-      assetsDir: options.assetsDir || ''
+      assetsDir: options.assetsDir || '',
+      disabled: options.disabled || { patterns: [], matches: [] },
+      deferred: options.deferred || { patterns: [], matches: [] }
     };
     if (options.devMode) {
       this.shell.addClass('jp-mod-devMode');
@@ -228,6 +229,16 @@ namespace QuantLab {
      * The mime renderer extensions.
      */
     mimeExtensions?: IRenderMime.IExtensionModule[];
+
+    /**
+     * The collection of deferred extension patterns and matched extensions.
+     */
+    deferred?: { patterns: string[], matches: string[] };
+
+    /**
+     * The collection of disabled extension patterns and matched extensions.
+     */
+    disabled?: { patterns: string[], matches: string[] };
   }
 
   /**
@@ -264,6 +275,16 @@ namespace QuantLab {
      * The assets directory of the app on the server.
      */
     readonly assetsDir: string;
+
+    /**
+     * The collection of deferred extension patterns and matched extensions.
+     */
+    readonly deferred: { patterns: string[], matches: string[] };
+
+    /**
+     * The collection of disabled extension patterns and matched extensions.
+     */
+    readonly disabled: { patterns: string[], matches: string[] };
   }
 
   /**

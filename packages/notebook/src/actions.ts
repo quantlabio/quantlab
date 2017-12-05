@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   KernelMessage
 } from '@quantlab/services';
@@ -47,7 +46,7 @@ const TRUST_MESSAGE = h.p(
   'Selecting trust will re-render this notebook in a trusted state.',
   h.br(),
   'For more information, see the',
-  h.a({ href: 'http://ipython.org/ipython-doc/2/notebook/security.html' },
+  h.a({ href: 'https://jupyter-notebook.readthedocs.io/en/stable/security.html' },
       'Jupyter security documentation'),
 );
 
@@ -467,6 +466,64 @@ namespace NotebookActions {
   }
 
   /**
+   * Run all of the cells before the currently active cell (exclusive).
+   *
+   * @param widget - The target notebook widget.
+   *
+   * @param session - The optional client session object.
+   *
+   * #### Notes
+   * The existing selection will be cleared.
+   * An execution error will prevent the remaining code cells from executing.
+   * All markdown cells will be rendered.
+   * The currently active cell will remain selected.
+   */
+  export
+  function runAllAbove(widget: Notebook, session?: IClientSession): Promise<boolean> {
+    if (!widget.model || !widget.activeCell || widget.activeCellIndex === 0) {
+      return Promise.resolve(false);
+    }
+    let state = Private.getState(widget);
+    widget.activeCellIndex--;
+    widget.deselectAll();
+    for (let i = 0; i < widget.activeCellIndex; ++i) {
+      widget.select(widget.widgets[i]);
+    }
+    let promise = Private.runSelected(widget, session);
+    widget.activeCellIndex++;
+    Private.handleRunState(widget, state, true);
+    return promise;
+  }
+
+  /**
+   * Run all of the cells after the currently active cell (inclusive).
+   *
+   * @param widget - The target notebook widget.
+   *
+   * @param session - The optional client session object.
+   *
+   * #### Notes
+   * The existing selection will be cleared.
+   * An execution error will prevent the remaining code cells from executing.
+   * All markdown cells will be rendered.
+   * The last cell in the notebook will be activated and scrolled into view.
+   */
+  export
+  function runAllBelow(widget: Notebook, session?: IClientSession): Promise<boolean> {
+    if (!widget.model || !widget.activeCell) {
+      return Promise.resolve(false);
+    }
+    let state = Private.getState(widget);
+    widget.deselectAll();
+    for (let i = widget.activeCellIndex; i < widget.widgets.length; ++i) {
+      widget.select(widget.widgets[i]);
+    }
+    let promise = Private.runSelected(widget, session);
+    Private.handleRunState(widget, state, true);
+    return promise;
+  }
+
+  /**
    * Select the above the active cell.
    *
    * @param widget - The target notebook widget.
@@ -706,7 +763,7 @@ namespace NotebookActions {
   }
 
   /**
-   * Toggle line numbers on the selected cell(s).
+   * Toggle match-brackets of all cells.
    *
    * @param widget - The target notebook widget.
    *
@@ -715,16 +772,14 @@ namespace NotebookActions {
    * The `mode` of the widget will be preserved.
    */
   export
-  function toggleLineNumbers(widget: Notebook): void {
+  function toggleAllMatchBrackets(widget: Notebook): void {
     if (!widget.model || !widget.activeCell) {
       return;
     }
     let state = Private.getState(widget);
-    let lineNumbers = widget.activeCell.editor.getOption('lineNumbers');
+    let matchBrackets = widget.activeCell.editor.getOption('matchBrackets');
     each(widget.widgets, child => {
-      if (widget.isSelected(child)) {
-        child.editor.setOption('lineNumbers', !lineNumbers);
-      }
+      child.editor.setOption('matchBrackets', !matchBrackets);
     });
     Private.handleState(widget, state);
   }

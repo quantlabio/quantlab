@@ -1,6 +1,5 @@
-// Copyright (c) QuantLab Development Team.
+// Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   Widget
 } from '@phosphor/widgets';
@@ -51,7 +50,7 @@ class RenderedPDF extends Widget implements IRenderMime.IRenderer {
     if (oldUrl) {
       try {
         URL.revokeObjectURL(oldUrl);
-      } catch(err) { /* no-op */ }
+      } catch (error) { /* no-op */ }
     }
     return Promise.resolve(void 0);
   }
@@ -62,7 +61,7 @@ class RenderedPDF extends Widget implements IRenderMime.IRenderer {
   dispose() {
     try {
       URL.revokeObjectURL(this._objectUrl);
-    } catch(err) { /* no-op */ }
+    } catch (error) { /* no-op */ }
     super.dispose();
   }
 
@@ -83,7 +82,7 @@ const rendererFactory: IRenderMime.IRendererFactory = {
 
 const extensions: IRenderMime.IExtension | IRenderMime.IExtension[] = [
   {
-    name: 'PDF',
+    id: '@quantlab/pdf-extension:factory',
     rendererFactory,
     rank: 0,
     dataType: 'string',

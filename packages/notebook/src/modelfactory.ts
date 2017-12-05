@@ -1,21 +1,20 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
-  Contents
-} from '@quantlab/services';
-
-import {
-  IModelDB
-} from '@quantlab/coreutils';
+  CodeCellModel
+} from '@quantlab/cells';
 
 import {
   DocumentRegistry
 } from '@quantlab/docregistry';
 
 import {
-  CodeCellModel
-} from '@quantlab/cells';
+  IModelDB
+} from '@quantlab/observables';
+
+import {
+  Contents
+} from '@quantlab/services';
 
 import {
   INotebookModel, NotebookModel

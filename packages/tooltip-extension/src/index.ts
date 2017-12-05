@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   Kernel, KernelMessage
 } from '@quantlab/services';
@@ -50,15 +49,15 @@ namespace CommandIDs {
 
   export
   const launchNotebook = 'tooltip:launch-notebook';
-};
+}
 
 
 
 /**
- * The main tooltip service.
+ * The main tooltip manager plugin.
  */
-const service: QuantLabPlugin<ITooltipManager> = {
-  id: 'jupyter.services.tooltip',
+const manager: QuantLabPlugin<ITooltipManager> = {
+  id: '@quantlab/tooltip-extension:manager',
   autoStart: true,
   provides: ITooltipManager,
   activate: (app: QuantLab): ITooltipManager => {
@@ -97,8 +96,8 @@ const service: QuantLabPlugin<ITooltipManager> = {
 /**
  * The console tooltip plugin.
  */
-const consolePlugin: QuantLabPlugin<void> = {
-  id: 'jupyter.extensions.tooltip-console',
+const consoles: QuantLabPlugin<void> = {
+  id: '@quantlab/tooltip-extension:consoles',
   autoStart: true,
   requires: [ITooltipManager, IConsoleTracker],
   activate: (app: QuantLab, manager: ITooltipManager, consoles: IConsoleTracker): void => {
@@ -130,8 +129,8 @@ const consolePlugin: QuantLabPlugin<void> = {
 /**
  * The notebook tooltip plugin.
  */
-const notebookPlugin: QuantLabPlugin<void> = {
-  id: 'jupyter.extensions.tooltip-notebook',
+const notebooks: QuantLabPlugin<void> = {
+  id: '@quantlab/tooltip-extension:notebooks',
   autoStart: true,
   requires: [ITooltipManager, INotebookTracker],
   activate: (app: QuantLab, manager: ITooltipManager, notebooks: INotebookTracker): void => {
@@ -162,9 +161,7 @@ const notebookPlugin: QuantLabPlugin<void> = {
 /**
  * Export the plugins as default.
  */
-const plugins: QuantLabPlugin<any>[] = [
-  service, consolePlugin, notebookPlugin
-];
+const plugins: QuantLabPlugin<any>[] = [manager, consoles, notebooks];
 export default plugins;
 
 

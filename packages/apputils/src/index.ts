@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import '../style/index.css';
 
 export * from './clientsession';
@@ -12,8 +11,8 @@ export * from './domutils';
 export * from './hoverbox';
 export * from './iframe';
 export * from './instancetracker';
-export * from './mainmenu';
 export * from './sanitizer';
+export * from './spinner';
 export * from './splash';
 export * from './styling';
 export * from './thememanager';

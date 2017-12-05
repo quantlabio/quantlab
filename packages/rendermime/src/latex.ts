@@ -8,13 +8,11 @@
 // under the terms of the Apache2 license governing the MathJax project.
 // Other minor modifications are also due to StackExchange and are used with
 // permission.
-
 import {
   IRenderMime
 } from '@quantlab/rendermime-interfaces';
 
 const inline = '$'; // the inline math delimiter
-
 // MATHSPLIT contains the pattern for math delimiters and special symbols
 // needed for searching for math in the text input.
 const MATHSPLIT = /(\$\$?|\\(?:begin|end)\{[a-z]*\*?\}|\\[{}$]|[{}]|(?:\n\s*)+|@@\d+@@|\\\\(?:\(|\)|\[|\]))/i;
@@ -41,10 +39,17 @@ class MathJaxTypesetter implements IRenderMime.ILatexTypesetter {
       this._init();
     }
     if ((window as any).MathJax) {
-      MathJax.Hub.Queue(
-        ['Typeset', MathJax.Hub, node,
-        ['resetEquationNumbers', MathJax.InputJax.TeX]]
-      );
+      MathJax.Hub.Queue(['Typeset', MathJax.Hub, node]);
+      try {
+        MathJax.Hub.Queue(
+          ['Require', MathJax.Ajax, '[MathJax]/extensions/TeX/AMSmath.js'],
+          () => {
+            MathJax.InputJax.TeX.resetEquationNumbers();
+          }
+        );
+      } catch (e) {
+        console.error('Error queueing resetEquationNumbers:', e);
+      }
     }
   }
 

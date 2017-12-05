@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
@@ -25,7 +24,7 @@ const FACTORY = 'Table';
  */
 const plugin: QuantLabPlugin<void> = {
   activate,
-  id: 'jupyter.extensions.csv-handler',
+  id: '@quantlab/csvviewer-extension:plugin',
   requires: [ILayoutRestorer],
   autoStart: true
 };

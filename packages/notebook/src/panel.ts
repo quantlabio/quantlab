@@ -1,7 +1,6 @@
 
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   Kernel, KernelMessage
 } from '@quantlab/services';
@@ -455,6 +454,6 @@ export namespace NotebookPanel {
    * The notebook renderer token.
    */
   export
-  const IContentFactory = new Token<IContentFactory>('jupyter.services.notebook.content-factory');
+  const IContentFactory = new Token<IContentFactory>('@quantlab/notebook:IContentFactory');
   /* tslint:enable */
 }

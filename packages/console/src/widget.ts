@@ -1,23 +1,25 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   IClientSession
 } from '@quantlab/apputils';
+
+import {
+  Cell, CellModel, CodeCell, CodeCellModel, ICodeCellModel, IRawCellModel,
+  RawCell, RawCellModel
+} from '@quantlab/cells';
 
 import {
   IEditorMimeTypeService, CodeEditor
 } from '@quantlab/codeeditor';
 
 import {
-  Cell, CodeCell, RawCell,
-  ICodeCellModel, IRawCellModel, CellModel,
-  RawCellModel, CodeCellModel
-} from '@quantlab/cells';
+  nbformat
+} from '@quantlab/coreutils';
 
 import {
-  nbformat, IObservableList, ObservableList
-} from '@quantlab/coreutils';
+  IObservableList, ObservableList
+} from '@quantlab/observables';
 
 import {
   RenderMime
@@ -51,6 +53,16 @@ import {
   ConsoleHistory, IConsoleHistory
 } from './history';
 
+
+/**
+ * The data attribute added to a widget that has an active kernel.
+ */
+const KERNEL_USER = 'jpKernelUser';
+
+/**
+ * The data attribute added to a widget can run code.
+ */
+const CODE_RUNNER = 'jpCodeRunner';
 
 /**
  * The class name added to console widgets.
@@ -103,7 +115,9 @@ class CodeConsole extends Widget {
   constructor(options: CodeConsole.IOptions) {
     super();
     this.addClass(CONSOLE_CLASS);
-
+    this.node.dataset[KERNEL_USER] = 'true';
+    this.node.dataset[CODE_RUNNER] = 'true';
+    this.node.tabIndex = -1;  // Allow the widget to take focus.
     // Create the panels that hold the content and input.
     let layout = this.layout = new PanelLayout();
     this._cells = new ObservableList<Cell>();
@@ -143,7 +157,7 @@ class CodeConsole extends Widget {
     this._foreignHandler = new ForeignHandler({
       session: this.session,
       parent: this,
-      cellFactory: () => this._createCodeCell(),
+      cellFactory: () => this._createCodeCell()
     });
 
     this._history = new ConsoleHistory({
@@ -356,6 +370,10 @@ class CodeConsole extends Widget {
     case 'keydown':
       this._evtKeyDown(event as KeyboardEvent);
       break;
+    case 'onclick':
+      this.node.focus();
+      event.preventDefault();
+      break;
     default:
       break;
     }
@@ -367,6 +385,7 @@ class CodeConsole extends Widget {
   protected onAfterAttach(msg: Message): void {
     let node = this.node;
     node.addEventListener('keydown', this, true);
+    node.addEventListener('click', this);
     // Create a prompt if necessary.
     if (!this.promptCell) {
       this.newPromptCell();
@@ -382,6 +401,7 @@ class CodeConsole extends Widget {
   protected onBeforeDetach(msg: Message): void {
     let node = this.node;
     node.removeEventListener('keydown', this, true);
+    node.removeEventListener('click', this);
   }
 
   /**

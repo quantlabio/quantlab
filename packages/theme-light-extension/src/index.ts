@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   QuantLab, QuantLabPlugin
 } from '@quantlab/application';
@@ -20,7 +19,9 @@ const plugin: QuantLabPlugin<void> = {
     manager.register({
       name: 'QuantLab Light',
       load: function() {
-        return manager.loadCSS('quantlab-theme-light-extension/index.css');
+        // Load the optional monospace font for the input/output prompt.
+        manager.loadCSS('https://fonts.googleapis.com/css?family=Roboto+Mono');
+        return manager.loadCSS('@quantlab/theme-light-extension/index.css');
       },
       unload: function() {
         return Promise.resolve(void 0);

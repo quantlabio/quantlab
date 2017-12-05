@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   IInstanceTracker
 } from '@quantlab/apputils';
@@ -30,5 +29,5 @@ interface IEditorTracker extends IInstanceTracker<FileEditor> {}
  * The editor tracker token.
  */
 export
-const IEditorTracker = new Token<IEditorTracker>('jupyter.services.editor-tracker');
+const IEditorTracker = new Token<IEditorTracker>('@quantlab/fileeditor:IEditorTracker');
 /* tslint:enable */

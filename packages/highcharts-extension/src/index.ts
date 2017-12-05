@@ -6,7 +6,7 @@ import {
 } from '@quantlab/application';
 
 import {
-  ICommandPalette, IMainMenu
+  ICommandPalette
 } from '@quantlab/apputils';
 
 import {
@@ -20,6 +20,10 @@ import {
 import {
   ILauncher
 } from '@quantlab/launcher';
+
+import {
+  IMainMenu
+} from '@quantlab/mainmenu';
 
 import {
   ChartTools, IChartTools, IHighChartsTracker,
@@ -75,8 +79,8 @@ const FACTORY = 'HighCharts';
 /**
  * The highchart widget tracker provider.
  */
-const trackerPlugin: QuantLabPlugin<IHighChartsTracker> = {
-  id: 'jupyter.extensions.highcharts',
+const tracker: QuantLabPlugin<IHighChartsTracker> = {
+  id: '@quantlab/highcharts-extension:tracker',
   provides: IHighChartsTracker,
   requires: [
     IMainMenu,
@@ -96,8 +100,8 @@ const trackerPlugin: QuantLabPlugin<IHighChartsTracker> = {
  * The highchart factory provider.
  */
 export
-const contentFactoryPlugin: QuantLabPlugin<HighChartsPanel.IContentFactory> = {
-  id: 'jupyter.services.highchart-renderer',
+const factory: QuantLabPlugin<HighChartsPanel.IContentFactory> = {
+  id: '@quantlab/highcharts-extension:factory',
   provides: HighChartsPanel.IContentFactory,
   autoStart: true,
   activate: (app: QuantLab) => {
@@ -109,10 +113,10 @@ const contentFactoryPlugin: QuantLabPlugin<HighChartsPanel.IContentFactory> = {
 /**
  * The chart tools extension.
  */
-const chartToolsPlugin: QuantLabPlugin<IChartTools> = {
+const tools: QuantLabPlugin<IChartTools> = {
   activate: activateChartTools,
   provides: IChartTools,
-  id: 'jupyter.extensions.chart-tools',
+  id: '@quantlab/highcharts-extension:tools',
   autoStart: true,
   requires: [IHighChartsTracker, IEditorServices, IStateDB]
 };
@@ -122,7 +126,7 @@ const chartToolsPlugin: QuantLabPlugin<IChartTools> = {
 /**
  * Export the plugin as default.
  */
-const plugins: QuantLabPlugin<any>[] = [contentFactoryPlugin, trackerPlugin, chartToolsPlugin];
+const plugins: QuantLabPlugin<any>[] = [factory, tracker, tools];
 export default plugins;
 
 function activateChartTools(app: QuantLab, tracker: IHighChartsTracker, editorServices: IEditorServices, state: IStateDB): Promise<IChartTools> {
@@ -159,7 +163,7 @@ function activateChartTools(app: QuantLab, tracker: IHighChartsTracker, editorSe
 
   // Wait until the application has finished restoring before rendering.
   Promise.all([state.fetch(id), app.restored]).then(([args]) => {
-    const open = (args && args['open'] as boolean) || false;
+    const open = !!(args && (args as ReadonlyJSONObject)['open'] as boolean);
 
     // After initial restoration, check if the chart tools should render.
     if (tracker.size) {
@@ -224,7 +228,7 @@ function activateHighCharts(app: QuantLab, mainMenu: IMainMenu, palette: IComman
   }
 
   // Fetch the initial state of the settings.
-  Promise.all([settingRegistry.load('jupyter.extensions.highcharts'), restored]).then(([settings]) => {
+  Promise.all([settingRegistry.load('@quantlab\\highcharts-extension\\highcharts'), restored]).then(([settings]) => {
     updateSettings(settings);
     updateTracker();
     settings.changed.connect(() => {
@@ -254,11 +258,11 @@ function activateHighCharts(app: QuantLab, mainMenu: IMainMenu, palette: IComman
   let registry = app.docRegistry;
   registry.addModelFactory(new HighChartsModelFactory({}));
   registry.addWidgetFactory(factory);
-  registry.addCreator({
-    name: 'HighCharts',
-    fileType: 'highcharts',
-    widgetName: 'HighCharts'
-  });
+  //registry.addCreator({
+  //  name: 'HighCharts',
+  //  fileType: 'highcharts',
+  //  widgetName: 'HighCharts'
+  //});
 
   addCommands(app, tracker);
   populatePalette(palette);

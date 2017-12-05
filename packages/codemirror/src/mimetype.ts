@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   IEditorMimeTypeService
 } from '@quantlab/codeeditor';
@@ -11,7 +10,7 @@ import {
 
 import {
   Mode
-} from '.';
+} from './mode';
 
 /**
  * The mime type service for CodeMirror.

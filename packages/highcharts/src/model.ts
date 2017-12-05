@@ -6,9 +6,12 @@ import {
 } from '@quantlab/docregistry';
 
 import {
-  IObservableJSON, nbformat, IModelDB
+  nbformat
 } from '@quantlab/coreutils';
 
+import {
+  IModelDB, IObservableJSON
+} from '@quantlab/observables';
 
 /**
  * The definition of a model object for a HighCharts widget.

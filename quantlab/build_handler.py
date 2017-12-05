@@ -2,17 +2,23 @@
 
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
+from concurrent.futures import ThreadPoolExecutor
 import json
-from tornado import gen, web
+from threading import Event
 
 from notebook.base.handlers import APIHandler
-from .commands import build_async, clean, should_build
+from tornado import gen, web
+from tornado.concurrent import run_on_executor
+
+from .commands import build, clean, build_check
 
 
 class Builder(object):
     building = False
+    executor = ThreadPoolExecutor(max_workers=5)
     canceled = False
     _canceling = False
+    _kill_event = None
     _future = None
 
     def __init__(self, log, core_mode, app_dir):
@@ -20,16 +26,23 @@ class Builder(object):
         self.core_mode = core_mode
         self.app_dir = app_dir
 
+    @gen.coroutine
     def get_status(self):
         if self.core_mode:
-            return dict(status='stable', message='')
+            raise gen.Return(dict(status='stable', message=''))
         if self.building:
-            return dict(status='building', message='')
+            raise gen.Return(dict(status='building', message=''))
 
-        needed, message = should_build(self.app_dir)
-        status = 'needed' if needed else 'stable'
+        messages = yield self._run_build_check(self.app_dir, self.log)
 
-        return dict(status=status, message=message)
+        status = 'needed' if messages else 'stable'
+        if messages:
+            self.log.warn('Build recommended')
+            [self.log.warn(m) for m in messages]
+        else:
+            self.log.info('Build not recommended')
+
+        raise gen.Return(dict(status=status, message='\n'.join(messages)))
 
     @gen.coroutine
     def build(self):
@@ -39,8 +52,9 @@ class Builder(object):
             self.canceled = False
             self._future = future = gen.Future()
             self.building = True
+            self._kill_event = evt = Event()
             try:
-                yield self._run_build()
+                yield self._run_build(self.app_dir, self.log, evt)
                 future.set_result(True)
             except Exception as e:
                 if str(e) == 'Aborted':
@@ -63,22 +77,21 @@ class Builder(object):
         self._canceling = False
         self.canceled = True
 
-    @gen.coroutine
-    def _run_build(self):
-        app_dir = self.app_dir
-        log = self.log
-        callback = self._abort_callback
+    @run_on_executor
+    def _run_build_check(self, app_dir, logger):
+        return build_check(app_dir=app_dir, logger=logger)
+
+    @run_on_executor
+    def _run_build(self, app_dir, logger, kill_event):
+        kwargs = dict(app_dir=app_dir, logger=logger, kill_event=kill_event)
         try:
-            yield build_async(app_dir, logger=log, abort_callback=callback)
+            return build(**kwargs)
         except Exception as e:
-            if str(e) == 'Aborted':
-                raise e
+            if self._kill_event.is_set():
+                return
             self.log.warn('Build failed, running a clean and rebuild')
             clean(app_dir)
-            yield build_async(app_dir, logger=log, abort_callback=callback)
-
-    def _abort_callback(self):
-        return self._canceling
+            return build(**kwargs)
 
 
 class BuildHandler(APIHandler):
@@ -89,7 +102,7 @@ class BuildHandler(APIHandler):
     @web.authenticated
     @gen.coroutine
     def get(self):
-        data = self.builder.get_status()
+        data = yield self.builder.get_status()
         self.finish(json.dumps(data))
 
     @web.authenticated

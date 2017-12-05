@@ -1,6 +1,5 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-
 import {
   ILayoutRestorer, QuantLab, QuantLabPlugin
 } from '@quantlab/application';
@@ -14,7 +13,7 @@ import {
 } from '@quantlab/console';
 
 import {
-  IInspector, InspectorPanel, InspectionHandler
+  IInspector, InspectionHandler, InspectorPanel, KernelConnector
 } from '@quantlab/inspector';
 
 import {
@@ -32,14 +31,14 @@ import {
 namespace CommandIDs {
   export
   const open = 'inspector:open';
-};
+}
 
 
 /**
  * A service providing code introspection.
  */
-const service: QuantLabPlugin<IInspector> = {
-  id: 'jupyter.services.inspector',
+const inspector: QuantLabPlugin<IInspector> = {
+  id: '@quantlab/inspector-extension:inspector',
   requires: [ICommandPalette, ILayoutRestorer],
   provides: IInspector,
   autoStart: true,
@@ -105,8 +104,8 @@ const service: QuantLabPlugin<IInspector> = {
 /**
  * An extension that registers consoles for inspection.
  */
-const consolePlugin: QuantLabPlugin<void> = {
-  id: 'jupyter.extensions.console-inspector',
+const consoles: QuantLabPlugin<void> = {
+  id: '@quantlab/inspector-extension:consoles',
   requires: [IInspector, IConsoleTracker],
   autoStart: true,
   activate: (app: QuantLab, manager: IInspector, consoles: IConsoleTracker): void => {
@@ -117,7 +116,8 @@ const consolePlugin: QuantLabPlugin<void> = {
     consoles.widgetAdded.connect((sender, parent) => {
       const session = parent.console.session;
       const rendermime = parent.console.rendermime;
-      const handler = new InspectionHandler({ session, rendermime });
+      const connector = new KernelConnector({ session });
+      const handler = new InspectionHandler({ connector, rendermime });
 
       // Associate the handler to the widget.
       handlers[parent.id] = handler;
@@ -150,15 +150,18 @@ const consolePlugin: QuantLabPlugin<void> = {
       }
     });
 
-    app.contextMenu.addItem({command: CommandIDs.open, selector: '.jp-CodeConsole'});
+    app.contextMenu.addItem({
+      command: CommandIDs.open,
+      selector: '.jp-CodeConsole'
+    });
   }
 };
 
 /**
  * An extension that registers notebooks for inspection.
  */
-const notebookPlugin: QuantLabPlugin<void> = {
-  id: 'jupyter.extensions.notebook-inspector',
+const notebooks: QuantLabPlugin<void> = {
+  id: '@quantlab/inspector-extension:notebooks',
   requires: [IInspector, INotebookTracker],
   autoStart: true,
   activate: (app: QuantLab, manager: IInspector, notebooks: INotebookTracker): void => {
@@ -169,7 +172,8 @@ const notebookPlugin: QuantLabPlugin<void> = {
     notebooks.widgetAdded.connect((sender, parent) => {
       const session = parent.session;
       const rendermime = parent.rendermime;
-      const handler = new InspectionHandler({ session, rendermime });
+      const connector = new KernelConnector({ session });
+      const handler = new InspectionHandler({ connector, rendermime });
 
       // Associate the handler to the widget.
       handlers[parent.id] = handler;
@@ -202,16 +206,17 @@ const notebookPlugin: QuantLabPlugin<void> = {
       }
     });
 
-    app.contextMenu.addItem({command: CommandIDs.open, selector: '.jp-NotebookPanel'});
+    app.contextMenu.addItem({
+      command: CommandIDs.open,
+      selector: '.jp-NotebookPanel'
+    });
   }
 };
 
 /**
  * Export the plugins as default.
  */
-const plugins: QuantLabPlugin<any>[] = [
-  service, consolePlugin, notebookPlugin
-];
+const plugins: QuantLabPlugin<any>[] = [inspector, consoles, notebooks];
 export default plugins;
 
 
