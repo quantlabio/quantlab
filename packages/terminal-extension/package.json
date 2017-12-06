@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/terminal-extension",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "QuantLab - Terminal Emulator Extension",
   "homepage": "https://github.com/quantlabio/quantlab",
   "bugs": {
@@ -29,12 +29,12 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@quantlab/application": "^0.4.0",
-    "@quantlab/apputils": "^0.4.0",
-    "@quantlab/launcher": "^0.4.0",
-    "@quantlab/mainmenu": "^0.1.0",
-    "@quantlab/services": "^0.4.0",
-    "@quantlab/terminal": "^0.4.0"
+    "@quantlab/application": "^0.5.0",
+    "@quantlab/apputils": "^0.5.0",
+    "@quantlab/launcher": "^0.5.0",
+    "@quantlab/mainmenu": "^0.2.0",
+    "@quantlab/services": "^0.5.0",
+    "@quantlab/terminal": "^0.5.0"
   },
   "devDependencies": {
     "rimraf": "~2.6.2",

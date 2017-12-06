@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/vdom-extension",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "QuantLab - VDOM Renderer",
   "homepage": "https://github.com/quantlabio/quantlab",
   "bugs": {
@@ -31,7 +31,7 @@
   "dependencies": {
     "@nteract/transform-vdom": "^1.1.1",
     "@phosphor/widgets": "^1.5.0",
-    "@quantlab/rendermime-interfaces": "^0.3.0",
+    "@quantlab/rendermime-interfaces": "^0.4.0",
     "react": "~16.0.0",
     "react-dom": "~16.0.0"
   },

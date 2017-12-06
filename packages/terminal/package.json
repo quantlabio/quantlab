@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/terminal",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "QuantLab - Terminal Emulator Widget",
   "homepage": "https://github.com/quantlabio/quantlab",
   "bugs": {
@@ -34,8 +34,8 @@
     "@phosphor/domutils": "^1.1.2",
     "@phosphor/messaging": "^1.2.2",
     "@phosphor/widgets": "^1.5.0",
-    "@quantlab/apputils": "^0.4.0",
-    "@quantlab/services": "^0.4.0",
+    "@quantlab/apputils": "^0.5.0",
+    "@quantlab/services": "^0.5.0",
     "xterm": "~2.8.1"
   },
   "devDependencies": {

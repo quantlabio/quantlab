@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/pdf-extension",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "QuantLab - PDF Viewer",
   "homepage": "https://github.com/quantlabio/quantlab",
   "bugs": {
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@phosphor/widgets": "^1.5.0",
-    "@quantlab/rendermime-interfaces": "^0.3.0"
+    "@quantlab/rendermime-interfaces": "^0.4.0"
   },
   "devDependencies": {
     "rimraf": "~2.6.2",

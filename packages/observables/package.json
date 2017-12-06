@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/observables",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Data structures which may be observed for changes.",
   "homepage": "https://github.com/quantlabio/quantlab",
   "bugs": {

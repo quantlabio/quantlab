@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/codeeditor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "QuantLab - Abstract Code Editor",
   "homepage": "https://github.com/quantlabio/quantlab",
   "bugs": {
@@ -36,8 +36,8 @@
     "@phosphor/signaling": "^1.2.2",
     "@phosphor/virtualdom": "^1.1.2",
     "@phosphor/widgets": "^1.5.0",
-    "@quantlab/coreutils": "^0.3.0",
-    "@quantlab/observables": "^0.1.0"
+    "@quantlab/coreutils": "^0.4.0",
+    "@quantlab/observables": "^0.2.0"
   },
   "devDependencies": {
     "rimraf": "~2.6.2",

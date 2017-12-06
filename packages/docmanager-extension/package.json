@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/docmanager-extension",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "QuantLab - Document Manager Extension",
   "homepage": "https://github.com/quantlabio/quantlab",
   "bugs": {
@@ -30,12 +30,12 @@
   },
   "dependencies": {
     "@phosphor/disposable": "^1.1.2",
-    "@quantlab/application": "^0.4.0",
-    "@quantlab/apputils": "^0.4.0",
-    "@quantlab/coreutils": "^0.3.0",
-    "@quantlab/docmanager": "^0.4.0",
-    "@quantlab/docregistry": "^0.4.0",
-    "@quantlab/services": "^0.4.0"
+    "@quantlab/application": "^0.5.0",
+    "@quantlab/apputils": "^0.5.0",
+    "@quantlab/coreutils": "^0.4.0",
+    "@quantlab/docmanager": "^0.5.0",
+    "@quantlab/docregistry": "^0.5.0",
+    "@quantlab/services": "^0.5.0"
   },
   "devDependencies": {
     "rimraf": "~2.6.2",

@@ -1,6 +1,6 @@
 {
   "name": "@quantlab/completer-extension",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "QuantLab - Completer Extension",
   "homepage": "https://github.com/quantlabio/quantlab",
   "bugs": {
@@ -30,10 +30,10 @@
   },
   "dependencies": {
     "@phosphor/widgets": "^1.5.0",
-    "@quantlab/application": "^0.4.0",
-    "@quantlab/completer": "^0.4.0",
-    "@quantlab/console": "^0.4.0",
-    "@quantlab/notebook": "^0.4.0"
+    "@quantlab/application": "^0.5.0",
+    "@quantlab/completer": "^0.5.0",
+    "@quantlab/console": "^0.5.0",
+    "@quantlab/notebook": "^0.5.0"
   },
   "devDependencies": {
     "rimraf": "~2.6.2",
