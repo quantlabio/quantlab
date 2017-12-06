@@ -98,5 +98,5 @@
   --jp-icon-undo: url('./quantlab/api/themes/@quantlab/theme-light-extension/icons/md/undo.svg');
   --jp-icon-settings: url('./quantlab/api/themes/@quantlab/theme-light-extension/icons/jupyter/settings.svg');
   --jp-about-header-logo: url('./quantlab/api/themes/@quantlab/theme-light-extension/icons/jupyter/jupyter.svg');
-  --jp-about-header-wordmark: url('./quantlab/api/themes/@quantlab/theme-light-extension/images/@quantlab/wordmark.svg');
+  --jp-about-header-wordmark: url('./quantlab/api/themes/@quantlab/theme-light-extension/images/quantlab-wordmark.svg');
 }

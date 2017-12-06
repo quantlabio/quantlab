@@ -74,12 +74,22 @@ def check_assets():
         raise ValueError('Version mismatch, please run `build:update`')
 
 
+cmdclass = create_cmdclass('jsdeps', data_files_spec=data_files_spec,
+    package_data_spec=package_data_spec)
+cmdclass['jsdeps'] = combine_commands(
+    #install_npm(build_cmd='build:prod', path=staging, source_dir=staging,
+    #            build_dir=pjoin(HERE, NAME, 'static'), npm=npm),
+    command_for_func(check_assets)
+)
+
+
 setup_args = dict(
     name             = NAME,
     description      = DESCRIPTION,
     long_description = LONG_DESCRIPTION,
     version          = VERSION,
     packages         = find_packages(),
+    cmdclass         = cmdclass,
     author           = 'QuantLab Development Team',
     author_email     = 'quantlab.io@gmail.com',
     url              = 'https://www.quantlab.io',
@@ -121,14 +131,13 @@ setup_args['extras_require'] = {
 }
 
 
-# Because of this we do not need a MANIFEST.in
 setup_args['include_package_data'] = True
 
 # Force entrypoints with setuptools (needed for Windows, unconditional
 # because of wheels)
 setup_args['entry_points'] = {
     'console_scripts': [
-        'jupyter-quantlab = quantlab_launcher.quantlabapp:main',
+        'jupyter-quantlab = quantlab.quantlabapp:main',
         'jupyter-quantlabextension = quantlab.quantlabextensions:main',
         'jupyter-quantlabhub = quantlab.quantlabhubapp:main',
         'qlpm = quantlab.qlpmapp:main',

@@ -154,8 +154,8 @@ function main() {
         disabled: disabled,
         deferred: deferred
     });
-    register.forEach(function(item) { lab.registerPluginModule(item); });
-    lab.start({ ignorePlugins: ignorePlugins });
+    register.forEach(function(item) { quantlab.registerPluginModule(item); });
+    quantlab.start({ ignorePlugins: ignorePlugins });
 
     // Handle a selenium test.
     var seleniumTest = PageConfig.getOption('seleniumTest');

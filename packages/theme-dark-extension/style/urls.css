@@ -6,7 +6,7 @@
 :root {
 
   /* Images
-  These images are included with JupyterLab for showing the Project Jupyter logo
+  These images are included with QuantLab for showing the Project Jupyter logo
   */
   --jp-image-jupyter: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/jupyter-white-moons.svg');
   --jp-image-quantlab: url('./quantlab/api/themes/@quantlab/theme-dark-extension/images/quantlab.svg');
